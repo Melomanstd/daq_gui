@@ -2,6 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
+
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
+
 #include "dataoperator.h"
 
 namespace Ui {
@@ -20,9 +25,17 @@ public:
     void blocks();
 
 private:
+    void _initializePlot();
+    void _initializeDataOperator();
+
+private:
     Ui::MainWindow  *ui;
 
-    DataOperator    *_dataOperator;
+    DataOperator*   _dataOperator;
+    QwtPlot*        _plot;
+    QwtPlotCurve*   _curve;
+
+    QTimer*         _updateTimer;
 };
 
 #endif // MAINWINDOW_H

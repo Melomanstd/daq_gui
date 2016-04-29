@@ -47,6 +47,14 @@ public:
     void        setMeasureSampleInterval(quint32 interval);
     void        setSampleCount(quint32 count); //samples per block
 
+    F64         getVoltage();
+    F64*        getVoltageBuffer();
+
+    U16         getSamples();
+    U16*        getSamplesBuffer();
+
+    bool        isDataReady();
+
 protected:
     virtual void run();
 
@@ -62,6 +70,7 @@ private:
     bool    _isWorking;
     bool    _isUnitialize;
     bool    _isNewParameters;
+    bool    _newDataReady;
     BOOLEAN _isDoubleBuffer;
 
     QMutex  _mutex;

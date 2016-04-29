@@ -6,12 +6,77 @@
 #include <D2kDask.h>
 #include <DAQHeader.h>
 
+#include <qwt_plot_grid.h>
+#include <qwt_symbol.h>
+#include <qwt_legend.h>
+#include <qwt_plot_magnifier.h>
+#include <qwt_plot_panner.h>
+#include <qwt_plot_zoomer.h>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
+    _initializePlot();
+    _initializeDataOperator();
+    _updateTimer = new QTimer;
+    _updateTimer->setInterval(500);
+    _updateTimer->start();
+//    singleShot();
+//    blocks();
+
+}
+
+MainWindow::~MainWindow()
+{
+    delete _updateTimer;
+    delete _dataOperator;
+
+    _updateTimer = 0;
+    _dataOperator = 0;
+
+    delete ui;
+}
+
+void MainWindow::_initializePlot()
+{
+    _plot = new QwtPlot();
+    _plot->setAxisTitle(QwtPlot::yLeft, "Y");
+    _plot->setAxisTitle(QwtPlot::xBottom, "X");
+    _plot->setCanvasBackground(Qt::white);
+
+    _plot->insertLegend(new QwtLegend);
+
+    QwtPlotGrid *g = new QwtPlotGrid();
+    g->setMajPen(QPen(Qt::gray, 2));
+    g->attach(_plot);
+
+    _curve = new QwtPlotCurve();
+    _curve->setTitle(tr("Channel 0"));
+    _curve->setPen(QPen(Qt::blue, 6));
+    _curve->setRenderHint(QwtPlotItem::RenderAntialiased, true);
+
+    QwtSymbol *simba = new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::yellow), QPen(Qt::red), QSize(8,8));
+    _curve->setSymbol(simba);
+
+    _curve->attach(_plot);
+
+    QwtPlotZoomer *zoomer = new QwtPlotZoomer(_plot->canvas());
+    zoomer->setTrackerMode(QwtPlotZoomer::AlwaysOff);
+
+//    QwtPlotMagnifier *magna = new QwtPlotMagnifier(p->canvas());
+//    magna->setMouseButton(Qt::RightButton);
+
+//    QwtPlotPanner *pana = new QwtPlotPanner(p->canvas());
+//    pana->setMouseButton(Qt::LeftButt11on);
+
+    setCentralWidget(_plot);
+}
+
+void MainWindow::_initializeDataOperator()
+{
     _dataOperator = new DataOperator();
     _dataOperator->setWorkingMode(DataOperator::MODE_SINGLESHOT_MEASURING);
     _dataOperator->setChannelStatus(DataOperator::CHANNEL_0,
@@ -22,14 +87,6 @@ MainWindow::MainWindow(QWidget *parent) :
     _dataOperator->setMeasureSampleInterval(160);
     _dataOperator->setSampleCount(1000);
     _dataOperator->startWorking();
-//    singleShot();
-//    blocks();
-
-}
-
-MainWindow::~MainWindow()
-{
-    delete ui;
 }
 
 void MainWindow::singleShot()

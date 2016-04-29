@@ -9,6 +9,7 @@ DataOperator::DataOperator(QObject *parent)
         _isWorking(false),
         _isUnitialize(false),
         _isNewParameters(false),
+        _newDataReady(false),
         _isDoubleBuffer(0),
         _errorCode(0),
         _lastError(tr("No error")),
@@ -53,6 +54,7 @@ void DataOperator::run()
             ::D2K_AI_VReadChannel(_cardID, 0, &_voltageSingleshotValue);
             msleep(_measuringInterval);
             qDebug() << _voltageSingleshotValue;
+            _newDataReady = true;
         }
 
 //        _isWorking = false;
@@ -228,4 +230,55 @@ void DataOperator::_updateParameters()
             }
         }
     }
+}
+
+U16 DataOperator::getSamples()
+{
+    _mutex.tryLock();
+    U16 temp = _sampleSingleshotValue;
+    _newDataReady = false;
+    _mutex.unlock();
+    return temp;
+}
+
+U16* DataOperator::getSamplesBuffer()
+{
+    _mutex.tryLock();
+    U16 *temp = new U16[_measureSampleCount];
+    for (unsigned int i = 0; i < _measureSampleCount; i++)
+    {
+        temp[i] = _samplesBlockBuffer[i];
+    }
+    _newDataReady = false;
+    _mutex.unlock();
+    return temp;
+}
+
+F64 DataOperator::getVoltage()
+{
+    _mutex.tryLock();
+    F64 temp = _voltageSingleshotValue;
+    _newDataReady = false;
+    _mutex.unlock();
+    return temp;
+}
+
+F64* DataOperator::getVoltageBuffer()
+{
+    _mutex.tryLock();
+    F64 *temp = new F64[_measureSampleCount];
+    for (unsigned int i = 0; i < _measureSampleCount; i++)
+    {
+        temp[i] = _voltageBlockBuffer[i];
+    }
+    _newDataReady = false;
+    _mutex.unlock();
+    return temp;
+}
+
+bool DataOperator::isDataReady()
+{
+//    _mutex.tryLock();
+    return _newDataReady;
+//    _mutex.unlock();
 }
