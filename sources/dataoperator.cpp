@@ -20,6 +20,7 @@ DataOperator::DataOperator(QObject *parent)
         _workingMode(0),
         _channelZeroMeasuring(0),
         _channelOneMeasuring(0),
+        _measureTime(0),
         _measureSampleInterval(8),
         _measureSampleCount(2),
         _measuringInterval(160),
@@ -51,10 +52,12 @@ void DataOperator::run()
 
         if (_workingMode == MODE_SINGLESHOT_MEASURING)
         {
+            _mutex.tryLock();
             ::D2K_AI_VReadChannel(_cardID, 0, &_voltageSingleshotValue);
-            msleep(_measuringInterval);
+            msleep(_measureTime);
             qDebug() << _voltageSingleshotValue;
             _newDataReady = true;
+            _mutex.unlock();
         }
 
 //        _isWorking = false;
@@ -282,4 +285,9 @@ bool DataOperator::isDataReady()
 //    _mutex.tryLock();
     return _newDataReady;
 //    _mutex.unlock();
+}
+
+void DataOperator::setMeasureTime(quint32 msec)
+{
+    _measureTime = msec;
 }

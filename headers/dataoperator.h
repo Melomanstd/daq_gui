@@ -42,6 +42,7 @@ public:
     void        startWorking();
     void        stopWorking();
     void        setWorkingMode(qint8 mode);
+    void        setMeasureTime(quint32 msec);
     void        setChannelStatus(qint8 channel, qint8 state);
     void        setMeasuringInterval(quint32 interval);
     void        setMeasureSampleInterval(quint32 interval);
@@ -86,6 +87,8 @@ private:
     qint8   _workingMode;
     qint8   _channelZeroMeasuring;
     qint8   _channelOneMeasuring;
+
+    quint32 _measureTime;
 
     U32     _measureSampleInterval;     //block measuring time
                                         //[8:16777215]

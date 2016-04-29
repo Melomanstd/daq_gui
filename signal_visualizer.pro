@@ -14,12 +14,15 @@ TEMPLATE = app
 
 SOURCES +=  sources/main.cpp\
             sources/mainwindow.cpp \
-            sources/dataoperator.cpp
+            sources/dataoperator.cpp \
+            sources/parametersdialog.cpp
 
 HEADERS  += headers/mainwindow.h \
-            headers/dataoperator.h
+            headers/dataoperator.h \
+            headers/parametersdialog.h
 
-FORMS    += ui/mainwindow.ui
+FORMS    += ui/mainwindow.ui \
+            ui/parametersdialog.ui
 
 #QWT
 INCLUDEPATH +=  C:\\Qt\\Qwt-6.0.1\\include

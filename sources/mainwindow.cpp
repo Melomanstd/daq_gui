@@ -88,17 +88,21 @@ void MainWindow::_initializeDataOperator()
                                     DataOperator::ON);
     _dataOperator->setChannelStatus(DataOperator::CHANNEL_1,
                                     DataOperator::OFF);
-    _dataOperator->setMeasuringInterval(1000);
+    _dataOperator->setMeasuringInterval(160);
     _dataOperator->setMeasureSampleInterval(160);
     _dataOperator->setSampleCount(1000);
+    _dataOperator->setMeasureTime(1000);
     _dataOperator->startWorking();
 
-    _updateTimer->setInterval(500);
+    _updateTimer->setInterval(200);
 }
 
 void MainWindow::_updatePlot()
 {
-//    _curve
+    if (_dataOperator->isDataReady() == false)
+    {
+        return;
+    }
     QPointF point(++count, _dataOperator->getVoltage());
     _points.push_back(point);
 
@@ -151,8 +155,8 @@ void MainWindow::blocks()
     #define CardNumber    0
     #define ADChan	     0
     #define ScanCount    1000
-    #define ScanIntrv     160
-    #define SampleIntrv   160
+    #define ScanIntrv     30000
+    #define SampleIntrv   30000
 
     //AI config constants definition
     #define ConfigCtrl    DAQ2K_AI_ADCONVSRC_Int
