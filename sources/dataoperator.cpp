@@ -11,7 +11,10 @@ DataOperator::DataOperator(QObject *parent)
         _samplesBlockBuffer(0),
         _sampleSingleshotValue(0),
         _voltageBlockBuffer(0),
-        _voltageSingleshotValue(0)
+        _voltageSingleshotValue(0),
+        _workingMode(0),
+        _channelZeroMeasuring(0),
+        _channelOneMeasuring(0)
 {
 
 }
@@ -47,5 +50,26 @@ void DataOperator::stopWorking()
 {
     _mutex.tryLock();
     _isWorking = false;
+    _mutex.unlock();
+}
+
+void DataOperator::setWorkingMode(qint8 mode)
+{
+    _mutex.tryLock();
+    _workingMode = mode;
+    _mutex.unlock();
+}
+
+void DataOperator::setChannelStatus(qint8 channel, qint8 state)
+{
+    _mutex.tryLock();
+    if (channel == CHANNEL_0)
+    {
+        _channelZeroMeasuring = state;
+    }
+    else if (channel == CHANNEL_1)
+    {
+        _channelOneMeasuring = state;
+    }
     _mutex.unlock();
 }
