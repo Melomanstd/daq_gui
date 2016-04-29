@@ -67,16 +67,17 @@ void MainWindow::_initializePlot()
 
     _curve->attach(_plot);
 
-    QwtPlotZoomer *zoomer = new QwtPlotZoomer(_plot->canvas());
-    zoomer->setTrackerMode(QwtPlotZoomer::AlwaysOff);
+//    QwtPlotZoomer *zoomer = new QwtPlotZoomer(_plot->canvas());
+//    zoomer->setTrackerMode(QwtPlotZoomer::AlwaysOff);
 
-//    QwtPlotMagnifier *magna = new QwtPlotMagnifier(p->canvas());
-//    magna->setMouseButton(Qt::RightButton);
+    QwtPlotMagnifier *magnifier = new QwtPlotMagnifier(_plot->canvas());
+    magnifier->setMouseButton(Qt::RightButton);
 
-//    QwtPlotPanner *pana = new QwtPlotPanner(p->canvas());
-//    pana->setMouseButton(Qt::LeftButt11on);
+    QwtPlotPanner *panner = new QwtPlotPanner(_plot->canvas());
+    panner->setMouseButton(Qt::LeftButton);
 
-    setCentralWidget(_plot);
+//    setCentralWidget(_plot);
+    ui->v_lay->addWidget(_plot);
 }
 
 void MainWindow::_initializeDataOperator()
