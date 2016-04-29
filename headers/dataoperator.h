@@ -1,6 +1,11 @@
 #ifndef DATAOPERATOR_H
 #define DATAOPERATOR_H
 
+#define MAXIMUM_OPTION_VALUE        16777215
+#define MINIMUM_SAMPLES_PER_BLOCK   2
+#define MINIMUM_SAMPLES_INTERVAL    8
+#define MINIMUM_MEASURING_INTERVAL  160 //miliseconds
+
 #include <QThread>
 #include <QMutex>
 

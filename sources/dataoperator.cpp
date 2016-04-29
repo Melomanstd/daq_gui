@@ -79,6 +79,12 @@ void DataOperator::setChannelStatus(qint8 channel, qint8 state)
 
 void DataOperator::setMeasuringInterval(quint32 interval)
 {
+    if ((interval < MINIMUM_MEASURING_INTERVAL) ||
+            (interval > MAXIMUM_OPTION_VALUE))
+    {
+        return;
+    }
+
     _mutex.tryLock();
     _measuringInterval = static_cast<U32> (interval);
     _mutex.unlock();
@@ -86,6 +92,12 @@ void DataOperator::setMeasuringInterval(quint32 interval)
 
 void DataOperator::setMeasureSampleInterval(quint32 interval)
 {
+    if ((interval < MINIMUM_SAMPLES_INTERVAL) ||
+            (interval > MAXIMUM_OPTION_VALUE))
+    {
+        return;
+    }
+
     _mutex.tryLock();
     _measureSampleInterval = static_cast<U32> (interval);
     _mutex.unlock();
@@ -93,6 +105,12 @@ void DataOperator::setMeasureSampleInterval(quint32 interval)
 
 void DataOperator::setSampleCount(quint32 count)
 {
+    if ((count < MINIMUM_SAMPLES_PER_BLOCK) ||
+            (count > MAXIMUM_OPTION_VALUE))
+    {
+        return;
+    }
+
     _mutex.tryLock();
     _measureSampleCount = static_cast<U32> (count);
     _mutex.unlock();
