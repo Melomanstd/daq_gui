@@ -1,11 +1,15 @@
 #include "headers/dataoperator.h"
 
+#define CardNumber 0
+
 #include <QDebug>
 
 DataOperator::DataOperator(QObject *parent)
     :   QThread(parent),
         _isWorking(false),
         _isUnitialize(false),
+        _isNewParameters(false),
+        _isDoubleBuffer(0),
         _errorCode(0),
         _lastError(tr("No error")),
         _samplesBlockBuffer(0),
@@ -17,7 +21,9 @@ DataOperator::DataOperator(QObject *parent)
         _channelOneMeasuring(0),
         _measureSampleInterval(8),
         _measureSampleCount(2),
-        _measuringInterval(160)
+        _measuringInterval(160),
+        _resultBufferId(0),
+        _cardID(-1)
 {
 
 }
@@ -38,11 +44,29 @@ void DataOperator::run()
         _isWorking = false;
         _lastError = tr("Cant initialize device");
         qDebug() << "Cant initialize device";
+        emit someError();
+    }
+    else
+    {
+        ::D2K_AI_CH_Config(_cardID, 0, AD_B_10_V|AI_RSE);
+//        ::D2K_AI_CH_Config(cardID, 1, AD_B_10_V|AI_RSE);
     }
 
     while (_isWorking)
     {
-        //
+        if (_isNewParameters == true)
+        {
+            _isNewParameters = false;
+            if (_workingMode == MODE_BLOCK_MEASURING)
+            {
+                if (_initializeBlockMode() == false)
+                {
+                    _isWorking = false;
+                    emit someError();
+                    break;
+                }
+            }
+        }
     }
 
     ::D2K_Release_Card(0);
@@ -93,7 +117,7 @@ void DataOperator::setMeasuringInterval(quint32 interval)
 void DataOperator::setMeasureSampleInterval(quint32 interval)
 {
     if ((interval < MINIMUM_SAMPLES_INTERVAL) ||
-            (interval > MAXIMUM_OPTION_VALUE))
+            (interval > MAXIMUM_SAMPLES_INTERVAL))
     {
         return;
     }
@@ -114,4 +138,66 @@ void DataOperator::setSampleCount(quint32 count)
     _mutex.tryLock();
     _measureSampleCount = static_cast<U32> (count);
     _mutex.unlock();
+}
+
+bool DataOperator::_initializeBlockMode()
+{
+    //AI config constants definition
+    U16     configCtrl = DAQ2K_AI_ADCONVSRC_Int;
+    U32     trigCtrl = DAQ2K_AI_TRGSRC_SOFT |
+                        DAQ2K_AI_TRGMOD_POST;
+    U16     reTrgCnt = 0;
+    BOOLEAN bufAutoReset = 1;
+    U32     memSize = 0;
+
+    _errorCode = ::D2K_AI_AsyncDblBufferMode(_cardID, _isDoubleBuffer);
+    if (_errorCode != NoError)
+    {
+        qDebug() << "Cannot set double buufer mode";
+        _lastError = tr("Cannot set double buufer mode");
+        emit someError();
+    }
+
+    _errorCode = ::D2K_AI_InitialMemoryAllocated(_cardID, &memSize);
+    if (_errorCode != NoError)
+    {
+        qDebug() <<"Cannot get current memory size";
+        _lastError = tr("Cannot get current memory size");
+        return false;
+    }
+    if (memSize*1024 < _measureSampleCount * sizeof(I16) )
+    {
+        qDebug() << "Not enough memory to initialize current mode";
+        _lastError = tr("Not enough memory to initialize current mode");
+        return false;
+           //available memory size for analog input in the device driver
+           //is smaller than the data size specified!!
+           //ToDo : do something here
+    }
+
+    _errorCode= ::D2K_AI_Config(_cardID,
+                                configCtrl,
+                                trigCtrl,
+                                0,
+                                0,
+                                reTrgCnt,
+                                bufAutoReset);
+    if (_errorCode != NoError) {
+        qDebug() <<"Cant config block mode";
+        _lastError = tr("Cant config block mode");
+        return false;
+    }
+
+    _errorCode=D2K_AI_ContBufferSetup (_cardID,
+                                       _samplesBlockBuffer,
+                                       _measureSampleCount,
+                                       &_resultBufferId);
+    if (_errorCode != NoError)
+    {
+        qDebug() <<"Cannot initialize buffer";
+        _lastError = tr("Cannot initialize buffer");
+        return false;
+    }
+
+    return true;
 }

@@ -2,8 +2,9 @@
 #define DATAOPERATOR_H
 
 #define MAXIMUM_OPTION_VALUE        16777215
+#define MAXIMUM_SAMPLES_INTERVAL    65535
 #define MINIMUM_SAMPLES_PER_BLOCK   2
-#define MINIMUM_SAMPLES_INTERVAL    8
+#define MINIMUM_SAMPLES_INTERVAL    160
 #define MINIMUM_MEASURING_INTERVAL  160 //miliseconds
 
 #include <QThread>
@@ -14,6 +15,7 @@
 
 class DataOperator : public QThread
 {
+    Q_OBJECT
 public:
     enum
     {
@@ -49,8 +51,16 @@ protected:
     virtual void run();
 
 private:
+    bool _initializeBlockMode();
+
+signals:
+    void someError();
+
+private:
     bool    _isWorking;
     bool    _isUnitialize;
+    bool    _isNewParameters;
+    BOOLEAN _isDoubleBuffer;
 
     QMutex  _mutex;
     I16     _errorCode;
@@ -72,6 +82,9 @@ private:
                                         //[2:16777215]
     U32     _measuringInterval;         //delay between measurings
                                         //[160:16777215]
+    U16     _resultBufferId;
+
+    I16     _cardID;
 };
 
 #endif // DATAOPERATOR_H
