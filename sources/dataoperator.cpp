@@ -14,7 +14,10 @@ DataOperator::DataOperator(QObject *parent)
         _voltageSingleshotValue(0),
         _workingMode(0),
         _channelZeroMeasuring(0),
-        _channelOneMeasuring(0)
+        _channelOneMeasuring(0),
+        _measureSampleInterval(8),
+        _measureSampleCount(2),
+        _measuringInterval(160)
 {
 
 }
@@ -71,5 +74,26 @@ void DataOperator::setChannelStatus(qint8 channel, qint8 state)
     {
         _channelOneMeasuring = state;
     }
+    _mutex.unlock();
+}
+
+void DataOperator::setMeasuringInterval(quint32 interval)
+{
+    _mutex.tryLock();
+    _measuringInterval = static_cast<U32> (interval);
+    _mutex.unlock();
+}
+
+void DataOperator::setMeasureSampleInterval(quint32 interval)
+{
+    _mutex.tryLock();
+    _measureSampleInterval = static_cast<U32> (interval);
+    _mutex.unlock();
+}
+
+void DataOperator::setSampleCount(quint32 count)
+{
+    _mutex.tryLock();
+    _measureSampleCount = static_cast<U32> (count);
     _mutex.unlock();
 }

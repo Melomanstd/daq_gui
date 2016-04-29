@@ -36,6 +36,9 @@ public:
     void        stopWorking();
     void        setWorkingMode(qint8 mode);
     void        setChannelStatus(qint8 channel, qint8 state);
+    void        setMeasuringInterval(quint32 interval);
+    void        setMeasureSampleInterval(quint32 interval);
+    void        setSampleCount(quint32 count); //samples per block
 
 protected:
     virtual void run();
@@ -54,9 +57,16 @@ private:
     F64*    _voltageBlockBuffer;
     F64     _voltageSingleshotValue;
 
-    qint8  _workingMode;
-    qint8    _channelZeroMeasuring;
-    qint8    _channelOneMeasuring;
+    qint8   _workingMode;
+    qint8   _channelZeroMeasuring;
+    qint8   _channelOneMeasuring;
+
+    U32     _measureSampleInterval;     //block measuring time
+                                        //[8:16777215]
+    U32     _measureSampleCount;        //samples per block
+                                        //[2:16777215]
+    U32     _measuringInterval;         //delay between measurings
+                                        //[160:16777215]
 };
 
 #endif // DATAOPERATOR_H
