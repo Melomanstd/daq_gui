@@ -5,9 +5,13 @@
 DataOperator::DataOperator(QObject *parent)
     :   QThread(parent),
         _isWorking(false),
+        _isUnitialize(false),
         _errorCode(0),
         _lastError(tr("No error")),
-        _isUnitialize(false)
+        _samplesBlockBuffer(0),
+        _sampleSingleshotValue(0),
+        _voltageBlockBuffer(0),
+        _voltageSingleshotValue(0)
 {
 
 }

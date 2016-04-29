@@ -26,6 +26,13 @@ private:
     QMutex  _mutex;
     I16     _errorCode;
     QString _lastError;
+
+    U16*    _samplesBlockBuffer;
+    U16     _sampleSingleshotValue;
+
+    F64*    _voltageBlockBuffer;
+    F64     _voltageSingleshotValue;
+
 };
 
 #endif // DATAOPERATOR_H

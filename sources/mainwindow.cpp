@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
 //    singleShot();
-//    blocks();
+    blocks();
 }
 
 MainWindow::~MainWindow()
@@ -82,7 +82,7 @@ void MainWindow::blocks()
     U32 MemSize   = 0;
     U16 BufId   = 0;
 //    I16 InBuf[1000]; //AI data buffer
-    I16 *InBuf = new I16[1000];
+    U16 *InBuf = new U16[1000];
     F64 *VoltBuf = new F64[1000];
     U16 vi = 0;
 
