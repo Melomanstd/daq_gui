@@ -19,10 +19,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    count = 0;
+    _updateTimer = new QTimer;
+    connect(_updateTimer, SIGNAL(timeout()),
+            this, SLOT(_updatePlot()));
+
     _initializePlot();
     _initializeDataOperator();
-    _updateTimer = new QTimer;
-    _updateTimer->setInterval(500);
     _updateTimer->start();
 //    singleShot();
 //    blocks();
@@ -32,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete _updateTimer;
+    _dataOperator->stopWorking();
     delete _dataOperator;
 
     _updateTimer = 0;
@@ -87,6 +91,19 @@ void MainWindow::_initializeDataOperator()
     _dataOperator->setMeasureSampleInterval(160);
     _dataOperator->setSampleCount(1000);
     _dataOperator->startWorking();
+
+    _updateTimer->setInterval(500);
+}
+
+void MainWindow::_updatePlot()
+{
+//    _curve
+    QPointF point(++count, _dataOperator->getVoltage());
+    _points.push_back(point);
+
+    _curve->setSamples(_points.toVector());
+    _curve->attach(_plot);
+    _plot->replot();
 }
 
 void MainWindow::singleShot()

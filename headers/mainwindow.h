@@ -28,6 +28,9 @@ private:
     void _initializePlot();
     void _initializeDataOperator();
 
+private slots:
+    void _updatePlot();
+
 private:
     Ui::MainWindow  *ui;
 
@@ -36,6 +39,9 @@ private:
     QwtPlotCurve*   _curve;
 
     QTimer*         _updateTimer;
+
+    QList <QPointF> _points;
+    int count;
 };
 
 #endif // MAINWINDOW_H

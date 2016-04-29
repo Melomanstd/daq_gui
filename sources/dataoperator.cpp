@@ -74,6 +74,7 @@ void DataOperator::stopWorking()
     _mutex.tryLock();
     _isWorking = false;
     _mutex.unlock();
+    wait(3000);
 }
 
 void DataOperator::setWorkingMode(qint8 mode)
