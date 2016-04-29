@@ -4,6 +4,9 @@
 #include <QThread>
 #include <QMutex>
 
+#include <D2kDask.h>
+#include <DAQHeader.h>
+
 class DataOperator : public QThread
 {
 public:
@@ -18,7 +21,11 @@ protected:
 
 private:
     bool    _isWorking;
+    bool    _isUnitialize;
+
     QMutex  _mutex;
+    I16     _errorCode;
+    QString _lastError;
 };
 
 #endif // DATAOPERATOR_H
