@@ -12,8 +12,19 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    _dataOperator = new DataOperator();
+    _dataOperator->setWorkingMode(DataOperator::MODE_SINGLESHOT_MEASURING);
+    _dataOperator->setChannelStatus(DataOperator::CHANNEL_0,
+                                    DataOperator::ON);
+    _dataOperator->setChannelStatus(DataOperator::CHANNEL_1,
+                                    DataOperator::OFF);
+    _dataOperator->setMeasuringInterval(1000);
+    _dataOperator->setMeasureSampleInterval(160);
+    _dataOperator->setSampleCount(1000);
+    _dataOperator->startWorking();
 //    singleShot();
-    blocks();
+//    blocks();
+
 }
 
 MainWindow::~MainWindow()

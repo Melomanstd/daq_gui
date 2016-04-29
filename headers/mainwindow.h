@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "dataoperator.h"
 
 namespace Ui {
 class MainWindow;
@@ -19,7 +20,9 @@ public:
     void blocks();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow  *ui;
+
+    DataOperator    *_dataOperator;
 };
 
 #endif // MAINWINDOW_H

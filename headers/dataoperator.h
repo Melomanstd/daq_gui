@@ -52,6 +52,8 @@ protected:
 
 private:
     bool _initializeBlockMode();
+    void _initializeCard();
+    void _updateParameters();
 
 signals:
     void someError();

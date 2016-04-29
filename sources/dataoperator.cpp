@@ -38,39 +38,33 @@ DataOperator::~DataOperator()
 
 void DataOperator::run()
 {
-    _errorCode = ::D2K_Register_Card(DAQ_2213, 0);
-    if (_errorCode != NoError)
-    {
-        _isWorking = false;
-        _lastError = tr("Cant initialize device");
-        qDebug() << "Cant initialize device";
-        emit someError();
-    }
-    else
-    {
-        ::D2K_AI_CH_Config(_cardID, 0, AD_B_10_V|AI_RSE);
-//        ::D2K_AI_CH_Config(cardID, 1, AD_B_10_V|AI_RSE);
-    }
+    _initializeCard();
 
-    while (_isWorking)
+    while (_isWorking == true)
     {
-        if (_isNewParameters == true)
+        _updateParameters();
+        if (_isWorking == false)
         {
-            _isNewParameters = false;
-            if (_workingMode == MODE_BLOCK_MEASURING)
-            {
-                if (_initializeBlockMode() == false)
-                {
-                    _isWorking = false;
-                    emit someError();
-                    break;
-                }
-            }
+            break;
         }
+
+        if (_workingMode == MODE_SINGLESHOT_MEASURING)
+        {
+            ::D2K_AI_VReadChannel(_cardID, 0, &_voltageSingleshotValue);
+            msleep(_measuringInterval);
+            qDebug() << _voltageSingleshotValue;
+        }
+
+//        _isWorking = false;
     }
 
     ::D2K_Release_Card(0);
     _isUnitialize = true;
+}
+
+void DataOperator::startWorking()
+{
+    start();
 }
 
 void DataOperator::stopWorking()
@@ -200,4 +194,38 @@ bool DataOperator::_initializeBlockMode()
     }
 
     return true;
+}
+
+void DataOperator::_initializeCard()
+{
+    _cardID = ::D2K_Register_Card(DAQ_2213, 0);
+    if (_cardID < 0)
+    {
+        _isWorking = false;
+        _lastError = tr("Cant initialize device");
+        qDebug() << "Cant initialize device";
+        emit someError();
+    }
+    else
+    {
+        ::D2K_AI_CH_Config(_cardID, 0, AD_B_10_V|AI_RSE);
+//        ::D2K_AI_CH_Config(cardID, 1, AD_B_10_V|AI_RSE);
+        _isWorking = true;
+    }
+}
+
+void DataOperator::_updateParameters()
+{
+    if (_isNewParameters == true)
+    {
+        _isNewParameters = false;
+        if (_workingMode == MODE_BLOCK_MEASURING)
+        {
+            if (_initializeBlockMode() == false)
+            {
+                _isWorking = false;
+                emit someError();
+            }
+        }
+    }
 }
