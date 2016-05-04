@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/new/images">
+        <file>blocks.jpg</file>
+        <file>points.jpg</file>
+    </qresource>
+</RCC>

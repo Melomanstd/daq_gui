@@ -1,4 +1,5 @@
 #include "headers/mainwindow.h"
+#include "headers/parametersdialog.h"
 #include "ui_mainwindow.h"
 
 #include <QDebug>
@@ -234,4 +235,10 @@ void MainWindow::blocks()
     }
 
     D2K_Release_Card(cardID);
+}
+
+void MainWindow::on_parameters_btn_clicked()
+{
+    ParametersDialog p(this);
+    p.exec();
 }

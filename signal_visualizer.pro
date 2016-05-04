@@ -33,3 +33,6 @@ LIBS        +=  -LC:\\Qt\\Qwt-6.0.1\\lib \
 INCLUDEPATH +=  C:\\ADLINK\\D2K-DASK\\Include
 LIBS        +=  -LC:\\ADLINK\\D2K-DASK\\Lib \
                 -lD2K-Dask
+
+RESOURCES += \
+    resources.qrc

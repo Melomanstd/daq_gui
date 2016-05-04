@@ -39,7 +39,20 @@
          <property name="text">
           <string/>
          </property>
+         <property name="icon">
+          <iconset resource="../resources.qrc">
+           <normaloff>:/new/images/points.jpg</normaloff>:/new/images/points.jpg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>120</width>
+           <height>80</height>
+          </size>
+         </property>
          <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoRaise">
           <bool>true</bool>
          </property>
         </widget>
@@ -69,7 +82,20 @@
          <property name="text">
           <string/>
          </property>
+         <property name="icon">
+          <iconset resource="../resources.qrc">
+           <normaloff>:/new/images/blocks.jpg</normaloff>:/new/images/blocks.jpg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>120</width>
+           <height>80</height>
+          </size>
+         </property>
          <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoRaise">
           <bool>true</bool>
          </property>
         </widget>
@@ -204,6 +230,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
