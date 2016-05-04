@@ -12,11 +12,19 @@ class ParametersDialog : public QDialog
     Q_OBJECT
 
 public:
+    enum
+    {
+        MODE_NO_MEASURING,
+        MODE_SINGLESHOT_MEASURING,
+        MODE_BLOCK_MEASURING
+    };
+
     explicit ParametersDialog(QWidget *parent = 0);
     ~ParametersDialog();
 
-    qint32 getMeasTime();
+    qint32 getMeasuringTime();
     qint32 getSamplesCount();
+    qint32 getMeasuringMode();
 
 private:
     void _singleshotMode();
@@ -27,7 +35,9 @@ private slots:
     void on_block_btn_clicked();
 
 private:
-    Ui::ParametersDialog *ui;
+    Ui::ParametersDialog*   ui;
+
+    qint32                  _mode;
 };
 
 #endif // PARAMETERSDIALOG_H

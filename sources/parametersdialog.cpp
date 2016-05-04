@@ -3,7 +3,8 @@
 
 ParametersDialog::ParametersDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ParametersDialog)
+    ui(new Ui::ParametersDialog),
+    _mode(MODE_NO_MEASURING)
 {
     ui->setupUi(this);
 
@@ -32,6 +33,7 @@ void ParametersDialog::_singleshotMode()
     ui->meas_samples_count_spin->setDisabled(true);
     ui->meas_time_spin->setMinimum(1);
     ui->meas_time_spin->setValue(1);
+    _mode = MODE_SINGLESHOT_MEASURING;
 }
 
 void ParametersDialog::_blockMode()
@@ -40,9 +42,10 @@ void ParametersDialog::_blockMode()
     ui->meas_samples_count_spin->setDisabled(false);
     ui->meas_time_spin->setMinimum(160);
     ui->meas_time_spin->setValue(160);
+    _mode = MODE_BLOCK_MEASURING;
 }
 
-qint32 ParametersDialog::getMeasTime()
+qint32 ParametersDialog::getMeasuringTime()
 {
     return ui->meas_time_spin->value();
 }
@@ -50,4 +53,9 @@ qint32 ParametersDialog::getMeasTime()
 qint32 ParametersDialog::getSamplesCount()
 {
     return ui->meas_samples_count_spin->value();
+}
+
+qint32 ParametersDialog::getMeasuringMode()
+{
+    return _mode;
 }
