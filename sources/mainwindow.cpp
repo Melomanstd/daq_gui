@@ -193,11 +193,35 @@ void MainWindow::blocks()
 
 void MainWindow::on_parameters_btn_clicked()
 {
+    _setupParameters();
+}
+
+void MainWindow::on_start_btn_clicked()
+{
+    ui->stop_btn->setChecked(false);
+    ui->start_btn->setChecked(true);
+    if (_setupParameters() == false)
+    {
+        ui->start_btn->setChecked(false);
+        ui->stop_btn->setChecked(true);
+        return;
+    }
+    _dataOperator->startWorking();
+}
+
+void MainWindow::on_stop_btn_clicked()
+{
+    ui->start_btn->setChecked(false);
+    ui->stop_btn->setChecked(true);
+}
+
+bool MainWindow::_setupParameters()
+{
     ParametersDialog p(this);
 
     if (p.exec() != QDialog::Accepted)
     {
-        return;
+        return false;
     }
 
     _parameters.mode = p.getMeasuringMode();
@@ -248,16 +272,5 @@ void MainWindow::on_parameters_btn_clicked()
     {
         _dataOperator->setParameters(_parameters);
     }
-}
-
-void MainWindow::on_start_btn_clicked()
-{
-    ui->stop_btn->setChecked(false);
-    ui->start_btn->setChecked(true);
-}
-
-void MainWindow::on_stop_btn_clicked()
-{
-    ui->start_btn->setChecked(false);
-    ui->stop_btn->setChecked(true);
+    return true;
 }

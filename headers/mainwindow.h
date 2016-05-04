@@ -26,6 +26,7 @@ public:
 private:
     void _initializePlot();
     void _initializeDataOperator();
+    bool _setupParameters();
 
 private slots:
     void on_parameters_btn_clicked();
