@@ -12,7 +12,10 @@ GraphicPlot::GraphicPlot(QWidget *parent)
         _count(0),
         _displayedPoints(1),
         _initializedPoints(0),
-        _displayStep(1)
+        _displayStep(1),
+        _currentStep(0),
+        _scaleMinimum(0),
+        _scaleMaximum(0)
 {
     setAxisTitle(QwtPlot::yLeft, "Y");
     setAxisTitle(QwtPlot::xBottom, "X");
@@ -29,8 +32,13 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     _curve->setPen(QPen(Qt::blue, 6));
     _curve->setRenderHint(QwtPlotItem::RenderAntialiased, true);
 
-    QwtSymbol *simba = new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::yellow), QPen(Qt::red), QSize(8,8));
+    QwtSymbol *simba = new QwtSymbol(QwtSymbol::Ellipse,
+                                     QBrush(Qt::yellow),
+                                     QPen(Qt::red),
+                                     QSize(8,8));
     _curve->setSymbol(simba);
+
+//    _curve->setXAxis(QwtPlot::xTop);
 
     _curve->attach(this);
 
@@ -55,6 +63,21 @@ void GraphicPlot::setPoint(double voltage)
 
     point.setX(_count++);
     point.setY(voltage);
+
+//    if (--_currentStep <= 0)
+//    {
+//        _currentStep = _displayStep;
+//        _scaleMaximum = _count / _displayStep;
+////        if ((_scaleMaximum - _scaleMinimum) > 10)
+//        {
+//            ++_scaleMinimum;
+//            setAxisScale(QwtPlot::xBottom,
+//                                 _scaleMinimum,
+//                                 _scaleMaximum,
+//                                 1);
+//        }
+//    }
+
     if (_initializedPoints < _displayedPoints)
     {
         _initializedPoints++;
@@ -64,8 +87,8 @@ void GraphicPlot::setPoint(double voltage)
         _points.pop_front();
 
         setAxisScale(QwtPlot::xBottom,
-                     _count - _displayedPoints -1,
-                     _count,
+                     _count - _displayedPoints,
+                     _count - 1,
                      _displayStep);
 
 //        setAxisScale(QwtPlot::yLeft,
@@ -114,4 +137,5 @@ void GraphicPlot::setDisplayedPoints(int size)
 void GraphicPlot::setDisplayStep(int step)
 {
     _displayStep = step;
+    _currentStep = step;
 }

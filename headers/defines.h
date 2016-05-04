@@ -27,13 +27,17 @@ public:
         mode(MODE_NO_MEASURING),
         measuringInterval(2),
         blockSize(2),
-        displayedInterval(10)
+        displayedInterval(10),
+        channelZeroState(STATE_OFF),
+        channelOneState(STATE_OFF)
     {}
 
     int mode;
     int measuringInterval;
     int blockSize;
     int displayedInterval;
+    unsigned char channelZeroState;
+    unsigned char channelOneState;
 };
 
 #endif // DEFINES

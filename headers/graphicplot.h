@@ -28,6 +28,9 @@ private:
     int                 _displayedPoints;
     int                 _initializedPoints;
     int                 _displayStep;
+    int                 _currentStep;
+    int                 _scaleMinimum;
+    int                 _scaleMaximum;
 
     QVector<QPointF>    _points;
 };

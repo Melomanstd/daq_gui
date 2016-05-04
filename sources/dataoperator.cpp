@@ -53,7 +53,14 @@ void DataOperator::run()
         if (_workingMode == MODE_SINGLESHOT_MEASURING)
         {
             _mutex.tryLock();
-            ::D2K_AI_VReadChannel(_cardID, 0, &_voltageSingleshotValue);
+            if (_channelZeroMeasuring == true)
+            {
+                ::D2K_AI_VReadChannel(_cardID, 0, &_voltageSingleshotValue);
+            }
+            if (_channelOneMeasuring == true)
+            {
+                //TODO
+            }
             msleep(_measuringInterval);
             qDebug() << _voltageSingleshotValue;
             _newDataReady = true;
@@ -300,6 +307,9 @@ void DataOperator::setParameters(ModeParameters parameters)
 {
     _mutex.tryLock();
     _workingMode = parameters.mode;
+
+    _channelZeroMeasuring = parameters.channelZeroState;
+    _channelOneMeasuring = parameters.channelOneState;
 
     //singleshot mode
     _measuringInterval      =

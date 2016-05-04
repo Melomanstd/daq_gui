@@ -29,6 +29,8 @@ private:
 
 private slots:
     void on_parameters_btn_clicked();
+    void on_start_btn_clicked();
+    void on_stop_btn_clicked();
 
     void _updatePlot();
 

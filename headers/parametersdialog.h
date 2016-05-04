@@ -19,6 +19,9 @@ public:
     qint32 getSamplesCount();
     qint32 getMeasuringMode();
 
+    bool   channelZeroState();
+    bool   channelOneState();
+
 private:
     void _singleshotMode();
     void _blockMode();

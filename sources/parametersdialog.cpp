@@ -31,6 +31,7 @@ void ParametersDialog::on_singleshot_btn_clicked()
 void ParametersDialog::_singleshotMode()
 {
     ui->block_btn->setChecked(false);
+    ui->singleshot_btn->setChecked(true);
     ui->meas_samples_count_spin->setMinimum(1);
     ui->meas_time_spin->setMinimum(1);
     ui->meas_time_spin->setValue(1);
@@ -42,6 +43,7 @@ void ParametersDialog::_singleshotMode()
 void ParametersDialog::_blockMode()
 {
     ui->singleshot_btn->setChecked(false);
+    ui->block_btn->setChecked(true);
     ui->meas_samples_count_spin->setMinimum(2);
     ui->meas_time_spin->setMinimum(160);
     ui->meas_time_spin->setValue(160);
@@ -63,4 +65,14 @@ qint32 ParametersDialog::getSamplesCount()
 qint32 ParametersDialog::getMeasuringMode()
 {
     return _mode;
+}
+
+bool ParametersDialog::channelZeroState()
+{
+    return ui->channel_zero_check->isChecked();
+}
+
+bool ParametersDialog::channelOneState()
+{
+    return ui->channel_one_check->isChecked();
 }

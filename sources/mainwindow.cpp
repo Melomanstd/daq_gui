@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->stop_btn->setChecked(true);
 
     _updateTimer = new QTimer;
     connect(_updateTimer, SIGNAL(timeout()),
@@ -16,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _initializePlot();
     _initializeDataOperator();
+    _updateTimer->setInterval(1);
     _updateTimer->start();
 //    singleShot();
 //    blocks();
@@ -39,23 +41,12 @@ void MainWindow::_initializePlot()
     _plot = new GraphicPlot();
     _plot->setDisplayedPoints(10);
     ui->v_lay->addWidget(_plot);
+    _plot->setAxisTitle(QwtPlot::yLeft, tr("Voltage"));
 }
 
 void MainWindow::_initializeDataOperator()
 {
     _dataOperator = new DataOperator();
-    _dataOperator->setWorkingMode(MODE_SINGLESHOT_MEASURING);
-    _dataOperator->setChannelStatus(CHANNEL_0,
-                                    STATE_ON);
-    _dataOperator->setChannelStatus(CHANNEL_1,
-                                    STATE_OFF);
-    _dataOperator->setBlockMeasuringInterval(160);
-    _dataOperator->setMeasureSampleInterval(160);
-    _dataOperator->setSampleCount(1000);
-    _dataOperator->setMeasuringInterval(1000);
-    _dataOperator->startWorking();
-
-    _updateTimer->setInterval(50);
 }
 
 void MainWindow::_updatePlot()
@@ -213,6 +204,24 @@ void MainWindow::on_parameters_btn_clicked()
     _parameters.measuringInterval = p.getMeasuringTime();
     int value = p.getSamplesCount();
 
+    if (p.channelZeroState() == true)
+    {
+        _parameters.channelZeroState = STATE_ON;
+    }
+    else
+    {
+        _parameters.channelOneState = STATE_OFF;
+    }
+
+    if (p.channelOneState() == true)
+    {
+        _parameters.channelOneState = STATE_ON;
+    }
+    else
+    {
+        _parameters.channelOneState = STATE_OFF;
+    }
+
     QSettings settings("settings.ini", QSettings::IniFormat, this);
     settings.setValue("measuring_mode", _parameters.mode);
     settings.setValue("measuring_interval", _parameters.measuringInterval);
@@ -224,6 +233,7 @@ void MainWindow::on_parameters_btn_clicked()
     else if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
     {
         _parameters.displayedInterval = value;
+//        _plot->setAxisTitle(QwtPlot::xBottom, tr("Seconds"));
 
         //points per sec * displayed seconds
         _plot->setDisplayStep(_parameters.measuringInterval);
@@ -232,8 +242,22 @@ void MainWindow::on_parameters_btn_clicked()
         settings.setValue("displayed_interval", value);
     }
 
+//    int updateInterval = 1000 / _parameters.measuringInterval;
+
     if (_dataOperator != 0)
     {
         _dataOperator->setParameters(_parameters);
     }
+}
+
+void MainWindow::on_start_btn_clicked()
+{
+    ui->stop_btn->setChecked(false);
+    ui->start_btn->setChecked(true);
+}
+
+void MainWindow::on_stop_btn_clicked()
+{
+    ui->start_btn->setChecked(false);
+    ui->stop_btn->setChecked(true);
 }
