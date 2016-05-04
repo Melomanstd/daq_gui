@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QSettings>
 
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
@@ -44,6 +45,8 @@ private:
 
     QList <QPointF> _points;
     int count;
+
+    ModeParameter   _parameters;
 };
 
 #endif // MAINWINDOW_H

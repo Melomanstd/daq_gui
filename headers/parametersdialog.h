@@ -12,13 +12,6 @@ class ParametersDialog : public QDialog
     Q_OBJECT
 
 public:
-    enum
-    {
-        MODE_NO_MEASURING,
-        MODE_SINGLESHOT_MEASURING,
-        MODE_BLOCK_MEASURING
-    };
-
     explicit ParametersDialog(QWidget *parent = 0);
     ~ParametersDialog();
 

@@ -13,29 +13,12 @@
 #include <D2kDask.h>
 #include <DAQHeader.h>
 
+#include "defines.h"
+
 class DataOperator : public QThread
 {
     Q_OBJECT
 public:
-    enum
-    {
-        MODE_NO_MEASURING,
-        MODE_SINGLESHOT_MEASURING,
-        MODE_BLOCK_MEASURING
-    };
-
-    enum
-    {
-        OFF,
-        ON
-    };
-
-    enum
-    {
-        CHANNEL_0,
-        CHANNEL_1
-    };
-
     explicit    DataOperator(QObject *parent = 0);
     virtual     ~DataOperator();
 

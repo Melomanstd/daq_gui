@@ -84,11 +84,11 @@ void MainWindow::_initializePlot()
 void MainWindow::_initializeDataOperator()
 {
     _dataOperator = new DataOperator();
-    _dataOperator->setWorkingMode(DataOperator::MODE_SINGLESHOT_MEASURING);
-    _dataOperator->setChannelStatus(DataOperator::CHANNEL_0,
-                                    DataOperator::ON);
-    _dataOperator->setChannelStatus(DataOperator::CHANNEL_1,
-                                    DataOperator::OFF);
+    _dataOperator->setWorkingMode(MODE_SINGLESHOT_MEASURING);
+    _dataOperator->setChannelStatus(CHANNEL_0,
+                                    STATE_ON);
+    _dataOperator->setChannelStatus(CHANNEL_1,
+                                    STATE_OFF);
     _dataOperator->setMeasuringInterval(160);
     _dataOperator->setMeasureSampleInterval(160);
     _dataOperator->setSampleCount(1000);
@@ -241,4 +241,22 @@ void MainWindow::on_parameters_btn_clicked()
 {
     ParametersDialog p(this);
     p.exec();
+
+    _parameters.mode = p.getMeasuringMode();
+    _parameters.measuringInterval = p.getMeasuringTime();
+    int value = p.getSamplesCount();
+
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    settings.setValue("measuring_mode", _parameters.mode);
+    settings.setValue("measuring_interval", _parameters.measuringInterval);
+    if (_parameters.mode == MODE_BLOCK_MEASURING)
+    {
+        _parameters.blockSize = value;
+        settings.setValue("samples_count", value);
+    }
+    else if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
+    {
+        _parameters.displayedInterval = value;
+        settings.setValue("displayed_interval", value);
+    }
 }
