@@ -16,6 +16,14 @@ public:
     ~ParametersDialog();
 
 private:
+    void _singleshotMode();
+    void _blockMode();
+
+private slots:
+    void on_singleshot_btn_clicked();
+    void on_block_btn_clicked();
+
+private:
     Ui::ParametersDialog *ui;
 };
 

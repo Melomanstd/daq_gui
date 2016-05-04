@@ -6,9 +6,38 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
     ui(new Ui::ParametersDialog)
 {
     ui->setupUi(this);
+
+    ui->singleshot_btn->setChecked(true);
+    _singleshotMode();
 }
 
 ParametersDialog::~ParametersDialog()
 {
     delete ui;
+}
+
+void ParametersDialog::on_block_btn_clicked()
+{
+    _blockMode();
+}
+
+void ParametersDialog::on_singleshot_btn_clicked()
+{
+    _singleshotMode();
+}
+
+void ParametersDialog::_singleshotMode()
+{
+    ui->block_btn->setChecked(false);
+    ui->meas_samples_count_spin->setDisabled(true);
+    ui->meas_time_spin->setMinimum(1);
+    ui->meas_time_spin->setValue(1);
+}
+
+void ParametersDialog::_blockMode()
+{
+    ui->singleshot_btn->setChecked(false);
+    ui->meas_samples_count_spin->setDisabled(false);
+    ui->meas_time_spin->setMinimum(160);
+    ui->meas_time_spin->setValue(160);
 }
