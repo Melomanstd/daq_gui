@@ -213,6 +213,8 @@ void MainWindow::on_stop_btn_clicked()
 {
     ui->start_btn->setChecked(false);
     ui->stop_btn->setChecked(true);
+
+    _dataOperator->stopWorking();
 }
 
 bool MainWindow::_setupParameters()
