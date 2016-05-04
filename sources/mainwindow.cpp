@@ -4,23 +4,12 @@
 
 #include <QDebug>
 
-#include <D2kDask.h>
-#include <DAQHeader.h>
-
-#include <qwt_plot_grid.h>
-#include <qwt_symbol.h>
-#include <qwt_legend.h>
-#include <qwt_plot_magnifier.h>
-#include <qwt_plot_panner.h>
-#include <qwt_plot_zoomer.h>
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    count = 0;
     _updateTimer = new QTimer;
     connect(_updateTimer, SIGNAL(timeout()),
             this, SLOT(_updatePlot()));
@@ -47,37 +36,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::_initializePlot()
 {
-    _plot = new QwtPlot();
-    _plot->setAxisTitle(QwtPlot::yLeft, "Y");
-    _plot->setAxisTitle(QwtPlot::xBottom, "X");
-    _plot->setCanvasBackground(Qt::white);
-
-    _plot->insertLegend(new QwtLegend);
-
-    QwtPlotGrid *g = new QwtPlotGrid();
-    g->setMajPen(QPen(Qt::gray, 2));
-    g->attach(_plot);
-
-    _curve = new QwtPlotCurve();
-    _curve->setTitle(tr("Channel 0"));
-    _curve->setPen(QPen(Qt::blue, 6));
-    _curve->setRenderHint(QwtPlotItem::RenderAntialiased, true);
-
-    QwtSymbol *simba = new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::yellow), QPen(Qt::red), QSize(8,8));
-    _curve->setSymbol(simba);
-
-    _curve->attach(_plot);
-
-//    QwtPlotZoomer *zoomer = new QwtPlotZoomer(_plot->canvas());
-//    zoomer->setTrackerMode(QwtPlotZoomer::AlwaysOff);
-
-    QwtPlotMagnifier *magnifier = new QwtPlotMagnifier(_plot->canvas());
-    magnifier->setMouseButton(Qt::RightButton);
-
-    QwtPlotPanner *panner = new QwtPlotPanner(_plot->canvas());
-    panner->setMouseButton(Qt::LeftButton);
-
-//    setCentralWidget(_plot);
+    _plot = new GraphicPlot();
     ui->v_lay->addWidget(_plot);
 }
 
@@ -104,12 +63,8 @@ void MainWindow::_updatePlot()
     {
         return;
     }
-    QPointF point(++count, _dataOperator->getVoltage());
-    _points.push_back(point);
 
-    _curve->setSamples(_points.toVector());
-    _curve->attach(_plot);
-    _plot->replot();
+    _plot->setPoint(_dataOperator->getVoltage());
 }
 
 void MainWindow::singleShot()

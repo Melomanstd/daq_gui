@@ -5,10 +5,8 @@
 #include <QTimer>
 #include <QSettings>
 
-#include <qwt_plot.h>
-#include <qwt_plot_curve.h>
-
 #include "dataoperator.h"
+#include "graphicplot.h"
 
 namespace Ui {
 class MainWindow;
@@ -38,13 +36,9 @@ private:
     Ui::MainWindow  *ui;
 
     DataOperator*   _dataOperator;
-    QwtPlot*        _plot;
-    QwtPlotCurve*   _curve;
+    GraphicPlot*    _plot;
 
     QTimer*         _updateTimer;
-
-    QList <QPointF> _points;
-    int count;
 
     ModeParameter   _parameters;
 };

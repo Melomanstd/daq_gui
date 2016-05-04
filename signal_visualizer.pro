@@ -15,12 +15,14 @@ TEMPLATE = app
 SOURCES +=  sources/main.cpp\
             sources/mainwindow.cpp \
             sources/dataoperator.cpp \
-            sources/parametersdialog.cpp
+            sources/parametersdialog.cpp \
+            sources/graphicplot.cpp
 
 HEADERS  += headers/mainwindow.h \
             headers/dataoperator.h \
             headers/parametersdialog.h \
-            headers/defines.h
+            headers/defines.h \
+            headers/graphicplot.h
 
 FORMS    += ui/mainwindow.ui \
             ui/parametersdialog.ui
