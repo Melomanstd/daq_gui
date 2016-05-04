@@ -1,5 +1,5 @@
 #include "headers/parametersdialog.h"
-#include "defines.h"
+#include "headers/defines.h"
 #include "ui_parametersdialog.h"
 
 ParametersDialog::ParametersDialog(QWidget *parent) :

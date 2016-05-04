@@ -20,7 +20,7 @@ SOURCES +=  sources/main.cpp\
 HEADERS  += headers/mainwindow.h \
             headers/dataoperator.h \
             headers/parametersdialog.h \
-    defines.h
+            headers/defines.h
 
 FORMS    += ui/mainwindow.ui \
             ui/parametersdialog.ui
