@@ -41,3 +41,13 @@ void ParametersDialog::_blockMode()
     ui->meas_time_spin->setMinimum(160);
     ui->meas_time_spin->setValue(160);
 }
+
+qint32 ParametersDialog::getMeasTime()
+{
+    return ui->meas_time_spin->value();
+}
+
+qint32 ParametersDialog::getSamplesCount()
+{
+    return ui->meas_samples_count_spin->value();
+}

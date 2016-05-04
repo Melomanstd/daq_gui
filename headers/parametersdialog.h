@@ -15,6 +15,9 @@ public:
     explicit ParametersDialog(QWidget *parent = 0);
     ~ParametersDialog();
 
+    qint32 getMeasTime();
+    qint32 getSamplesCount();
+
 private:
     void _singleshotMode();
     void _blockMode();
