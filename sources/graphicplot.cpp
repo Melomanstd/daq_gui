@@ -11,7 +11,8 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     :   QwtPlot(parent),
         _count(0),
         _displayedPoints(1),
-        _initializedPoints(0)
+        _initializedPoints(0),
+        _displayStep(1)
 {
     setAxisTitle(QwtPlot::yLeft, "Y");
     setAxisTitle(QwtPlot::xBottom, "X");
@@ -63,9 +64,9 @@ void GraphicPlot::setPoint(double voltage)
         _points.pop_front();
 
         setAxisScale(QwtPlot::xBottom,
-                     _count - _displayedPoints,
-                     _count - 1,
-                     1);
+                     _count - _displayedPoints -1,
+                     _count,
+                     _displayStep);
 
 //        setAxisScale(QwtPlot::yLeft,
 //                     _points.first().y(),
@@ -108,4 +109,9 @@ void GraphicPlot::setDisplayedPoints(int size)
 
 //    _points.resize(size);
     _points.reserve(size);
+}
+
+void GraphicPlot::setDisplayStep(int step)
+{
+    _displayStep = step;
 }

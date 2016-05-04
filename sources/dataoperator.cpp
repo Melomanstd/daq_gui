@@ -303,7 +303,7 @@ void DataOperator::setParameters(ModeParameters parameters)
 
     //singleshot mode
     _measuringInterval      =
-            static_cast<quint32> (parameters.measuringInterval);
+            static_cast<quint32> (1000 / parameters.measuringInterval);
 
     //block mode
     _measureSampleCount     =

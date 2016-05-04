@@ -12,6 +12,7 @@ public:
     virtual     ~GraphicPlot();
 
     void        setDisplayedPoints(int size);
+    void        setDisplayStep(int step);
 
     void        setPoint(double/*F64*/ voltage);
     void        setPoint(unsigned short/*U16*/ samples);
@@ -26,6 +27,8 @@ private:
     int                 _count;
     int                 _displayedPoints;
     int                 _initializedPoints;
+    int                 _displayStep;
+
     QVector<QPointF>    _points;
 };
 

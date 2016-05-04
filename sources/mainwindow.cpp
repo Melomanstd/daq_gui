@@ -55,7 +55,7 @@ void MainWindow::_initializeDataOperator()
     _dataOperator->setMeasuringInterval(1000);
     _dataOperator->startWorking();
 
-    _updateTimer->setInterval(200);
+    _updateTimer->setInterval(50);
 }
 
 void MainWindow::_updatePlot()
@@ -224,6 +224,11 @@ void MainWindow::on_parameters_btn_clicked()
     else if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
     {
         _parameters.displayedInterval = value;
+
+        //points per sec * displayed seconds
+        _plot->setDisplayStep(_parameters.measuringInterval);
+        _plot->setDisplayedPoints(_parameters.measuringInterval *
+                                  _parameters.displayedInterval);
         settings.setValue("displayed_interval", value);
     }
 
