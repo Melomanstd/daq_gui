@@ -9,7 +9,9 @@
 
 GraphicPlot::GraphicPlot(QWidget *parent)
     :   QwtPlot(parent),
-        _count(0)
+        _count(0),
+        _displayedPoints(1),
+        _initializedPoints(0)
 {
     setAxisTitle(QwtPlot::yLeft, "Y");
     setAxisTitle(QwtPlot::xBottom, "X");
@@ -43,13 +45,38 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 
 GraphicPlot::~GraphicPlot()
 {
-
+    //
 }
 
 void GraphicPlot::setPoint(double voltage)
 {
+    QPointF point;
+
+    point.setX(_count++);
+    point.setY(voltage);
+    if (_initializedPoints < _displayedPoints)
+    {
+        _initializedPoints++;
+    }
+    else
+    {
+        _points.pop_front();
+
+        setAxisScale(QwtPlot::xBottom,
+                     _count - _displayedPoints,
+                     _count - 1,
+                     1);
+    }
+    _points.append(point);
+
+    _curve->setSamples(_points);
+    /*
     _points.append(QPointF(++_count, voltage));
     _curve->setSamples(_points.toVector());
+    */
+
+
+
     replot();
 }
 
@@ -66,4 +93,15 @@ void GraphicPlot::setBlock(double *voltageBuffer, int size)
 void GraphicPlot::setBlock(unsigned short *samples, int size)
 {
 
+}
+
+void GraphicPlot::setDisplayedPoints(int size)
+{
+    _displayedPoints = size;
+
+    _count = 0;
+    _initializedPoints = 0;
+
+//    _points.resize(size);
+    _points.reserve(size);
 }

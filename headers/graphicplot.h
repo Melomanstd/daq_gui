@@ -11,6 +11,8 @@ public:
     explicit    GraphicPlot(QWidget *parent = 0);
     virtual     ~GraphicPlot();
 
+    void        setDisplayedPoints(int size);
+
     void        setPoint(double/*F64*/ voltage);
     void        setPoint(unsigned short/*U16*/ samples);
 
@@ -18,10 +20,13 @@ public:
     void        setBlock(unsigned short/*U16*/ *samples, int size);
 
 private:
-    QwtPlotCurve*   _curve;
-    QList<QPointF>  _points;
+    QwtPlotCurve*       _curve;
+//    QList<QPointF>      _points;
 
-    int             _count;
+    int                 _count;
+    int                 _displayedPoints;
+    int                 _initializedPoints;
+    QVector<QPointF>    _points;
 };
 
 #endif // GRAPHICPLOT_H

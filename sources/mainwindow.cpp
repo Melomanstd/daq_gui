@@ -37,6 +37,7 @@ MainWindow::~MainWindow()
 void MainWindow::_initializePlot()
 {
     _plot = new GraphicPlot();
+    _plot->setDisplayedPoints(10);
     ui->v_lay->addWidget(_plot);
 }
 
