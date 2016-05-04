@@ -25,11 +25,12 @@ public:
     void        startWorking();
     void        stopWorking();
     void        setWorkingMode(qint8 mode);
-    void        setMeasureTime(quint32 msec);
+    void        setMeasuringInterval(quint32 msec);
     void        setChannelStatus(qint8 channel, qint8 state);
-    void        setMeasuringInterval(quint32 interval);
+    void        setBlockMeasuringInterval(quint32 interval);
     void        setMeasureSampleInterval(quint32 interval);
     void        setSampleCount(quint32 count); //samples per block
+    void        setParameters(ModeParameters parameters);
 
     F64         getVoltage();
     F64*        getVoltageBuffer();
@@ -51,37 +52,37 @@ signals:
     void someError();
 
 private:
-    bool    _isWorking;
-    bool    _isUnitialize;
-    bool    _isNewParameters;
-    bool    _newDataReady;
-    BOOLEAN _isDoubleBuffer;
+    bool            _isWorking;
+    bool            _isUnitialize;
+    bool            _isNewParameters;
+    mutable bool    _newDataReady;
+    BOOLEAN         _isDoubleBuffer;
 
-    QMutex  _mutex;
-    I16     _errorCode;
-    QString _lastError;
+    QMutex          _mutex;
+    I16             _errorCode;
+    QString         _lastError;
 
-    U16*    _samplesBlockBuffer;
-    U16     _sampleSingleshotValue;
+    U16*            _samplesBlockBuffer;
+    U16             _sampleSingleshotValue;
 
-    F64*    _voltageBlockBuffer;
-    F64     _voltageSingleshotValue;
+    F64*            _voltageBlockBuffer;
+    F64             _voltageSingleshotValue;
 
-    qint8   _workingMode;
-    qint8   _channelZeroMeasuring;
-    qint8   _channelOneMeasuring;
+    qint8           _workingMode;
+    qint8           _channelZeroMeasuring;
+    qint8           _channelOneMeasuring;
 
-    quint32 _measureTime;
+    quint32         _measuringInterval;
 
-    U32     _measureSampleInterval;     //block measuring time
+    U32             _measureSampleInterval;     //block measuring time
                                         //[8:16777215]
-    U32     _measureSampleCount;        //samples per block
+    U32             _measureSampleCount;        //samples per block
                                         //[2:16777215]
-    U32     _measuringInterval;         //delay between measurings
+    U32             _measuringBlockInterval;         //delay between measurings
                                         //[160:16777215]
-    U16     _resultBufferId;
+    U16             _resultBufferId;
 
-    I16     _cardID;
+    I16             _cardID;
 };
 
 #endif // DATAOPERATOR_H

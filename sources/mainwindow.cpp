@@ -49,10 +49,10 @@ void MainWindow::_initializeDataOperator()
                                     STATE_ON);
     _dataOperator->setChannelStatus(CHANNEL_1,
                                     STATE_OFF);
-    _dataOperator->setMeasuringInterval(160);
+    _dataOperator->setBlockMeasuringInterval(160);
     _dataOperator->setMeasureSampleInterval(160);
     _dataOperator->setSampleCount(1000);
-    _dataOperator->setMeasureTime(1000);
+    _dataOperator->setMeasuringInterval(1000);
     _dataOperator->startWorking();
 
     _updateTimer->setInterval(200);
@@ -65,7 +65,14 @@ void MainWindow::_updatePlot()
         return;
     }
 
-    _plot->setPoint(_dataOperator->getVoltage());
+    if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
+    {
+        _plot->setPoint(_dataOperator->getVoltage());
+    }
+    else if (_parameters.mode == MODE_BLOCK_MEASURING)
+    {
+        //TODO
+    }
 }
 
 void MainWindow::singleShot()
@@ -196,7 +203,11 @@ void MainWindow::blocks()
 void MainWindow::on_parameters_btn_clicked()
 {
     ParametersDialog p(this);
-    p.exec();
+
+    if (p.exec() != QDialog::Accepted)
+    {
+        return;
+    }
 
     _parameters.mode = p.getMeasuringMode();
     _parameters.measuringInterval = p.getMeasuringTime();
@@ -214,5 +225,10 @@ void MainWindow::on_parameters_btn_clicked()
     {
         _parameters.displayedInterval = value;
         settings.setValue("displayed_interval", value);
+    }
+
+    if (_dataOperator != 0)
+    {
+        _dataOperator->setParameters(_parameters);
     }
 }

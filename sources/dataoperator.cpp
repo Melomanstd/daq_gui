@@ -20,10 +20,10 @@ DataOperator::DataOperator(QObject *parent)
         _workingMode(0),
         _channelZeroMeasuring(0),
         _channelOneMeasuring(0),
-        _measureTime(0),
+        _measuringInterval(0),
         _measureSampleInterval(8),
         _measureSampleCount(2),
-        _measuringInterval(160),
+        _measuringBlockInterval(160),
         _resultBufferId(0),
         _cardID(-1)
 {
@@ -54,7 +54,7 @@ void DataOperator::run()
         {
             _mutex.tryLock();
             ::D2K_AI_VReadChannel(_cardID, 0, &_voltageSingleshotValue);
-            msleep(_measureTime);
+            msleep(_measuringInterval);
             qDebug() << _voltageSingleshotValue;
             _newDataReady = true;
             _mutex.unlock();
@@ -101,7 +101,7 @@ void DataOperator::setChannelStatus(qint8 channel, qint8 state)
     _mutex.unlock();
 }
 
-void DataOperator::setMeasuringInterval(quint32 interval)
+void DataOperator::setBlockMeasuringInterval(quint32 interval)
 {
     if ((interval < MINIMUM_MEASURING_INTERVAL) ||
             (interval > MAXIMUM_OPTION_VALUE))
@@ -110,7 +110,8 @@ void DataOperator::setMeasuringInterval(quint32 interval)
     }
 
     _mutex.tryLock();
-    _measuringInterval = static_cast<U32> (interval);
+    _measuringBlockInterval = static_cast<U32> (interval);
+    _measureSampleInterval = static_cast<U32> (interval);
     _mutex.unlock();
 }
 
@@ -124,6 +125,7 @@ void DataOperator::setMeasureSampleInterval(quint32 interval)
 
     _mutex.tryLock();
     _measureSampleInterval = static_cast<U32> (interval);
+    _measuringBlockInterval = static_cast<U32> (interval);
     _mutex.unlock();
 }
 
@@ -287,7 +289,29 @@ bool DataOperator::isDataReady()
 //    _mutex.unlock();
 }
 
-void DataOperator::setMeasureTime(quint32 msec)
+void DataOperator::setMeasuringInterval(quint32 msec)
 {
-    _measureTime = msec;
+    _mutex.tryLock();
+    _measuringInterval = msec;
+    _mutex.unlock();
+}
+
+void DataOperator::setParameters(ModeParameters parameters)
+{
+    _mutex.tryLock();
+    _workingMode = parameters.mode;
+
+    //singleshot mode
+    _measuringInterval      =
+            static_cast<quint32> (parameters.measuringInterval);
+
+    //block mode
+    _measureSampleCount     =
+            static_cast<U32> (parameters.blockSize);
+    _measureSampleInterval  =
+            static_cast<U32> (parameters.measuringInterval);
+    _measuringBlockInterval =
+            static_cast<U32> (parameters.measuringInterval);
+
+    _mutex.unlock();
 }

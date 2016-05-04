@@ -66,6 +66,10 @@ void GraphicPlot::setPoint(double voltage)
                      _count - _displayedPoints,
                      _count - 1,
                      1);
+
+//        setAxisScale(QwtPlot::yLeft,
+//                     _points.first().y(),
+//                     voltage);
     }
     _points.append(point);
 

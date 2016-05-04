@@ -36,6 +36,7 @@ void ParametersDialog::_singleshotMode()
     ui->meas_time_spin->setValue(1);
     _mode = MODE_SINGLESHOT_MEASURING;
     ui->meas_samples_count_lbl->setText("Displayed interval");
+    ui->meas_time_lbl->setText(tr("Measuring per second"));
 }
 
 void ParametersDialog::_blockMode()
@@ -46,6 +47,7 @@ void ParametersDialog::_blockMode()
     ui->meas_time_spin->setValue(160);
     _mode = MODE_BLOCK_MEASURING;
     ui->meas_samples_count_lbl->setText(tr("Samples per block"));
+    ui->meas_time_lbl->setText(tr("Measuring interval"));
 }
 
 qint32 ParametersDialog::getMeasuringTime()

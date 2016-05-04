@@ -20,10 +20,10 @@ enum
     CHANNEL_1
 };
 
-class ModeParameter
+class ModeParameters
 {
 public:
-    ModeParameter() :
+    ModeParameters() :
         mode(MODE_NO_MEASURING),
         measuringInterval(2),
         blockSize(2),
