@@ -2,6 +2,7 @@
 #define PARAMETERSDIALOG_H
 
 #include <QDialog>
+#include "defines.h"
 
 namespace Ui {
 class ParametersDialog;
@@ -21,6 +22,8 @@ public:
 
     bool   channelZeroState();
     bool   channelOneState();
+
+    void   setDefaultParameters(ModeParameters parameters);
 
 private:
     void _singleshotMode();

@@ -24,9 +24,10 @@ public:
     void blocks();
 
 private:
-    void _initializePlot();
-    void _initializeDataOperator();
-    bool _setupParameters();
+    void            _initializePlot();
+    void            _initializeDataOperator();
+    bool            _setupParameters();
+    ModeParameters  _lastParameters();
 
 private slots:
     void on_parameters_btn_clicked();

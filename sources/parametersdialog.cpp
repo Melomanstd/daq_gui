@@ -1,5 +1,4 @@
 #include "headers/parametersdialog.h"
-#include "headers/defines.h"
 #include "ui_parametersdialog.h"
 
 ParametersDialog::ParametersDialog(QWidget *parent) :
@@ -75,4 +74,28 @@ bool ParametersDialog::channelZeroState()
 bool ParametersDialog::channelOneState()
 {
     return ui->channel_one_check->isChecked();
+}
+
+void ParametersDialog::setDefaultParameters(ModeParameters parameters)
+{
+    if (parameters.mode == MODE_SINGLESHOT_MEASURING)
+    {
+        _singleshotMode();
+        ui->meas_samples_count_spin->setValue(parameters.displayedInterval);
+    }
+    else if (parameters.mode == MODE_BLOCK_MEASURING)
+    {
+        _blockMode();
+        ui->meas_samples_count_spin->setValue(parameters.blockSize);
+    }
+
+    ui->meas_time_spin->setValue(parameters.measuringInterval);
+    if (parameters.channelZeroState == STATE_ON)
+    {
+        ui->channel_zero_check->setChecked(true);
+    }
+    if (parameters.channelOneState == STATE_ON)
+    {
+        ui->channel_one_check->setChecked(true);
+    }
 }

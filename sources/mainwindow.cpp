@@ -220,11 +220,13 @@ void MainWindow::on_stop_btn_clicked()
 bool MainWindow::_setupParameters()
 {
     ParametersDialog p(this);
+    p.setDefaultParameters(_lastParameters());
 
     if (p.exec() != QDialog::Accepted)
     {
         return false;
     }
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
 
     _parameters.mode = p.getMeasuringMode();
     _parameters.measuringInterval = p.getMeasuringTime();
@@ -233,22 +235,25 @@ bool MainWindow::_setupParameters()
     if (p.channelZeroState() == true)
     {
         _parameters.channelZeroState = STATE_ON;
+        settings.setValue("channel_zero", STATE_ON);
     }
     else
     {
-        _parameters.channelOneState = STATE_OFF;
+        _parameters.channelZeroState = STATE_OFF;
+        settings.setValue("channel_zero", STATE_OFF);
     }
 
     if (p.channelOneState() == true)
     {
         _parameters.channelOneState = STATE_ON;
+        settings.setValue("channel_one", STATE_ON);
     }
     else
     {
         _parameters.channelOneState = STATE_OFF;
+        settings.setValue("channel_one", STATE_OFF);
     }
 
-    QSettings settings("settings.ini", QSettings::IniFormat, this);
     settings.setValue("measuring_mode", _parameters.mode);
     settings.setValue("measuring_interval", _parameters.measuringInterval);
     if (_parameters.mode == MODE_BLOCK_MEASURING)
@@ -275,4 +280,24 @@ bool MainWindow::_setupParameters()
         _dataOperator->setParameters(_parameters);
     }
     return true;
+}
+
+ModeParameters MainWindow::_lastParameters()
+{
+    ModeParameters parameters;
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    parameters.mode = settings.value(
+                "measuring_mode", MODE_SINGLESHOT_MEASURING).toInt();
+    parameters.measuringInterval = settings.value(
+                "measuring_interval", 1).toInt();
+    parameters.blockSize = settings.value(
+                "samples_count", 10).toInt();
+    parameters.displayedInterval = settings.value(
+                "displayed_interval", 10).toInt();
+    parameters.channelZeroState = settings.value(
+                "channel_zero", STATE_ON).toInt();
+    parameters.channelOneState = settings.value(
+                "channel_one", STATE_OFF).toInt();
+
+    return parameters;
 }
