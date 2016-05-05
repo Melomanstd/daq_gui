@@ -18,8 +18,8 @@ GraphicPlot::GraphicPlot(QWidget *parent)
         _scaleMaximum(0.5),
         _channelZeroEnabled(false),
         _channelOneEnabled(false),
-        _channelZeroSamplesBuffer(0),
-        _channelOneSamplesBuffer(0)
+        _channelZeroVoltageBuffer(0),
+        _channelOneVoltageBuffer(0)
 {
     setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
     setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
@@ -66,7 +66,7 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     magnifier->setMouseButton(Qt::RightButton);
 
     QwtPlotPanner *panner = new QwtPlotPanner(canvas());
-    panner->setMouseButton(Qt::MidButton);
+    panner->setMouseButton(Qt::LeftButton);
 
 //    setAutoReplot(true);
 //    setAxisMaxMajor(QwtPlot::xBottom, 1);
@@ -75,13 +75,13 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 
 GraphicPlot::~GraphicPlot()
 {
-    if (_channelZeroSamplesBuffer != 0)
+    if (_channelZeroVoltageBuffer != 0)
     {
-        delete [] _channelZeroSamplesBuffer;
+        delete [] _channelZeroVoltageBuffer;
     }
-    if (_channelOneSamplesBuffer != 0)
+    if (_channelOneVoltageBuffer != 0)
     {
-        delete [] _channelOneSamplesBuffer;
+        delete [] _channelOneVoltageBuffer;
     }
 }
 
@@ -219,26 +219,60 @@ void GraphicPlot::setChannels(bool ch1, bool ch2)
     _channelZeroEnabled = ch1;
 }
 
-unsigned short *GraphicPlot::initializeChannelZeroBuffer(
+double *GraphicPlot::initializeChannelZeroBuffer(
         unsigned int size)
 {
-    if (_channelZeroSamplesBuffer != 0)
+    if (_channelZeroVoltageBuffer != 0)
     {
-        delete [] _channelZeroSamplesBuffer;
+        delete [] _channelZeroVoltageBuffer;
     }
 
-    _channelZeroSamplesBuffer = new unsigned short[size];
-    return _channelZeroSamplesBuffer;
+    _channelZeroVoltageBuffer = new double[size];
+    return _channelZeroVoltageBuffer;
 }
 
-unsigned short *GraphicPlot::initializeChannelOneBuffer(
+double *GraphicPlot::initializeChannelOneBuffer(
         unsigned int size)
 {
-    if (_channelOneSamplesBuffer != 0)
+    if (_channelOneVoltageBuffer != 0)
     {
-        delete [] _channelOneSamplesBuffer;
+        delete [] _channelOneVoltageBuffer;
     }
 
-    _channelOneSamplesBuffer = new unsigned short[size];
-    return _channelOneSamplesBuffer;
+    _channelOneVoltageBuffer = new double[size];
+    return _channelOneVoltageBuffer;
+}
+
+void GraphicPlot::displayBlock()
+{
+    _pointsZero.clear();
+    _pointsOne.clear();
+    _count = 1;
+
+    setAxisScale(QwtPlot::xBottom,
+                 _count,
+                 _displayedPoints,
+                 _displayStep);
+
+    for (int i = 0; i < _displayedPoints; i++)
+    {
+        if (_channelZeroEnabled == true)
+        {
+            ch0Point.setX(_count);
+            ch0Point.setY(_channelZeroVoltageBuffer[i]);
+            _pointsZero.append(ch0Point);
+        }
+        if (_channelOneEnabled == true)
+        {
+            ch1Point.setX(_count);
+            ch1Point.setY(_channelOneVoltageBuffer[i]);
+            _pointsOne.append(ch1Point);
+        }
+
+        ++_count;
+    }
+
+    _curveZero->setSamples(_pointsZero);
+    _curveOne->setSamples(_pointsOne);
+    replot();
 }

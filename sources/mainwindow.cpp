@@ -76,7 +76,9 @@ void MainWindow::_updatePlot()
     }
     else if (_parameters.mode == MODE_BLOCK_MEASURING)
     {
-        //TODO
+        _dataOperator->getSamplesBuffer(_plotBufferZero,
+                                        _plotBufferOne);
+        _plot->displayBlock();
     }
 }
 
@@ -231,6 +233,8 @@ void MainWindow::on_stop_btn_clicked()
     ui->stop_btn->setChecked(true);
     _isWorking = false;
     _dataOperator->stopWorking();
+    _plotBufferZero = 0;
+    _plotBufferOne = 0;
 }
 
 bool MainWindow::_setupParameters()
@@ -290,6 +294,8 @@ bool MainWindow::_setupParameters()
     if (_parameters.mode == MODE_BLOCK_MEASURING)
     {
         _parameters.blockSize = value;
+        _plot->setDisplayStep(value / 10);
+        _plot->setDisplayedPoints(value, !_isWorking);
         settings.setValue("samples_count", value);
         if (p.channelZeroState() == true)
         {

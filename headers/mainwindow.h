@@ -48,8 +48,8 @@ private:
 
     bool            _isWorking;
 
-    unsigned short* _plotBufferZero;
-    unsigned short* _plotBufferOne;
+    double* _plotBufferZero;
+    double* _plotBufferOne;
 };
 
 #endif // MAINWINDOW_H

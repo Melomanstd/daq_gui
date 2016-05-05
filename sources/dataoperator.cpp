@@ -272,18 +272,29 @@ U16 DataOperator::getSamples()
     return temp;
 }
 
-U16* DataOperator::getSamplesBuffer(unsigned int &size)
+void DataOperator::getSamplesBuffer(double* bufferZero,
+                                    double* bufferOne)
 {
     _mutex.tryLock();
-    size = _measureSampleCount;
-    U16 *temp = new U16[_measureSampleCount];
-    for (unsigned int i = 0; i < _measureSampleCount; i++)
+    if (bufferZero != 0)
     {
-        temp[i] = _samplesBlockBuffer_0[i];
+        ::D2K_AI_ContVScale(_cardID,
+                            AD_B_10_V,
+                            _samplesBlockBuffer_0,
+                            bufferZero,
+                            _measureSampleCount);
+    }
+
+    if (bufferOne != 0)
+    {
+        ::D2K_AI_ContVScale(_cardID,
+                            AD_B_10_V,
+                            _samplesBlockBuffer_1,
+                            bufferOne,
+                            _measureSampleCount);
     }
     _newDataReady = false;
     _mutex.unlock();
-    return temp;
 }
 
 void DataOperator::getVoltage(double &ch0, double &ch1)
@@ -408,6 +419,7 @@ void DataOperator::_blockMeasure()
             qDebug() << "error";
         }
     }
+    msleep(1000);
     _newDataReady = true;
     _mutex.unlock();
 }

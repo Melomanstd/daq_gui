@@ -23,8 +23,10 @@ public:
     void        setBlock(unsigned short/*U16*/ *samples, int size);
     void        setChannels(bool ch1, bool ch2);
 
-    unsigned short *initializeChannelZeroBuffer(unsigned int size);
-    unsigned short *initializeChannelOneBuffer(unsigned int size);
+    double      *initializeChannelZeroBuffer(unsigned int size);
+    double      *initializeChannelOneBuffer(unsigned int size);
+
+    void        displayBlock();
 
 private:
     QwtPlotCurve*       _curveZero;
@@ -48,8 +50,8 @@ private:
     bool                _channelZeroEnabled;
     bool                _channelOneEnabled;
 
-    unsigned short*     _channelZeroSamplesBuffer;
-    unsigned short*     _channelOneSamplesBuffer;
+    double*             _channelZeroVoltageBuffer;
+    double*             _channelOneVoltageBuffer;
 };
 
 #endif // GRAPHICPLOT_H

@@ -36,7 +36,8 @@ public:
     F64*        getVoltageBuffer();
 
     U16         getSamples();
-    U16*        getSamplesBuffer(unsigned int &size);
+    void        getSamplesBuffer(double *bufferZero,
+                                 double *bufferOne);
 
     bool        isDataReady();
 
