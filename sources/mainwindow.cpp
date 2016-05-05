@@ -42,7 +42,9 @@ void MainWindow::_initializePlot()
     _plot = new GraphicPlot();
     _plot->setDisplayedPoints(10, true);
     ui->v_lay->addWidget(_plot);
-    _plot->setAxisTitle(QwtPlot::yLeft, tr("Voltage"));
+//    _plot->setAxisTitle(QwtPlot::yLeft, tr("Voltage CH 0"));
+//    _plot->setAxisTitle(QwtPlot::yRight, tr("Voltage CH 1"));
+    _plot->enableAxis(QwtPlot::yRight);
 }
 
 void MainWindow::_initializeDataOperator()

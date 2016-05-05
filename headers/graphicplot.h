@@ -7,6 +7,7 @@
 
 class GraphicPlot : public QwtPlot
 {
+    Q_OBJECT
 public:
     explicit    GraphicPlot(QWidget *parent = 0);
     virtual     ~GraphicPlot();
@@ -21,7 +22,8 @@ public:
     void        setBlock(unsigned short/*U16*/ *samples, int size);
 
 private:
-    QwtPlotCurve*       _curve;
+    QwtPlotCurve*       _curveZero;
+    QwtPlotCurve*       _curveOne;
 //    QList<QPointF>      _points;
 
     int                 _count;

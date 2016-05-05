@@ -14,34 +14,45 @@ GraphicPlot::GraphicPlot(QWidget *parent)
         _initializedPoints(0),
         _displayStep(1),
         _currentStep(0),
-        _scaleMinimum(-1.0),
-        _scaleMaximum(1.0)
+        _scaleMinimum(-0.5),
+        _scaleMaximum(0.5)
 {
-    setAxisTitle(QwtPlot::yLeft, "Y");
-    setAxisTitle(QwtPlot::xBottom, "X");
-//    setAxisScale(QwtPlot::yLeft, -1, 1);
+    setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
+    setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
+    setAxisAutoScale(QwtPlot::yLeft, true);
+    setAxisAutoScale(QwtPlot::yRight, true);
     setCanvasBackground(Qt::white);
 
-    insertLegend(new QwtLegend);
-
+//    insertLegend(new QwtLegend);
     QwtPlotGrid *g = new QwtPlotGrid();
     g->setMajPen(QPen(Qt::gray, 2));
     g->attach(this);
 
-    _curve = new QwtPlotCurve();
-    _curve->setTitle(tr("Channel 0"));
-    _curve->setPen(QPen(Qt::blue, 6));
-    _curve->setRenderHint(QwtPlotItem::RenderAntialiased, true);
-
+    _curveZero = new QwtPlotCurve();
+    _curveZero->setTitle(tr("Channel 0"));
+    _curveZero->setPen(QPen(Qt::blue, 6));
+    _curveZero->setRenderHint(QwtPlotItem::RenderAntialiased, true);
     QwtSymbol *simba = new QwtSymbol(QwtSymbol::Ellipse,
                                      QBrush(Qt::yellow),
                                      QPen(Qt::red),
                                      QSize(8,8));
-    _curve->setSymbol(simba);
+    _curveZero->setSymbol(simba);
+    _curveZero->attach(this);
+
+    _curveOne = new QwtPlotCurve();
+    _curveOne->setTitle(tr("Channel 1"));
+    _curveOne->setPen(QPen(Qt::red, 6));
+    _curveOne->setRenderHint(QwtPlotItem::RenderAntialiased, true);
+    simba = new QwtSymbol(QwtSymbol::Ellipse,
+                          QBrush(Qt::green),
+                          QPen(Qt::yellow),
+                          QSize(8,8));
+    _curveOne->setSymbol(simba);
+    _curveOne->attach(this);
+
+
 
 //    _curve->setXAxis(QwtPlot::xTop);
-
-    _curve->attach(this);
 
 //    QwtPlotZoomer *zoomer = new QwtPlotZoomer(canvas());
 //    zoomer->setTrackerMode(QwtPlotZoomer::AlwaysOff);
@@ -50,7 +61,11 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     magnifier->setMouseButton(Qt::RightButton);
 
     QwtPlotPanner *panner = new QwtPlotPanner(canvas());
-    panner->setMouseButton(Qt::LeftButton);
+    panner->setMouseButton(Qt::MidButton);
+
+//    setAutoReplot(true);
+//    setAxisMaxMajor(QwtPlot::xBottom, 1);
+//    setAxisMaxMinor(QwtPlot::xBottom, 6);
 }
 
 GraphicPlot::~GraphicPlot()
@@ -119,7 +134,7 @@ void GraphicPlot::setPoint(double voltage)
     }
     _points.append(point);
 
-    _curve->setSamples(_points);
+    _curveZero->setSamples(_points);
     /*
     _points.append(QPointF(++_count, voltage));
     _curve->setSamples(_points.toVector());
@@ -153,6 +168,7 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset)
     {
         _count = 0;
         _initializedPoints = 0;
+        _points.clear();
     }
 
 //    _points.resize(size);
