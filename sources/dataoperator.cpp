@@ -7,7 +7,7 @@
 DataOperator::DataOperator(QObject *parent)
     :   QThread(parent),
         _isWorking(false),
-        _isUnitialize(false),
+        _isUnitialize(true),
         _isNewParameters(false),
         _newDataReady(false),
         _isDoubleBuffer(0),
@@ -252,6 +252,7 @@ void DataOperator::_initializeCard()
         ::D2K_AI_CH_Config(_cardID, 0, AD_B_10_V|AI_RSE);
         ::D2K_AI_CH_Config(_cardID, 1, AD_B_10_V|AI_RSE);
         _isWorking = true;
+        _isUnitialize = false;
     }
 }
 
@@ -419,7 +420,7 @@ void DataOperator::_blockMeasure()
             qDebug() << "error";
         }
     }
-    msleep(1000);
+    msleep(80);
     _newDataReady = true;
     _mutex.unlock();
 }

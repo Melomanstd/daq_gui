@@ -215,6 +215,12 @@ void MainWindow::on_parameters_btn_clicked()
 
 void MainWindow::on_start_btn_clicked()
 {
+    if (_isWorking == true)
+    {
+        ui->stop_btn->setChecked(false);
+        ui->start_btn->setChecked(true);
+        return;
+    }
     ui->stop_btn->setChecked(false);
     ui->start_btn->setChecked(true);
     if (_setupParameters() == false)

@@ -41,6 +41,7 @@ GraphicPlot::GraphicPlot(QWidget *parent)
                                      QPen(Qt::red),
                                      QSize(8,8));
     _curveZero->setSymbol(simba);
+    _curveZero->setRenderHint(QwtPlotCurve::RenderAntialiased);
     _curveZero->attach(this);
 
     _curveOne = new QwtPlotCurve();
@@ -53,9 +54,8 @@ GraphicPlot::GraphicPlot(QWidget *parent)
                           QSize(8,8));
     _curveOne->setSymbol(simba);
     _curveOne->setYAxis(QwtPlot::yRight);
+    _curveOne->setRenderHint(QwtPlotCurve::RenderAntialiased);
     _curveOne->attach(this);
-
-
 
 //    _curve->setXAxis(QwtPlot::xTop);
 
