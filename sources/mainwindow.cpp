@@ -59,9 +59,12 @@ void MainWindow::_updatePlot()
         return;
     }
 
+    double ch0, ch1;
+
     if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
     {
-        _plot->setPoint(_dataOperator->getVoltage());
+        _dataOperator->getVoltage(ch0, ch1);
+        _plot->setPoint(ch0, ch1);
     }
     else if (_parameters.mode == MODE_BLOCK_MEASURING)
     {
@@ -236,6 +239,12 @@ bool MainWindow::_setupParameters()
     _parameters.measuringInterval = p.getMeasuringTime();
     int value = p.getSamplesCount();
 
+    if ((p.channelOneState() == false) &&
+            (p.channelZeroState() == false))
+    {
+        return false;
+    }
+
     if (p.channelZeroState() == true)
     {
         _parameters.channelZeroState = STATE_ON;
@@ -257,6 +266,13 @@ bool MainWindow::_setupParameters()
         _parameters.channelOneState = STATE_OFF;
         settings.setValue("channel_one", STATE_OFF);
     }
+
+    _plot->enableAxis(QwtPlot::yLeft, p.channelZeroState());
+    _plot->enableAxis(QwtPlot::yRight, p.channelOneState());
+    ui->volt_ch0_lbl->setVisible(p.channelZeroState());
+    ui->volt_ch1_lbl->setVisible(p.channelOneState());
+    _plot->setChannels(p.channelZeroState(),
+                       p.channelOneState());
 
     settings.setValue("measuring_mode", _parameters.mode);
     settings.setValue("measuring_interval", _parameters.measuringInterval);

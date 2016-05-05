@@ -15,7 +15,9 @@ GraphicPlot::GraphicPlot(QWidget *parent)
         _displayStep(1),
         _currentStep(0),
         _scaleMinimum(-0.5),
-        _scaleMaximum(0.5)
+        _scaleMaximum(0.5),
+        _channelZeroEnabled(false),
+        _channelOneEnabled(false)
 {
     setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
     setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
@@ -41,13 +43,14 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 
     _curveOne = new QwtPlotCurve();
     _curveOne->setTitle(tr("Channel 1"));
-    _curveOne->setPen(QPen(Qt::red, 6));
+    _curveOne->setPen(QPen(Qt::darkCyan, 6));
     _curveOne->setRenderHint(QwtPlotItem::RenderAntialiased, true);
     simba = new QwtSymbol(QwtSymbol::Ellipse,
-                          QBrush(Qt::green),
-                          QPen(Qt::yellow),
+                          QBrush(Qt::yellow),
+                          QPen(Qt::red),
                           QSize(8,8));
     _curveOne->setSymbol(simba);
+    _curveOne->setYAxis(QwtPlot::yRight);
     _curveOne->attach(this);
 
 
@@ -73,12 +76,25 @@ GraphicPlot::~GraphicPlot()
     //
 }
 
-void GraphicPlot::setPoint(double voltage)
+void GraphicPlot::setPoint(const double &voltage_0,
+                           const double &voltage_1)
 {
-    QPointF point;
+    if (_channelZeroEnabled == true)
+    {
+        ch0Point.setX(_count);
+        ch0Point.setY(voltage_0);
+        _pointsZero.append(ch0Point);
+        _curveZero->setSamples(_pointsZero);
+    }
+    if (_channelOneEnabled == true)
+    {
+        ch1Point.setX(_count);
+        ch1Point.setY(voltage_1);
+        _pointsOne.append(ch1Point);
+        _curveOne->setSamples(_pointsOne);
+    }
 
-    point.setX(_count++);
-    point.setY(voltage);
+    ++_count;
 
 //    if (--_currentStep <= 0)
 //    {
@@ -121,7 +137,14 @@ void GraphicPlot::setPoint(double voltage)
     }
     else
     {
-        _points.pop_front();
+        if (_channelZeroEnabled)
+        {
+            _pointsZero.pop_front();
+        }
+        if (_channelOneEnabled)
+        {
+            _pointsOne.pop_front();
+        }
 
         setAxisScale(QwtPlot::xBottom,
                      _count - _displayedPoints,
@@ -132,9 +155,7 @@ void GraphicPlot::setPoint(double voltage)
 //                     _points.first().y(),
 //                     voltage);
     }
-    _points.append(point);
 
-    _curveZero->setSamples(_points);
     /*
     _points.append(QPointF(++_count, voltage));
     _curve->setSamples(_points.toVector());
@@ -168,15 +189,23 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset)
     {
         _count = 0;
         _initializedPoints = 0;
-        _points.clear();
+        _pointsZero.clear();
+        _pointsOne.clear();
     }
 
 //    _points.resize(size);
-    _points.reserve(size);
+    _pointsZero.reserve(size);
+    _pointsOne.reserve(size);
 }
 
 void GraphicPlot::setDisplayStep(int step)
 {
     _displayStep = step;
     _currentStep = step;
+}
+
+void GraphicPlot::setChannels(bool ch1, bool ch2)
+{
+    _channelOneEnabled = ch2;
+    _channelZeroEnabled = ch1;
 }

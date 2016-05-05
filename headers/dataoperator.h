@@ -32,7 +32,7 @@ public:
     void        setSampleCount(quint32 count); //samples per block
     void        setParameters(ModeParameters parameters);
 
-    F64         getVoltage();
+    void getVoltage(double &ch0, double &ch1);
     F64*        getVoltageBuffer();
 
     U16         getSamples();
@@ -62,11 +62,17 @@ private:
     I16             _errorCode;
     QString         _lastError;
 
-    U16*            _samplesBlockBuffer;
-    U16             _sampleSingleshotValue;
+    U16*            _samplesBlockBuffer_0;
+    U16             _sampleSingleshotValue_0;
 
-    F64*            _voltageBlockBuffer;
-    F64             _voltageSingleshotValue;
+    F64*            _voltageBlockBuffer_0;
+    F64             _voltageSingleshotValue_0;
+
+    U16*            _samplesBlockBuffer_1;
+    U16             _sampleSingleshotValue_1;
+
+    F64*            _voltageBlockBuffer_1;
+    F64             _voltageSingleshotValue_1;
 
     qint8           _workingMode;
     qint8           _channelZeroMeasuring;

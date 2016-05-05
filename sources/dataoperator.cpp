@@ -13,10 +13,14 @@ DataOperator::DataOperator(QObject *parent)
         _isDoubleBuffer(0),
         _errorCode(0),
         _lastError(tr("No error")),
-        _samplesBlockBuffer(0),
-        _sampleSingleshotValue(0),
-        _voltageBlockBuffer(0),
-        _voltageSingleshotValue(0),
+        _samplesBlockBuffer_0(0),
+        _sampleSingleshotValue_0(0),
+        _voltageBlockBuffer_0(0),
+        _voltageSingleshotValue_0(0),
+        _samplesBlockBuffer_1(0),
+        _sampleSingleshotValue_1(0),
+        _voltageBlockBuffer_1(0),
+        _voltageSingleshotValue_1(0),
         _workingMode(0),
         _channelZeroMeasuring(0),
         _channelOneMeasuring(0),
@@ -55,11 +59,11 @@ void DataOperator::run()
             _mutex.tryLock();
             if (_channelZeroMeasuring == true)
             {
-                ::D2K_AI_VReadChannel(_cardID, 0, &_voltageSingleshotValue);
+                ::D2K_AI_VReadChannel(_cardID, 0, &_voltageSingleshotValue_0);
             }
             if (_channelOneMeasuring == true)
             {
-                //TODO
+                ::D2K_AI_VReadChannel(_cardID, 1, &_voltageSingleshotValue_1);
             }
             msleep(_measuringInterval);
 //            qDebug() << _voltageSingleshotValue;
@@ -198,7 +202,7 @@ bool DataOperator::_initializeBlockMode()
     }
 
     _errorCode=D2K_AI_ContBufferSetup (_cardID,
-                                       _samplesBlockBuffer,
+                                       _samplesBlockBuffer_0,
                                        _measureSampleCount,
                                        &_resultBufferId);
     if (_errorCode != NoError)
@@ -248,7 +252,7 @@ void DataOperator::_updateParameters()
 U16 DataOperator::getSamples()
 {
     _mutex.tryLock();
-    U16 temp = _sampleSingleshotValue;
+    U16 temp = _sampleSingleshotValue_0;
     _newDataReady = false;
     _mutex.unlock();
     return temp;
@@ -260,20 +264,21 @@ U16* DataOperator::getSamplesBuffer()
     U16 *temp = new U16[_measureSampleCount];
     for (unsigned int i = 0; i < _measureSampleCount; i++)
     {
-        temp[i] = _samplesBlockBuffer[i];
+        temp[i] = _samplesBlockBuffer_0[i];
     }
     _newDataReady = false;
     _mutex.unlock();
     return temp;
 }
 
-F64 DataOperator::getVoltage()
+void DataOperator::getVoltage(double &ch0, double &ch1)
 {
     _mutex.tryLock();
-    F64 temp = _voltageSingleshotValue;
+    ch0 = _voltageSingleshotValue_0;
+    ch1 = _voltageSingleshotValue_1;
     _newDataReady = false;
     _mutex.unlock();
-    return temp;
+//    return temp;
 }
 
 F64* DataOperator::getVoltageBuffer()
@@ -282,7 +287,7 @@ F64* DataOperator::getVoltageBuffer()
     F64 *temp = new F64[_measureSampleCount];
     for (unsigned int i = 0; i < _measureSampleCount; i++)
     {
-        temp[i] = _voltageBlockBuffer[i];
+        temp[i] = _voltageBlockBuffer_0[i];
     }
     _newDataReady = false;
     _mutex.unlock();
