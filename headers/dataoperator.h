@@ -32,11 +32,11 @@ public:
     void        setSampleCount(quint32 count); //samples per block
     void        setParameters(ModeParameters parameters);
 
-    void getVoltage(double &ch0, double &ch1);
+    void        getVoltage(double &ch0, double &ch1);
     F64*        getVoltageBuffer();
 
     U16         getSamples();
-    U16*        getSamplesBuffer();
+    U16*        getSamplesBuffer(unsigned int &size);
 
     bool        isDataReady();
 
@@ -44,9 +44,11 @@ protected:
     virtual void run();
 
 private:
-    bool _initializeBlockMode();
-    void _initializeCard();
-    void _updateParameters();
+    bool        _initializeBlockMode();
+    void        _initializeCard();
+    void        _updateParameters();
+    inline void _singleshotMeasure();
+    inline void _blockMeasure();
 
 signals:
     void someError();
@@ -86,7 +88,8 @@ private:
                                         //[2:16777215]
     U32             _measuringBlockInterval;         //delay between measurings
                                         //[160:16777215]
-    U16             _resultBufferId;
+    U16             _resultBufferIdZero;
+    U16             _resultBufferIdOne;
 
     I16             _cardID;
 };

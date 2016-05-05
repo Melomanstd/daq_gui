@@ -29,7 +29,6 @@ MainWindow::MainWindow(QWidget *parent) :
     _updateTimer->start();
 //    singleShot();
 //    blocks();
-
 }
 
 MainWindow::~MainWindow()
@@ -187,6 +186,7 @@ void MainWindow::blocks()
            //Error occurs !!
            //ToDo : Handle error here
     }
+
     err=D2K_AI_ContReadChannel (cardID, ADChan, BufId, ScanCount, ScanIntrv, SampleIntrv, SYNCH_OP);
     if (err!=NoError) {
         qDebug() <<"D2K_AI_ContReadChannel";
