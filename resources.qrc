@@ -2,5 +2,10 @@
     <qresource prefix="/new/images">
         <file>blocks.jpg</file>
         <file>points.jpg</file>
+        <file>gear-wheel-with-cogs.png</file>
+        <file>stop-button.png</file>
+        <file>youtube-play-button.png</file>
+        <file>zoom-decreasing-button-symbol (1).png</file>
+        <file>zoom-plus-sign (1).png</file>
     </qresource>
 </RCC>
