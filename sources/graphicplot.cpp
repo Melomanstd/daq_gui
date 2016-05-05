@@ -14,11 +14,12 @@ GraphicPlot::GraphicPlot(QWidget *parent)
         _initializedPoints(0),
         _displayStep(1),
         _currentStep(0),
-        _scaleMinimum(0),
-        _scaleMaximum(0)
+        _scaleMinimum(-1.0),
+        _scaleMaximum(1.0)
 {
     setAxisTitle(QwtPlot::yLeft, "Y");
     setAxisTitle(QwtPlot::xBottom, "X");
+//    setAxisScale(QwtPlot::yLeft, -1, 1);
     setCanvasBackground(Qt::white);
 
     insertLegend(new QwtLegend);
@@ -68,7 +69,7 @@ void GraphicPlot::setPoint(double voltage)
 //    {
 //        _currentStep = _displayStep;
 //        _scaleMaximum = _count / _displayStep;
-////        if ((_scaleMaximum - _scaleMinimum) > 10)
+//        if ((_scaleMaximum - _scaleMinimum) > 10)
 //        {
 //            ++_scaleMinimum;
 //            setAxisScale(QwtPlot::xBottom,
@@ -77,10 +78,31 @@ void GraphicPlot::setPoint(double voltage)
 //                                 1);
 //        }
 //    }
+    /*if (voltage < _scaleMinimum)
+    {
+        while (voltage < _scaleMinimum)
+        {
+            _scaleMinimum -= 0.25;
+        }
+        setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
+    }
+
+    if (voltage > _scaleMaximum)
+    {
+        while (voltage > _scaleMaximum)
+        {
+            _scaleMaximum += 0.25;
+        }
+        setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
+    }*/
 
     if (_initializedPoints < _displayedPoints)
     {
         _initializedPoints++;
+        setAxisScale(QwtPlot::xBottom,
+                     0,
+                     _initializedPoints - 1,
+                     _displayStep);
     }
     else
     {
@@ -123,12 +145,15 @@ void GraphicPlot::setBlock(unsigned short *samples, int size)
 
 }
 
-void GraphicPlot::setDisplayedPoints(int size)
+void GraphicPlot::setDisplayedPoints(int size, bool reset)
 {
     _displayedPoints = size;
 
-    _count = 0;
-    _initializedPoints = 0;
+    if (reset == true)
+    {
+        _count = 0;
+        _initializedPoints = 0;
+    }
 
 //    _points.resize(size);
     _points.reserve(size);

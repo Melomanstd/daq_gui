@@ -6,7 +6,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    _isWorking(false)
 {
     ui->setupUi(this);
     ui->stop_btn->setChecked(true);
@@ -39,7 +40,7 @@ MainWindow::~MainWindow()
 void MainWindow::_initializePlot()
 {
     _plot = new GraphicPlot();
-    _plot->setDisplayedPoints(10);
+    _plot->setDisplayedPoints(10, true);
     ui->v_lay->addWidget(_plot);
     _plot->setAxisTitle(QwtPlot::yLeft, tr("Voltage"));
 }
@@ -206,6 +207,7 @@ void MainWindow::on_start_btn_clicked()
         ui->stop_btn->setChecked(true);
         return;
     }
+    _isWorking = true;
     _dataOperator->startWorking();
 }
 
@@ -213,7 +215,7 @@ void MainWindow::on_stop_btn_clicked()
 {
     ui->start_btn->setChecked(false);
     ui->stop_btn->setChecked(true);
-
+    _isWorking = false;
     _dataOperator->stopWorking();
 }
 
@@ -269,7 +271,8 @@ bool MainWindow::_setupParameters()
         //points per sec * displayed seconds
         _plot->setDisplayStep(_parameters.measuringInterval);
         _plot->setDisplayedPoints(_parameters.measuringInterval *
-                                  _parameters.displayedInterval);
+                                  _parameters.displayedInterval,
+                                  !_isWorking);
         settings.setValue("displayed_interval", value);
     }
 

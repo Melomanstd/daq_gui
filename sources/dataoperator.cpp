@@ -62,7 +62,7 @@ void DataOperator::run()
                 //TODO
             }
             msleep(_measuringInterval);
-            qDebug() << _voltageSingleshotValue;
+//            qDebug() << _voltageSingleshotValue;
             _newDataReady = true;
             _mutex.unlock();
         }

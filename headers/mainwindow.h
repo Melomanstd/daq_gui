@@ -44,7 +44,9 @@ private:
 
     QTimer*         _updateTimer;
 
-    ModeParameters   _parameters;
+    ModeParameters  _parameters;
+
+    bool            _isWorking;
 };
 
 #endif // MAINWINDOW_H

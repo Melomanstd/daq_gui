@@ -11,7 +11,7 @@ public:
     explicit    GraphicPlot(QWidget *parent = 0);
     virtual     ~GraphicPlot();
 
-    void        setDisplayedPoints(int size);
+    void        setDisplayedPoints(int size, bool reset);
     void        setDisplayStep(int step);
 
     void        setPoint(double/*F64*/ voltage);
@@ -29,8 +29,8 @@ private:
     int                 _initializedPoints;
     int                 _displayStep;
     int                 _currentStep;
-    int                 _scaleMinimum;
-    int                 _scaleMaximum;
+    double              _scaleMinimum;
+    double              _scaleMaximum;
 
     QVector<QPointF>    _points;
 };
