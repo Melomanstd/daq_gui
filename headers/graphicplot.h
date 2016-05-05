@@ -12,7 +12,7 @@ public:
     explicit    GraphicPlot(QWidget *parent = 0);
     virtual     ~GraphicPlot();
 
-    void        setDisplayedPoints(int size, bool reset);
+    void        setDisplayedPoints(int size, bool reset, qint8 mode);
     void        setDisplayStep(int step);
 
     void        setPoint(const double/*F64*/ &voltage_0,

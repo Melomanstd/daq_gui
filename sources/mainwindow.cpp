@@ -48,7 +48,7 @@ MainWindow::~MainWindow()
 void MainWindow::_initializePlot()
 {
     _plot = new GraphicPlot();
-    _plot->setDisplayedPoints(10, true);
+//    _plot->setDisplayedPoints(10, true, );
     ui->v_lay->addWidget(_plot);
 //    _plot->setAxisTitle(QwtPlot::yLeft, tr("Voltage CH 0"));
 //    _plot->setAxisTitle(QwtPlot::yRight, tr("Voltage CH 1"));
@@ -301,7 +301,7 @@ bool MainWindow::_setupParameters()
     {
         _parameters.blockSize = value;
         _plot->setDisplayStep(value / 10);
-        _plot->setDisplayedPoints(value, !_isWorking);
+        _plot->setDisplayedPoints(value, !_isWorking, _parameters.mode);
         settings.setValue("samples_count", value);
         if (p.channelZeroState() == true)
         {
@@ -321,7 +321,8 @@ bool MainWindow::_setupParameters()
         _plot->setDisplayStep(_parameters.measuringInterval);
         _plot->setDisplayedPoints(_parameters.measuringInterval *
                                   _parameters.displayedInterval,
-                                  !_isWorking);
+                                  !_isWorking,
+                                  _parameters.mode);
         settings.setValue("displayed_interval", value);
     }
 

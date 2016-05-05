@@ -1,4 +1,5 @@
 #include "headers/graphicplot.h"
+#include "headers/defines.h"
 
 #include <qwt_plot_grid.h>
 #include <qwt_symbol.h>
@@ -36,11 +37,6 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     _curveZero->setTitle(tr("Channel 0"));
     _curveZero->setPen(QPen(Qt::blue, 6));
     _curveZero->setRenderHint(QwtPlotItem::RenderAntialiased, true);
-    QwtSymbol *simba = new QwtSymbol(QwtSymbol::Ellipse,
-                                     QBrush(Qt::yellow),
-                                     QPen(Qt::red),
-                                     QSize(8,8));
-    _curveZero->setSymbol(simba);
     _curveZero->setRenderHint(QwtPlotCurve::RenderAntialiased);
     _curveZero->attach(this);
 
@@ -48,11 +44,6 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     _curveOne->setTitle(tr("Channel 1"));
     _curveOne->setPen(QPen(Qt::darkCyan, 6));
     _curveOne->setRenderHint(QwtPlotItem::RenderAntialiased, true);
-    simba = new QwtSymbol(QwtSymbol::Ellipse,
-                          QBrush(Qt::yellow),
-                          QPen(Qt::red),
-                          QSize(8,8));
-    _curveOne->setSymbol(simba);
     _curveOne->setYAxis(QwtPlot::yRight);
     _curveOne->setRenderHint(QwtPlotCurve::RenderAntialiased);
     _curveOne->attach(this);
@@ -190,7 +181,7 @@ void GraphicPlot::setBlock(unsigned short *samples, int size)
 
 }
 
-void GraphicPlot::setDisplayedPoints(int size, bool reset)
+void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
 {
     _displayedPoints = size;
 
@@ -200,6 +191,26 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset)
         _initializedPoints = 0;
         _pointsZero.clear();
         _pointsOne.clear();
+    }
+
+    if (mode == MODE_SINGLESHOT_MEASURING)
+    {
+        QwtSymbol *simba = new QwtSymbol(QwtSymbol::Ellipse,
+                                         QBrush(Qt::yellow),
+                                         QPen(Qt::red),
+                                         QSize(8,8));
+        _curveZero->setSymbol(simba);
+
+        simba = new QwtSymbol(QwtSymbol::Ellipse,
+                              QBrush(Qt::yellow),
+                              QPen(Qt::red),
+                              QSize(8,8));
+        _curveOne->setSymbol(simba);
+
+    } else if (mode == MODE_BLOCK_MEASURING)
+    {
+        _curveZero->setSymbol(0);
+        _curveOne->setSymbol(0);
     }
 
 //    _points.resize(size);
