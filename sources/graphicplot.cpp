@@ -17,7 +17,9 @@ GraphicPlot::GraphicPlot(QWidget *parent)
         _scaleMinimum(-0.5),
         _scaleMaximum(0.5),
         _channelZeroEnabled(false),
-        _channelOneEnabled(false)
+        _channelOneEnabled(false),
+        _channelZeroSamplesBuffer(0),
+        _channelOneSamplesBuffer(0)
 {
     setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
     setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
@@ -73,7 +75,14 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 
 GraphicPlot::~GraphicPlot()
 {
-    //
+    if (_channelZeroSamplesBuffer != 0)
+    {
+        delete [] _channelZeroSamplesBuffer;
+    }
+    if (_channelOneSamplesBuffer != 0)
+    {
+        delete [] _channelOneSamplesBuffer;
+    }
 }
 
 void GraphicPlot::setPoint(const double &voltage_0,
@@ -208,4 +217,28 @@ void GraphicPlot::setChannels(bool ch1, bool ch2)
 {
     _channelOneEnabled = ch2;
     _channelZeroEnabled = ch1;
+}
+
+unsigned short *GraphicPlot::initializeChannelZeroBuffer(
+        unsigned int size)
+{
+    if (_channelZeroSamplesBuffer != 0)
+    {
+        delete [] _channelZeroSamplesBuffer;
+    }
+
+    _channelZeroSamplesBuffer = new unsigned short[size];
+    return _channelZeroSamplesBuffer;
+}
+
+unsigned short *GraphicPlot::initializeChannelOneBuffer(
+        unsigned int size)
+{
+    if (_channelOneSamplesBuffer != 0)
+    {
+        delete [] _channelOneSamplesBuffer;
+    }
+
+    _channelOneSamplesBuffer = new unsigned short[size];
+    return _channelOneSamplesBuffer;
 }

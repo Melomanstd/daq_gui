@@ -47,6 +47,9 @@ private:
     ModeParameters  _parameters;
 
     bool            _isWorking;
+
+    unsigned short* _plotBufferZero;
+    unsigned short* _plotBufferOne;
 };
 
 #endif // MAINWINDOW_H

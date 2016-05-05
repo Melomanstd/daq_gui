@@ -7,7 +7,9 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    _isWorking(false)
+    _isWorking(false),
+    _plotBufferZero(0),
+    _plotBufferOne(0)
 {
     ui->setupUi(this);
 
@@ -240,6 +242,7 @@ bool MainWindow::_setupParameters()
     {
         return false;
     }
+    _updateTimer->stop();
     QSettings settings("settings.ini", QSettings::IniFormat, this);
 
     _parameters.mode = p.getMeasuringMode();
@@ -249,6 +252,7 @@ bool MainWindow::_setupParameters()
     if ((p.channelOneState() == false) &&
             (p.channelZeroState() == false))
     {
+        _updateTimer->start();
         return false;
     }
 
@@ -287,6 +291,14 @@ bool MainWindow::_setupParameters()
     {
         _parameters.blockSize = value;
         settings.setValue("samples_count", value);
+        if (p.channelZeroState() == true)
+        {
+            _plotBufferZero = _plot->initializeChannelZeroBuffer(value);
+        }
+        if (p.channelOneState() == true)
+        {
+            _plotBufferOne = _plot->initializeChannelOneBuffer(value);
+        }
     }
     else if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
     {
@@ -307,6 +319,7 @@ bool MainWindow::_setupParameters()
     {
         _dataOperator->setParameters(_parameters);
     }
+    _updateTimer->start();
     return true;
 }
 
