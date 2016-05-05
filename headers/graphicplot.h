@@ -28,6 +28,8 @@ public:
 
     void        displayBlock();
 
+    void        rescaleAxis(Axis ax, int value);
+
 private:
     QwtPlotCurve*       _curveZero;
     QwtPlotCurve*       _curveOne;

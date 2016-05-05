@@ -24,9 +24,14 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 {
     setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
     setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
-    setAxisAutoScale(QwtPlot::yLeft, true);
-    setAxisAutoScale(QwtPlot::yRight, true);
+//    setAxisAutoScale(QwtPlot::yLeft, true);
+//    setAxisAutoScale(QwtPlot::yRight, true);
     setCanvasBackground(Qt::white);
+
+    setAxisMaxMajor(yLeft, 10);
+    setAxisMaxMinor(yLeft, 2);
+    setAxisMaxMajor(yRight, 10);
+    setAxisMaxMinor(yRight, 2);
 
 //    insertLegend(new QwtLegend);
     QwtPlotGrid *g = new QwtPlotGrid();
@@ -286,4 +291,11 @@ void GraphicPlot::displayBlock()
     _curveZero->setSamples(_pointsZero);
     _curveOne->setSamples(_pointsOne);
     replot();
+}
+
+void GraphicPlot::rescaleAxis(Axis ax, int value)
+{
+    _scaleMinimum = static_cast<double> (value) * 0.1 * -1.0;
+    _scaleMaximum = static_cast<double> (value) * 0.1;
+    setAxisScale(ax,_scaleMinimum, _scaleMaximum);
 }

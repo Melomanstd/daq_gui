@@ -357,3 +357,19 @@ ModeParameters MainWindow::_lastParameters()
 
     return parameters;
 }
+
+void MainWindow::on_ch_0_voltage_range_slider_valueChanged(int value)
+{
+    if (_plot != 0)
+    {
+        _plot->rescaleAxis(QwtPlot::yLeft, value);
+    }
+}
+
+void MainWindow::on_ch_1_voltage_range_slider_valueChanged(int value)
+{
+    if (_plot != 0)
+    {
+        _plot->rescaleAxis(QwtPlot::yRight, value);
+    }
+}

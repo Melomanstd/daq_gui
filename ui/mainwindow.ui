@@ -120,13 +120,13 @@
            <enum>Qt::LeftToRight</enum>
           </property>
           <property name="minimum">
-           <number>-100</number>
+           <number>1</number>
           </property>
           <property name="maximum">
            <number>100</number>
           </property>
           <property name="value">
-           <number>0</number>
+           <number>10</number>
           </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -225,13 +225,13 @@
            <string>Voltage range</string>
           </property>
           <property name="minimum">
-           <number>-100</number>
+           <number>1</number>
           </property>
           <property name="maximum">
            <number>100</number>
           </property>
           <property name="value">
-           <number>0</number>
+           <number>10</number>
           </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -483,8 +483,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
         <property name="checkable">
@@ -521,8 +521,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
         <property name="checkable">
