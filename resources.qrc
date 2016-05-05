@@ -7,5 +7,7 @@
         <file>youtube-play-button.png</file>
         <file>zoom-decreasing-button-symbol (1).png</file>
         <file>zoom-plus-sign (1).png</file>
+        <file>backward-arrows-couple-pointing-to-left.png</file>
+        <file>forward.png</file>
     </qresource>
 </RCC>
