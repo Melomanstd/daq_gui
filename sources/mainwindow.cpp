@@ -10,6 +10,13 @@ MainWindow::MainWindow(QWidget *parent) :
     _isWorking(false)
 {
     ui->setupUi(this);
+
+    QPalette pal = ui->volt_ch0_lbl->palette();
+    pal.setColor(QPalette::WindowText, Qt::blue);
+    ui->volt_ch0_lbl->setPalette(pal);
+    pal.setColor(QPalette::WindowText, Qt::darkCyan);
+    ui->volt_ch1_lbl->setPalette(pal);
+
     ui->stop_btn->setChecked(true);
 
     _updateTimer = new QTimer;
