@@ -18,15 +18,16 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLabel" name="volt_ch0_lbl">
+       <widget class="QCheckBox" name="channelZero_check">
         <property name="font">
          <font>
+          <pointsize>14</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
         <property name="text">
-         <string>Channel 0 Voltage</string>
+         <string>Channel 0</string>
         </property>
        </widget>
       </item>
@@ -44,15 +45,16 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="volt_ch1_lbl">
+       <widget class="QCheckBox" name="channelOne_check">
         <property name="font">
          <font>
+          <pointsize>14</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
         <property name="text">
-         <string>Channel 1 Voltage</string>
+         <string>Channel 1</string>
         </property>
        </widget>
       </item>
@@ -66,7 +68,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="ch_0_zoom_in_btn">
           <property name="minimumSize">
            <size>
             <width>32</width>
@@ -104,7 +106,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="verticalSlider">
+         <widget class="QSlider" name="ch_0_voltage_range_slider">
           <property name="minimumSize">
            <size>
             <width>32</width>
@@ -123,7 +125,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="ch_0_zoom_out_btn">
           <property name="minimumSize">
            <size>
             <width>32</width>
@@ -165,7 +167,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QPushButton" name="pushButton_4">
+         <widget class="QPushButton" name="ch_1_zoom_in_btn">
           <property name="minimumSize">
            <size>
             <width>32</width>
@@ -203,7 +205,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="verticalSlider_2">
+         <widget class="QSlider" name="ch_1_voltage_range_slider">
           <property name="minimumSize">
            <size>
             <width>32</width>
@@ -219,7 +221,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="ch_1_zoom_out_btn">
           <property name="minimumSize">
            <size>
             <width>32</width>
@@ -311,7 +313,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_5">
+       <widget class="QPushButton" name="backward_btn">
         <property name="minimumSize">
          <size>
           <width>32</width>
@@ -346,7 +348,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QSlider" name="horizontalSlider">
+       <widget class="QSlider" name="speed_slider">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -368,7 +370,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_6">
+       <widget class="QPushButton" name="forward_btn">
         <property name="minimumSize">
          <size>
           <width>32</width>

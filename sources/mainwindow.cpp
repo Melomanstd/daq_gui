@@ -13,11 +13,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QPalette pal = ui->volt_ch0_lbl->palette();
+    QPalette pal = ui->channelZero_check->palette();
     pal.setColor(QPalette::WindowText, Qt::blue);
-    ui->volt_ch0_lbl->setPalette(pal);
+    ui->channelZero_check->setPalette(pal);
     pal.setColor(QPalette::WindowText, Qt::darkCyan);
-    ui->volt_ch1_lbl->setPalette(pal);
+    ui->channelOne_check->setPalette(pal);
 
     ui->stop_btn->setChecked(true);
 
@@ -54,8 +54,8 @@ void MainWindow::_initializePlot()
 //    ui->v_lay->addWidget(_plot);
     ui->v_lay->insertWidget(1, _plot);
 
-//    _plot->setAxisTitle(QwtPlot::yLeft, tr("Voltage CH 0"));
-//    _plot->setAxisTitle(QwtPlot::yRight, tr("Voltage CH 1"));
+    _plot->setAxisTitle(QwtPlot::yLeft, tr("Channel 0 Voltage"));
+    _plot->setAxisTitle(QwtPlot::yRight, tr("Channel 1 Voltage"));
     _plot->enableAxis(QwtPlot::yRight);
 }
 
@@ -294,8 +294,6 @@ bool MainWindow::_setupParameters()
 
     _plot->enableAxis(QwtPlot::yLeft, p.channelZeroState());
     _plot->enableAxis(QwtPlot::yRight, p.channelOneState());
-    ui->volt_ch0_lbl->setVisible(p.channelZeroState());
-    ui->volt_ch1_lbl->setVisible(p.channelOneState());
     _plot->setChannels(p.channelZeroState(),
                        p.channelOneState());
 
