@@ -120,10 +120,10 @@
            <enum>Qt::LeftToRight</enum>
           </property>
           <property name="minimum">
-           <number>1</number>
+           <number>0</number>
           </property>
           <property name="maximum">
-           <number>100</number>
+           <number>99</number>
           </property>
           <property name="value">
            <number>10</number>
@@ -225,10 +225,10 @@
            <string>Voltage range</string>
           </property>
           <property name="minimum">
-           <number>1</number>
+           <number>0</number>
           </property>
           <property name="maximum">
-           <number>100</number>
+           <number>99</number>
           </property>
           <property name="value">
            <number>10</number>

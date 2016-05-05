@@ -35,6 +35,10 @@ private slots:
     void on_stop_btn_clicked();
     void on_ch_0_voltage_range_slider_valueChanged(int value);
     void on_ch_1_voltage_range_slider_valueChanged(int value);
+    void on_ch_0_zoom_in_btn_clicked();
+    void on_ch_1_zoom_in_btn_clicked();
+    void on_ch_0_zoom_out_btn_clicked();
+    void on_ch_1_zoom_out_btn_clicked();
 
     void _updatePlot();
 

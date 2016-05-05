@@ -362,7 +362,7 @@ void MainWindow::on_ch_0_voltage_range_slider_valueChanged(int value)
 {
     if (_plot != 0)
     {
-        _plot->rescaleAxis(QwtPlot::yLeft, value);
+        _plot->rescaleAxis(QwtPlot::yLeft, 100 - value);
     }
 }
 
@@ -370,6 +370,30 @@ void MainWindow::on_ch_1_voltage_range_slider_valueChanged(int value)
 {
     if (_plot != 0)
     {
-        _plot->rescaleAxis(QwtPlot::yRight, value);
+        _plot->rescaleAxis(QwtPlot::yRight, 100 - value);
     }
+}
+
+void MainWindow::on_ch_0_zoom_in_btn_clicked()
+{
+    ui->ch_0_voltage_range_slider->setValue(
+                ui->ch_0_voltage_range_slider->value() + 5);
+}
+
+void MainWindow::on_ch_0_zoom_out_btn_clicked()
+{
+    ui->ch_0_voltage_range_slider->setValue(
+                ui->ch_0_voltage_range_slider->value() - 5);
+}
+
+void MainWindow::on_ch_1_zoom_in_btn_clicked()
+{
+    ui->ch_1_voltage_range_slider->setValue(
+                ui->ch_1_voltage_range_slider->value() + 5);
+}
+
+void MainWindow::on_ch_1_zoom_out_btn_clicked()
+{
+    ui->ch_1_voltage_range_slider->setValue(
+                ui->ch_1_voltage_range_slider->value() - 5);
 }
