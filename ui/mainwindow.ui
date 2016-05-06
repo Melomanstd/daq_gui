@@ -92,7 +92,7 @@
           </property>
           <property name="icon">
            <iconset resource="../resources.qrc">
-            <normaloff>:/new/images/zoom-plus-sign (1).png</normaloff>:/new/images/zoom-plus-sign (1).png</iconset>
+            <normaloff>:/new/images/images/zoom-plus-sign (1).png</normaloff>:/new/images/images/zoom-plus-sign (1).png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -158,7 +158,7 @@
           </property>
           <property name="icon">
            <iconset resource="../resources.qrc">
-            <normaloff>:/new/images/zoom-decreasing-button-symbol (1).png</normaloff>:/new/images/zoom-decreasing-button-symbol (1).png</iconset>
+            <normaloff>:/new/images/images/zoom-decreasing-button-symbol (1).png</normaloff>:/new/images/images/zoom-decreasing-button-symbol (1).png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -200,7 +200,7 @@
           </property>
           <property name="icon">
            <iconset resource="../resources.qrc">
-            <normaloff>:/new/images/zoom-plus-sign (1).png</normaloff>:/new/images/zoom-plus-sign (1).png</iconset>
+            <normaloff>:/new/images/images/zoom-plus-sign (1).png</normaloff>:/new/images/images/zoom-plus-sign (1).png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -263,7 +263,7 @@
           </property>
           <property name="icon">
            <iconset resource="../resources.qrc">
-            <normaloff>:/new/images/zoom-decreasing-button-symbol (1).png</normaloff>:/new/images/zoom-decreasing-button-symbol (1).png</iconset>
+            <normaloff>:/new/images/images/zoom-decreasing-button-symbol (1).png</normaloff>:/new/images/images/zoom-decreasing-button-symbol (1).png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -317,7 +317,7 @@
         </property>
         <property name="icon">
          <iconset resource="../resources.qrc">
-          <normaloff>:/new/images/gear-wheel-with-cogs.png</normaloff>:/new/images/gear-wheel-with-cogs.png</iconset>
+          <normaloff>:/new/images/images/gear-wheel-with-cogs.png</normaloff>:/new/images/images/gear-wheel-with-cogs.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -365,7 +365,7 @@
         </property>
         <property name="icon">
          <iconset resource="../resources.qrc">
-          <normaloff>:/new/images/backward-arrows-couple-pointing-to-left.png</normaloff>:/new/images/backward-arrows-couple-pointing-to-left.png</iconset>
+          <normaloff>:/new/images/images/backward-arrows-couple-pointing-to-left.png</normaloff>:/new/images/images/backward-arrows-couple-pointing-to-left.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -400,7 +400,7 @@
         </property>
         <property name="icon">
          <iconset resource="../resources.qrc">
-          <normaloff>:/new/images/forward.png</normaloff>:/new/images/forward.png</iconset>
+          <normaloff>:/new/images/images/forward.png</normaloff>:/new/images/images/forward.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -448,7 +448,7 @@
         </property>
         <property name="icon">
          <iconset resource="../resources.qrc">
-          <normaloff>:/new/images/play-button.png</normaloff>:/new/images/play-button.png</iconset>
+          <normaloff>:/new/images/images/play-button.png</normaloff>:/new/images/images/play-button.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -486,7 +486,7 @@
         </property>
         <property name="icon">
          <iconset resource="../resources.qrc">
-          <normaloff>:/new/images/stop-button-black-rounded-square.png</normaloff>:/new/images/stop-button-black-rounded-square.png</iconset>
+          <normaloff>:/new/images/images/stop-button-black-rounded-square.png</normaloff>:/new/images/images/stop-button-black-rounded-square.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -525,7 +525,7 @@
      <x>0</x>
      <y>0</y>
      <width>373</width>
-     <height>21</height>
+     <height>27</height>
     </rect>
    </property>
   </widget>

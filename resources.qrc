@@ -1,13 +1,13 @@
 <RCC>
     <qresource prefix="/new/images">
-        <file>blocks.jpg</file>
-        <file>points.jpg</file>
-        <file>gear-wheel-with-cogs.png</file>
-        <file>zoom-decreasing-button-symbol (1).png</file>
-        <file>zoom-plus-sign (1).png</file>
-        <file>backward-arrows-couple-pointing-to-left.png</file>
-        <file>forward.png</file>
-        <file>play-button.png</file>
-        <file>stop-button-black-rounded-square.png</file>
+        <file>images/blocks.jpg</file>
+        <file>images/points.jpg</file>
+        <file>images/gear-wheel-with-cogs.png</file>
+        <file>images/zoom-decreasing-button-symbol (1).png</file>
+        <file>images/zoom-plus-sign (1).png</file>
+        <file>images/backward-arrows-couple-pointing-to-left.png</file>
+        <file>images/forward.png</file>
+        <file>images/play-button.png</file>
+        <file>images/stop-button-black-rounded-square.png</file>
     </qresource>
 </RCC>
