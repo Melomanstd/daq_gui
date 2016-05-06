@@ -584,7 +584,7 @@ void MainWindow::_delayedSliderNewValue(int value)
         //points per sec * displayed seconds
         _plot->setDisplayedPoints(_parameters.measuringInterval *
                                   _parameters.displayedInterval,
-                                  !_isWorking,
+                                  true,
                                   _parameters.mode);
     }
 
