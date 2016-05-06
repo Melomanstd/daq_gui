@@ -15,16 +15,15 @@ GraphicPlot::GraphicPlot(QWidget *parent)
         _initializedPoints(0),
         _displayStep(1),
         _currentStep(0),
-        _scaleMinimum(-0.5),
-        _scaleMaximum(0.5),
+        _scaleMinimum(0.0),
+        _scaleMaximum(0.0),
         _channelZeroEnabled(false),
         _channelOneEnabled(false),
         _channelZeroVoltageBuffer(0),
-        _channelOneVoltageBuffer(0)
+        _channelOneVoltageBuffer(0),
+        _lastZoom_0(0),
+        _lastZoom_1(0)
 {
-    lastZoom = 0;
-
-
     setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
     setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
 //    setAxisAutoScale(QwtPlot::yLeft, true);
@@ -298,19 +297,28 @@ void GraphicPlot::displayBlock()
 
 void GraphicPlot::rescaleAxis(Axis ax, int value)
 {
-    double scale_min = axisInterval(yLeft).minValue();
-    double scale_max = axisInterval(yLeft).maxValue();
+    double zoomDiff = 0.0;
 
-    double transformedValue = static_cast<double> (value) * 0.1;
+    if (ax == yLeft)
+    {
+        zoomDiff = (static_cast<double> (value) -
+                    static_cast<double> (_lastZoom_0)) * 0.1;
+        _lastZoom_0 = value;
+    }
+    else if (ax == yRight)
+    {
+        zoomDiff = (static_cast<double> (value) -
+                    static_cast<double> (_lastZoom_1)) * 0.1;
+        _lastZoom_1 = value;
+    }
 
-    double zoomDiff = (static_cast<double> (value) -
-            static_cast<double> (lastZoom)) * 0.1;
+    _scaleMinimum = axisInterval(ax).minValue();
+    _scaleMaximum = axisInterval(ax).maxValue();
 
-    _scaleMinimum = scale_min - zoomDiff;//transformedValue * -1.0;
-    _scaleMaximum = scale_max + zoomDiff;//transformedValue;
+    _scaleMinimum = _scaleMinimum - zoomDiff;
+    _scaleMaximum = _scaleMaximum + zoomDiff;
     setAxisScale(ax,_scaleMinimum, _scaleMaximum);
     replot();
-    lastZoom = value;
 }
 
 void GraphicPlot::setCurveProperties(qint8 channel, QPen pen)
