@@ -3,6 +3,7 @@
 #include "ui_mainwindow.h"
 
 #include <QDebug>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -13,11 +14,32 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QPalette pal = ui->volt_ch0_lbl->palette();
-    pal.setColor(QPalette::WindowText, Qt::blue);
-    ui->volt_ch0_lbl->setPalette(pal);
-    pal.setColor(QPalette::WindowText, Qt::darkCyan);
-    ui->volt_ch1_lbl->setPalette(pal);
+    setWindowTitle(tr("DAQ 2213 Signal visualizer"));
+
+    delayedSlider = new TimerSlider(Qt::Horizontal, 0);
+    connect(delayedSlider, SIGNAL(NewValue(int)),
+            this, SLOT(_delayedSliderNewValue(int)));
+    ui->horizontalLayout->insertWidget(4,delayedSlider);
+
+    _modeLabel = new QLabel(tr("Current mode:"));
+    _modeValue = new QLabel(tr("No mode"));
+    _intervalLabel = new QLabel(tr("Measuring interval(msec):"));
+    _intervalValue = new QLabel(QString::number(
+                               (delayedSlider->value())));
+
+    QFont font = _modeLabel->font();
+    font.setBold(true);
+    font.setPointSize(12);
+
+    _modeLabel->setFont(font);
+    _modeValue->setFont(font);
+    _intervalLabel->setFont(font);
+    _intervalValue->setFont(font);
+
+    statusBar()->addWidget(_modeLabel);
+    statusBar()->addWidget(_modeValue);
+    statusBar()->addWidget(_intervalLabel);
+    statusBar()->addWidget(_intervalValue);
 
     ui->stop_btn->setChecked(true);
 
@@ -29,8 +51,47 @@ MainWindow::MainWindow(QWidget *parent) :
     _initializeDataOperator();
     _updateTimer->setInterval(1);
     _updateTimer->start();
+    showMaximized();
 //    singleShot();
 //    blocks();
+
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    if (settings.value("channel_zero", STATE_ON) == STATE_ON)
+    {
+        ui->channelZero_check->setChecked(true);
+        _channelZeroState(true);
+    }
+    else
+    {
+        ui->channelZero_check->setChecked(false);
+        _channelZeroState(false);
+    }
+
+    if (settings.value("channel_one", STATE_OFF) == STATE_ON)
+    {
+        ui->channelOne_check->setChecked(true);
+        _channelOneState(true);
+    }
+    else
+    {
+        ui->channelOne_check->setChecked(false);
+        _channelOneState(false);
+    }
+
+    ui->ch_0_voltage_range_slider->setValue(80);
+    ui->ch_1_voltage_range_slider->setValue(80);
+
+    QColor channelZeroColor = Qt::blue;
+    QColor channelOneColor = Qt::darkCyan;
+
+    QPalette pal = ui->channelZero_check->palette();
+    pal.setColor(QPalette::WindowText, channelZeroColor);
+    ui->channelZero_check->setPalette(pal);
+    pal.setColor(QPalette::WindowText, channelOneColor);
+    ui->channelOne_check->setPalette(pal);
+
+    _plot->setCurveProperties(0, QPen(channelZeroColor, 3));
+    _plot->setCurveProperties(1, QPen(channelOneColor, 3));
 }
 
 MainWindow::~MainWindow()
@@ -49,15 +110,21 @@ void MainWindow::_initializePlot()
 {
     _plot = new GraphicPlot();
 //    _plot->setDisplayedPoints(10, true, );
-    ui->v_lay->addWidget(_plot);
-//    _plot->setAxisTitle(QwtPlot::yLeft, tr("Voltage CH 0"));
-//    _plot->setAxisTitle(QwtPlot::yRight, tr("Voltage CH 1"));
+
+//    ui->v_lay->addWidget(_plot);
+    ui->v_lay->insertWidget(1, _plot);
+
+    _plot->setAxisTitle(QwtPlot::yLeft, tr("Channel 0 Voltage"));
+    _plot->setAxisTitle(QwtPlot::yRight, tr("Channel 1 Voltage"));
     _plot->enableAxis(QwtPlot::yRight);
 }
 
 void MainWindow::_initializeDataOperator()
 {
     _dataOperator = new DataOperator();
+
+    connect(_dataOperator, SIGNAL(someError()),
+            this, SLOT(_displayError()));
 }
 
 void MainWindow::_updatePlot()
@@ -221,12 +288,24 @@ void MainWindow::on_start_btn_clicked()
         ui->start_btn->setChecked(true);
         return;
     }
+
+    if ((ui->channelZero_check->isChecked() == false) &&
+        (ui->channelOne_check->isChecked() == false))
+    {
+        QMessageBox::critical(this,
+                              tr("Error"),
+                              tr("Select atleast one channel for measuring"),
+                              QMessageBox::Ok);
+        return;
+    }
+
     ui->stop_btn->setChecked(false);
     ui->start_btn->setChecked(true);
     if (_setupParameters() == false)
     {
         ui->start_btn->setChecked(false);
         ui->stop_btn->setChecked(true);
+        _modeValue->setText(tr("No mode"));
         return;
     }
     _isWorking = true;
@@ -238,9 +317,11 @@ void MainWindow::on_stop_btn_clicked()
     ui->start_btn->setChecked(false);
     ui->stop_btn->setChecked(true);
     _isWorking = false;
+    _updateTimer->stop();
     _dataOperator->stopWorking();
     _plotBufferZero = 0;
     _plotBufferOne = 0;
+    _modeValue->setText(tr("No mode"));
 }
 
 bool MainWindow::_setupParameters()
@@ -256,77 +337,68 @@ bool MainWindow::_setupParameters()
     QSettings settings("settings.ini", QSettings::IniFormat, this);
 
     _parameters.mode = p.getMeasuringMode();
-    _parameters.measuringInterval = p.getMeasuringTime();
-    int value = p.getSamplesCount();
-
-    if ((p.channelOneState() == false) &&
-            (p.channelZeroState() == false))
-    {
-        _updateTimer->start();
-        return false;
-    }
-
-    if (p.channelZeroState() == true)
-    {
-        _parameters.channelZeroState = STATE_ON;
-        settings.setValue("channel_zero", STATE_ON);
-    }
-    else
-    {
-        _parameters.channelZeroState = STATE_OFF;
-        settings.setValue("channel_zero", STATE_OFF);
-    }
-
-    if (p.channelOneState() == true)
-    {
-        _parameters.channelOneState = STATE_ON;
-        settings.setValue("channel_one", STATE_ON);
-    }
-    else
-    {
-        _parameters.channelOneState = STATE_OFF;
-        settings.setValue("channel_one", STATE_OFF);
-    }
-
-    _plot->enableAxis(QwtPlot::yLeft, p.channelZeroState());
-    _plot->enableAxis(QwtPlot::yRight, p.channelOneState());
-    ui->volt_ch0_lbl->setVisible(p.channelZeroState());
-    ui->volt_ch1_lbl->setVisible(p.channelOneState());
-    _plot->setChannels(p.channelZeroState(),
-                       p.channelOneState());
 
     settings.setValue("measuring_mode", _parameters.mode);
-    settings.setValue("measuring_interval", _parameters.measuringInterval);
+
     if (_parameters.mode == MODE_BLOCK_MEASURING)
     {
-        _parameters.blockSize = value;
-        _plot->setDisplayStep(value / 10);
-        _plot->setDisplayedPoints(value, !_isWorking, _parameters.mode);
-        settings.setValue("samples_count", value);
-        if (p.channelZeroState() == true)
+        delayedSlider->setMaximum(990);
+        delayedSlider->setMinimum(10);
+        delayedSlider->setValue(10);
+
+        _parameters.measuringInterval = 990;
+        _parameters.blockSize = p.getSamplesPerMeasuring();
+        _parameters.scaningInterval = p.getScaningInterval();
+        _parameters.samplingInterval = p.getSamplesInterval();
+        _plot->setDisplayStep(_parameters.blockSize / 10);
+        _plot->setDisplayedPoints(_parameters.blockSize,
+                                  !_isWorking,
+                                  _parameters.mode);
+        settings.setValue("samples_count",
+                          _parameters.blockSize);
+
+        if (ui->channelZero_check->isChecked() == true)
         {
-            _plotBufferZero = _plot->initializeChannelZeroBuffer(value);
+            _plotBufferZero = _plot->initializeChannelZeroBuffer(
+                        _parameters.blockSize);
         }
-        if (p.channelOneState() == true)
+        if (ui->channelOne_check->isChecked() == true)
         {
-            _plotBufferOne = _plot->initializeChannelOneBuffer(value);
+            _plotBufferOne = _plot->initializeChannelOneBuffer(
+                        _parameters.blockSize);
         }
+
+        _modeValue->setText(tr("Block measuring mode"));
     }
     else if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
     {
-        _parameters.displayedInterval = value;
+        delayedSlider->setMaximum(100);
+        delayedSlider->setMinimum(1);
+        delayedSlider->setValue(1);
+        delayedSlider->setPageStep(1);
+        delayedSlider->setSingleStep(1);
+
+        _parameters.displayedInterval = p.getDisplayedInterval();
+        _parameters.measuringInterval = p.getMeasuringsPerSecond();
 //        _plot->setAxisTitle(QwtPlot::xBottom, tr("Seconds"));
 
-        //points per sec * displayed seconds
         _plot->setDisplayStep(_parameters.measuringInterval);
+        //points per sec * displayed seconds
         _plot->setDisplayedPoints(_parameters.measuringInterval *
                                   _parameters.displayedInterval,
                                   !_isWorking,
                                   _parameters.mode);
-        settings.setValue("displayed_interval", value);
+        settings.setValue("displayed_interval",
+                          _parameters.displayedInterval);
+
+        _plotBufferZero = 0;
+        _plotBufferOne = 0;
+
+        _modeValue->setText(tr("Singleshot measuring mode"));
     }
 
-//    int updateInterval = 1000 / _parameters.measuringInterval;
+    _plot->setChannels(ui->channelZero_check->isChecked(),
+                       ui->channelOne_check->isChecked());
 
     if (_dataOperator != 0)
     {
@@ -354,4 +426,171 @@ ModeParameters MainWindow::_lastParameters()
                 "channel_one", STATE_OFF).toInt();
 
     return parameters;
+}
+
+void MainWindow::on_ch_0_voltage_range_slider_valueChanged(int value)
+{
+    if (_plot != 0)
+    {
+        _plot->rescaleAxis(QwtPlot::yLeft, 100 - value);
+    }
+}
+
+void MainWindow::on_ch_1_voltage_range_slider_valueChanged(int value)
+{
+    if (_plot != 0)
+    {
+        _plot->rescaleAxis(QwtPlot::yRight, 100 - value);
+    }
+}
+
+void MainWindow::on_ch_0_zoom_in_btn_clicked()
+{
+    ui->ch_0_voltage_range_slider->setValue(
+                ui->ch_0_voltage_range_slider->value() + 5);
+}
+
+void MainWindow::on_ch_0_zoom_out_btn_clicked()
+{
+    ui->ch_0_voltage_range_slider->setValue(
+                ui->ch_0_voltage_range_slider->value() - 5);
+}
+
+void MainWindow::on_ch_1_zoom_in_btn_clicked()
+{
+    ui->ch_1_voltage_range_slider->setValue(
+                ui->ch_1_voltage_range_slider->value() + 5);
+}
+
+void MainWindow::on_ch_1_zoom_out_btn_clicked()
+{
+    ui->ch_1_voltage_range_slider->setValue(
+                ui->ch_1_voltage_range_slider->value() - 5);
+}
+
+void MainWindow::on_channelZero_check_toggled(bool state)
+{
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    if (state == true)
+    {
+        _parameters.channelZeroState = STATE_ON;
+        settings.setValue("channel_zero", STATE_ON);
+    }
+    else
+    {
+        _parameters.channelZeroState = STATE_OFF;
+        settings.setValue("channel_zero", STATE_OFF);
+        _plotBufferZero = 0;
+    }
+    _channelZeroState(state);
+    if (_dataOperator != 0)
+    {
+        _dataOperator->setChannelStatus(CHANNEL_0,
+                                        _parameters.channelZeroState);
+    }
+}
+
+void MainWindow::on_channelOne_check_toggled(bool state)
+{
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    if (state == true)
+    {
+        _parameters.channelOneState = STATE_ON;
+        settings.setValue("channel_one", STATE_ON);
+    }
+    else
+    {
+        _parameters.channelOneState = STATE_OFF;
+        settings.setValue("channel_one", STATE_OFF);
+        _plotBufferOne = 0;
+    }
+    _channelOneState(state);
+    if (_dataOperator != 0)
+    {
+        _dataOperator->setChannelStatus(CHANNEL_1,
+                                        _parameters.channelOneState);
+    }
+}
+
+void MainWindow::_displayError()
+{
+    QMessageBox::critical(this,
+                          tr("Error"),
+                          _dataOperator->getLastError(),
+                          QMessageBox::Ok);
+}
+
+void MainWindow::_channelZeroState(bool state)
+{
+    _plot->setChannels(ui->channelZero_check->isChecked(),
+                       ui->channelOne_check->isChecked());
+    _plot->enableAxis(QwtPlot::yLeft, state);
+    ui->ch_0_voltage_range_slider->setVisible(state);
+    ui->ch_0_zoom_in_btn->setVisible(state);
+    ui->ch_0_zoom_out_btn->setVisible(state);
+}
+
+void MainWindow::_channelOneState(bool state)
+{
+    _plot->setChannels(ui->channelZero_check->isChecked(),
+                       ui->channelOne_check->isChecked());
+    _plot->enableAxis(QwtPlot::yRight, state);
+    ui->ch_1_voltage_range_slider->setVisible(state);
+    ui->ch_1_zoom_in_btn->setVisible(state);
+    ui->ch_1_zoom_out_btn->setVisible(state);
+}
+
+void MainWindow::on_forward_btn_clicked()
+{
+    int temp = 0;
+    if (_parameters.mode == MODE_BLOCK_MEASURING)
+    {
+        temp = 5;
+    }
+    else
+    {
+        temp = 1;
+    }
+    delayedSlider->setValue(delayedSlider->value() + temp);
+}
+
+void MainWindow::on_backward_btn_clicked()
+{
+    int temp = 0;
+    if (_parameters.mode == MODE_BLOCK_MEASURING)
+    {
+        temp = 5;
+    }
+    else
+    {
+        temp = 1;
+    }
+    delayedSlider->setValue(delayedSlider->value() - temp);
+}
+
+void MainWindow::_delayedSliderNewValue(int value)
+{
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    _parameters.measuringInterval = value;
+    settings.setValue("measuring_interval", value);
+
+    if (_parameters.mode == MODE_BLOCK_MEASURING)
+    {
+        value = 1000 - value;
+    }
+    else
+    {
+        _plot->setDisplayStep(_parameters.measuringInterval);
+        //points per sec * displayed seconds
+        _plot->setDisplayedPoints(_parameters.measuringInterval *
+                                  _parameters.displayedInterval,
+                                  true,
+                                  _parameters.mode);
+    }
+
+    if (_dataOperator != 0)
+    {
+        _dataOperator->setMeasuringInterval(value);
+    }
+    _intervalValue->setText(QString::number(value));
 }

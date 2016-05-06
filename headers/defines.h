@@ -29,7 +29,9 @@ public:
         blockSize(2),
         displayedInterval(10),
         channelZeroState(STATE_OFF),
-        channelOneState(STATE_OFF)
+        channelOneState(STATE_OFF),
+        scaningInterval(0),
+        samplingInterval(0)
     {}
 
     int mode;
@@ -38,6 +40,8 @@ public:
     int displayedInterval;
     unsigned char channelZeroState;
     unsigned char channelOneState;
+    int scaningInterval;
+    int samplingInterval;
 };
 
 #endif // DEFINES

@@ -40,6 +40,7 @@ public:
                                  double *bufferOne);
 
     bool        isDataReady();
+    QString     getLastError();
 
 protected:
     virtual void run();

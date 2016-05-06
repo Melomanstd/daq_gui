@@ -15,22 +15,34 @@ GraphicPlot::GraphicPlot(QWidget *parent)
         _initializedPoints(0),
         _displayStep(1),
         _currentStep(0),
-        _scaleMinimum(-0.5),
-        _scaleMaximum(0.5),
+        _scaleMinimum(0.0),
+        _scaleMaximum(0.0),
         _channelZeroEnabled(false),
         _channelOneEnabled(false),
         _channelZeroVoltageBuffer(0),
-        _channelOneVoltageBuffer(0)
+        _channelOneVoltageBuffer(0),
+        _lastZoom_0(0),
+        _lastZoom_1(0)
 {
     setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
     setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
-    setAxisAutoScale(QwtPlot::yLeft, true);
-    setAxisAutoScale(QwtPlot::yRight, true);
+//    setAxisAutoScale(QwtPlot::yLeft, true);
+//    setAxisAutoScale(QwtPlot::yRight, true);
     setCanvasBackground(Qt::white);
+
+    setAxisMaxMajor(yLeft, 10);
+    setAxisMaxMinor(yLeft, 2);
+    setAxisMaxMajor(yRight, 10);
+    setAxisMaxMinor(yRight, 2);
+    setAxisMaxMajor(xBottom, 10);
+    setAxisMaxMinor(xBottom, 2);
 
 //    insertLegend(new QwtLegend);
     QwtPlotGrid *g = new QwtPlotGrid();
     g->setMajPen(QPen(Qt::gray, 2));
+//    g->setMinPen(QPen(Qt::gray, 2));
+    g->enableXMin(false);
+    g->enableYMin(false);
     g->attach(this);
 
     _curveZero = new QwtPlotCurve();
@@ -53,11 +65,12 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 //    QwtPlotZoomer *zoomer = new QwtPlotZoomer(canvas());
 //    zoomer->setTrackerMode(QwtPlotZoomer::AlwaysOff);
 
-    QwtPlotMagnifier *magnifier = new QwtPlotMagnifier(canvas());
-    magnifier->setMouseButton(Qt::RightButton);
+//    QwtPlotMagnifier *magnifier = new QwtPlotMagnifier(canvas());
+//    magnifier->setMouseButton(Qt::RightButton);
 
     QwtPlotPanner *panner = new QwtPlotPanner(canvas());
     panner->setMouseButton(Qt::LeftButton);
+    replot();
 
 //    setAutoReplot(true);
 //    setAxisMaxMajor(QwtPlot::xBottom, 1);
@@ -96,37 +109,6 @@ void GraphicPlot::setPoint(const double &voltage_0,
 
     ++_count;
 
-//    if (--_currentStep <= 0)
-//    {
-//        _currentStep = _displayStep;
-//        _scaleMaximum = _count / _displayStep;
-//        if ((_scaleMaximum - _scaleMinimum) > 10)
-//        {
-//            ++_scaleMinimum;
-//            setAxisScale(QwtPlot::xBottom,
-//                                 _scaleMinimum,
-//                                 _scaleMaximum,
-//                                 1);
-//        }
-//    }
-    /*if (voltage < _scaleMinimum)
-    {
-        while (voltage < _scaleMinimum)
-        {
-            _scaleMinimum -= 0.25;
-        }
-        setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
-    }
-
-    if (voltage > _scaleMaximum)
-    {
-        while (voltage > _scaleMaximum)
-        {
-            _scaleMaximum += 0.25;
-        }
-        setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
-    }*/
-
     if (_initializedPoints < _displayedPoints)
     {
         _initializedPoints++;
@@ -137,11 +119,13 @@ void GraphicPlot::setPoint(const double &voltage_0,
     }
     else
     {
-        if (_channelZeroEnabled)
+        if ((_channelZeroEnabled == true) &&
+                (_pointsZero.size() >= _initializedPoints))
         {
             _pointsZero.pop_front();
         }
-        if (_channelOneEnabled)
+        if ((_channelOneEnabled == true) &&
+                (_pointsOne.size() >= _initializedPoints))
         {
             _pointsOne.pop_front();
         }
@@ -150,18 +134,7 @@ void GraphicPlot::setPoint(const double &voltage_0,
                      _count - _displayedPoints,
                      _count - 1,
                      _displayStep);
-
-//        setAxisScale(QwtPlot::yLeft,
-//                     _points.first().y(),
-//                     voltage);
     }
-
-    /*
-    _points.append(QPointF(++_count, voltage));
-    _curve->setSamples(_points.toVector());
-    */
-
-
 
     replot();
 }
@@ -228,6 +201,29 @@ void GraphicPlot::setChannels(bool ch1, bool ch2)
 {
     _channelOneEnabled = ch2;
     _channelZeroEnabled = ch1;
+
+    if (_channelZeroEnabled == true)
+    {
+        _curveZero->show();
+    }
+    else
+    {
+        _curveZero->hide();
+        _pointsZero.clear();
+        _curveZero->setSamples(_pointsZero);
+    }
+
+    if (_channelOneEnabled == true)
+    {
+        _curveOne->show();
+    }
+    else
+    {
+        _curveOne->hide();
+        _pointsOne.clear();
+        _curveOne->setSamples(_pointsOne);
+    }
+    replot();
 }
 
 double *GraphicPlot::initializeChannelZeroBuffer(
@@ -286,4 +282,42 @@ void GraphicPlot::displayBlock()
     _curveZero->setSamples(_pointsZero);
     _curveOne->setSamples(_pointsOne);
     replot();
+}
+
+void GraphicPlot::rescaleAxis(Axis ax, int value)
+{
+    double zoomDiff = 0.0;
+
+    if (ax == yLeft)
+    {
+        zoomDiff = (static_cast<double> (value) -
+                    static_cast<double> (_lastZoom_0)) * 0.1;
+        _lastZoom_0 = value;
+    }
+    else if (ax == yRight)
+    {
+        zoomDiff = (static_cast<double> (value) -
+                    static_cast<double> (_lastZoom_1)) * 0.1;
+        _lastZoom_1 = value;
+    }
+
+    _scaleMinimum = axisInterval(ax).minValue();
+    _scaleMaximum = axisInterval(ax).maxValue();
+
+    _scaleMinimum = _scaleMinimum - zoomDiff;
+    _scaleMaximum = _scaleMaximum + zoomDiff;
+    setAxisScale(ax,_scaleMinimum, _scaleMaximum);
+    replot();
+}
+
+void GraphicPlot::setCurveProperties(qint8 channel, QPen pen)
+{
+    if (channel == 0)
+    {
+        _curveZero->setPen(pen);
+    }
+    else if (channel == 1)
+    {
+        _curveOne->setPen(pen);
+    }
 }

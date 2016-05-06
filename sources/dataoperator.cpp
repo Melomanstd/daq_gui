@@ -352,17 +352,16 @@ void DataOperator::setParameters(ModeParameters parameters)
     _channelZeroMeasuring = parameters.channelZeroState;
     _channelOneMeasuring = parameters.channelOneState;
 
-    //singleshot mode
-    _measuringInterval      =
-            static_cast<quint32> (1000 / parameters.measuringInterval);
+    _measuringInterval      = parameters.measuringInterval;
+//            static_cast<quint32> (1000 / );
 
     //block mode
     _measureSampleCount     =
             static_cast<U32> (parameters.blockSize);
     _measureSampleInterval  =
-            static_cast<U32> (parameters.measuringInterval);
+            static_cast<U32> (parameters.samplingInterval);
     _measuringBlockInterval =
-            static_cast<U32> (parameters.measuringInterval);
+            static_cast<U32> (parameters.scaningInterval);
 
     _samplesBlockBuffer_0 = new U16[_measureSampleCount];
     _samplesBlockBuffer_1 = new U16[_measureSampleCount];
@@ -373,15 +372,15 @@ void DataOperator::setParameters(ModeParameters parameters)
 void DataOperator::_singleshotMeasure()
 {
     _mutex.tryLock();
-    if (_channelZeroMeasuring == true)
+    if (_channelZeroMeasuring == STATE_ON)
     {
         ::D2K_AI_VReadChannel(_cardID, 0, &_voltageSingleshotValue_0);
     }
-    if (_channelOneMeasuring == true)
+    if (_channelOneMeasuring == STATE_ON)
     {
         ::D2K_AI_VReadChannel(_cardID, 1, &_voltageSingleshotValue_1);
     }
-    msleep(_measuringInterval);
+    msleep(1000 / _measuringInterval);
     _newDataReady = true;
     _mutex.unlock();
 }
@@ -420,7 +419,12 @@ void DataOperator::_blockMeasure()
             qDebug() << "error";
         }
     }
-    msleep(80);
+    msleep(_measuringInterval);
     _newDataReady = true;
     _mutex.unlock();
+}
+
+QString DataOperator::getLastError()
+{
+    return _lastError;
 }

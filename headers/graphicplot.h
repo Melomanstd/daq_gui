@@ -28,6 +28,9 @@ public:
 
     void        displayBlock();
 
+    void        rescaleAxis(Axis ax, int value);
+    void        setCurveProperties(qint8 channel, QPen pen);
+
 private:
     QwtPlotCurve*       _curveZero;
     QwtPlotCurve*       _curveOne;
@@ -52,6 +55,9 @@ private:
 
     double*             _channelZeroVoltageBuffer;
     double*             _channelOneVoltageBuffer;
+
+    int                 _lastZoom_0;
+    int                 _lastZoom_1;
 };
 
 #endif // GRAPHICPLOT_H
