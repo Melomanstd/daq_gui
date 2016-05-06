@@ -20,9 +20,6 @@ public:
     qint32 getSamplesCount();
     qint32 getMeasuringMode();
 
-    bool   channelZeroState();
-    bool   channelOneState();
-
     void   setDefaultParameters(ModeParameters parameters);
 
 private:

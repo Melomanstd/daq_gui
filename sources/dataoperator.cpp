@@ -424,3 +424,8 @@ void DataOperator::_blockMeasure()
     _newDataReady = true;
     _mutex.unlock();
 }
+
+QString DataOperator::getLastError()
+{
+    return _lastError;
+}

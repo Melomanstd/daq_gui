@@ -66,16 +66,6 @@ qint32 ParametersDialog::getMeasuringMode()
     return _mode;
 }
 
-bool ParametersDialog::channelZeroState()
-{
-    return ui->channel_zero_check->isChecked();
-}
-
-bool ParametersDialog::channelOneState()
-{
-    return ui->channel_one_check->isChecked();
-}
-
 void ParametersDialog::setDefaultParameters(ModeParameters parameters)
 {
     if (parameters.mode == MODE_SINGLESHOT_MEASURING)
@@ -90,12 +80,4 @@ void ParametersDialog::setDefaultParameters(ModeParameters parameters)
     }
 
     ui->meas_time_spin->setValue(parameters.measuringInterval);
-    if (parameters.channelZeroState == STATE_ON)
-    {
-        ui->channel_zero_check->setChecked(true);
-    }
-    if (parameters.channelOneState == STATE_ON)
-    {
-        ui->channel_one_check->setChecked(true);
-    }
 }

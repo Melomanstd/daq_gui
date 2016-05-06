@@ -298,4 +298,5 @@ void GraphicPlot::rescaleAxis(Axis ax, int value)
     _scaleMinimum = static_cast<double> (value) * 0.1 * -1.0;
     _scaleMaximum = static_cast<double> (value) * 0.1;
     setAxisScale(ax,_scaleMinimum, _scaleMaximum);
+    replot();
 }

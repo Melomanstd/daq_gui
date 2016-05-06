@@ -39,8 +39,11 @@ private slots:
     void on_ch_1_zoom_in_btn_clicked();
     void on_ch_0_zoom_out_btn_clicked();
     void on_ch_1_zoom_out_btn_clicked();
+    void on_channelZero_check_toggled(bool state);
+    void on_channelOne_check_toggled(bool state);
 
     void _updatePlot();
+    void _displayError();
 
 private:
     Ui::MainWindow  *ui;

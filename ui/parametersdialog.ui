@@ -105,27 +105,6 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QCheckBox" name="channel_zero_check">
-       <property name="text">
-        <string>Channel 1</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="channel_one_check">
-       <property name="text">
-        <string>Channel 2</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
     <widget class="QGroupBox" name="block_box">
      <property name="title">
       <string/>
