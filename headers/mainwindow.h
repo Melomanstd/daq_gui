@@ -28,6 +28,8 @@ private:
     void            _initializeDataOperator();
     bool            _setupParameters();
     ModeParameters  _lastParameters();
+    void            _channelZeroState(bool state);
+    void            _channelOneState(bool state);
 
 private slots:
     void on_parameters_btn_clicked();

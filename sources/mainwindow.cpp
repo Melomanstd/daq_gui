@@ -34,6 +34,29 @@ MainWindow::MainWindow(QWidget *parent) :
 //    singleShot();
 //    blocks();
 
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    if (settings.value("channel_zero", STATE_ON) == STATE_ON)
+    {
+        ui->channelZero_check->setChecked(true);
+        _channelZeroState(true);
+    }
+    else
+    {
+        ui->channelZero_check->setChecked(false);
+        _channelZeroState(false);
+    }
+
+    if (settings.value("channel_one", STATE_OFF) == STATE_ON)
+    {
+        ui->channelOne_check->setChecked(true);
+        _channelOneState(true);
+    }
+    else
+    {
+        ui->channelOne_check->setChecked(false);
+        _channelOneState(false);
+    }
+
     ui->ch_0_voltage_range_slider->setValue(80);
     ui->ch_1_voltage_range_slider->setValue(80);
 }
@@ -403,10 +426,7 @@ void MainWindow::on_channelZero_check_toggled(bool state)
         settings.setValue("channel_zero", STATE_OFF);
         _plotBufferZero = 0;
     }
-    _plot->enableAxis(QwtPlot::yLeft, state);
-    ui->ch_0_voltage_range_slider->setVisible(state);
-    ui->ch_0_zoom_in_btn->setVisible(state);
-    ui->ch_0_zoom_out_btn->setVisible(state);
+    _channelZeroState(state);
 }
 
 void MainWindow::on_channelOne_check_toggled(bool state)
@@ -423,10 +443,7 @@ void MainWindow::on_channelOne_check_toggled(bool state)
         settings.setValue("channel_one", STATE_OFF);
         _plotBufferOne = 0;
     }
-    _plot->enableAxis(QwtPlot::yRight, state);
-    ui->ch_1_voltage_range_slider->setVisible(state);
-    ui->ch_1_zoom_in_btn->setVisible(state);
-    ui->ch_1_zoom_out_btn->setVisible(state);
+    _channelOneState(state);
 }
 
 void MainWindow::_displayError()
@@ -435,4 +452,20 @@ void MainWindow::_displayError()
                           tr("Error"),
                           _dataOperator->getLastError(),
                           QMessageBox::Ok);
+}
+
+void MainWindow::_channelZeroState(bool state)
+{
+    _plot->enableAxis(QwtPlot::yLeft, state);
+    ui->ch_0_voltage_range_slider->setVisible(state);
+    ui->ch_0_zoom_in_btn->setVisible(state);
+    ui->ch_0_zoom_out_btn->setVisible(state);
+}
+
+void MainWindow::_channelOneState(bool state)
+{
+    _plot->enableAxis(QwtPlot::yRight, state);
+    ui->ch_1_voltage_range_slider->setVisible(state);
+    ui->ch_1_zoom_in_btn->setVisible(state);
+    ui->ch_1_zoom_out_btn->setVisible(state);
 }
