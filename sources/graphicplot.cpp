@@ -38,6 +38,9 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 //    insertLegend(new QwtLegend);
     QwtPlotGrid *g = new QwtPlotGrid();
     g->setMajPen(QPen(Qt::gray, 2));
+    g->setMinPen(QPen(Qt::gray, 2));
+    g->enableXMin(true);
+    g->enableYMin(true);
     g->attach(this);
 
     _curveZero = new QwtPlotCurve();
