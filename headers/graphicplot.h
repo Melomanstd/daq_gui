@@ -55,6 +55,8 @@ private:
 
     double*             _channelZeroVoltageBuffer;
     double*             _channelOneVoltageBuffer;
+
+    int lastZoom;
 };
 
 #endif // GRAPHICPLOT_H
