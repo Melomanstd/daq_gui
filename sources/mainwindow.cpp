@@ -313,7 +313,7 @@ bool MainWindow::_setupParameters()
 
     if (_parameters.mode == MODE_BLOCK_MEASURING)
     {
-        ui->speed_slider->setMaximum(1000);
+        ui->speed_slider->setMaximum(990);
         ui->speed_slider->setMinimum(10);
         ui->speed_slider->setValue(10);
 
@@ -525,15 +525,23 @@ void MainWindow::on_speed_slider_valueChanged(int value)
     QSettings settings("settings.ini", QSettings::IniFormat, this);
     _parameters.measuringInterval = value;
     settings.setValue("measuring_interval", value);
+
+    if (_parameters.mode == MODE_BLOCK_MEASURING)
+    {
+        value = 1000 - value;
+    }
+    else
+    {
+        _plot->setDisplayStep(_parameters.measuringInterval);
+        //points per sec * displayed seconds
+        _plot->setDisplayedPoints(_parameters.measuringInterval *
+                                  _parameters.displayedInterval,
+                                  !_isWorking,
+                                  _parameters.mode);
+    }
+
     if (_dataOperator != 0)
     {
         _dataOperator->setMeasuringInterval(value);
     }
-
-    _plot->setDisplayStep(_parameters.measuringInterval);
-    //points per sec * displayed seconds
-    _plot->setDisplayedPoints(_parameters.measuringInterval *
-                              _parameters.displayedInterval,
-                              !_isWorking,
-                              _parameters.mode);
 }

@@ -331,7 +331,7 @@ bool DataOperator::isDataReady()
 void DataOperator::setMeasuringInterval(quint32 msec)
 {
     _mutex.tryLock();
-    _measuringInterval = 1000 / msec;
+    _measuringInterval = msec;
     _mutex.unlock();
 }
 
@@ -352,8 +352,8 @@ void DataOperator::setParameters(ModeParameters parameters)
     _channelZeroMeasuring = parameters.channelZeroState;
     _channelOneMeasuring = parameters.channelOneState;
 
-    _measuringInterval      =
-            static_cast<quint32> (1000 / parameters.measuringInterval);
+    _measuringInterval      = parameters.measuringInterval;
+//            static_cast<quint32> (1000 / );
 
     //block mode
     _measureSampleCount     =
@@ -380,7 +380,7 @@ void DataOperator::_singleshotMeasure()
     {
         ::D2K_AI_VReadChannel(_cardID, 1, &_voltageSingleshotValue_1);
     }
-    msleep(_measuringInterval);
+    msleep(1000 / _measuringInterval);
     _newDataReady = true;
     _mutex.unlock();
 }
@@ -419,7 +419,7 @@ void DataOperator::_blockMeasure()
             qDebug() << "error";
         }
     }
-    msleep(/*_measuringInterval*/100);
+    msleep(_measuringInterval);
     _newDataReady = true;
     _mutex.unlock();
 }
