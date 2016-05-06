@@ -21,25 +21,25 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(_delayedSliderNewValue(int)));
     ui->horizontalLayout->insertWidget(4,delayedSlider);
 
-    modeLabel = new QLabel(tr("Current mode:"));
-    modeValue = new QLabel(tr("No mode"));
-    intervalLabel = new QLabel(tr("Measuring interval(msec):"));
-    intervalValue = new QLabel(QString::number(
+    _modeLabel = new QLabel(tr("Current mode:"));
+    _modeValue = new QLabel(tr("No mode"));
+    _intervalLabel = new QLabel(tr("Measuring interval(msec):"));
+    _intervalValue = new QLabel(QString::number(
                                (delayedSlider->value())));
 
-    QFont font = modeLabel->font();
+    QFont font = _modeLabel->font();
     font.setBold(true);
     font.setPointSize(12);
 
-    modeLabel->setFont(font);
-    modeValue->setFont(font);
-    intervalLabel->setFont(font);
-    intervalValue->setFont(font);
+    _modeLabel->setFont(font);
+    _modeValue->setFont(font);
+    _intervalLabel->setFont(font);
+    _intervalValue->setFont(font);
 
-    statusBar()->addWidget(modeLabel);
-    statusBar()->addWidget(modeValue);
-    statusBar()->addWidget(intervalLabel);
-    statusBar()->addWidget(intervalValue);
+    statusBar()->addWidget(_modeLabel);
+    statusBar()->addWidget(_modeValue);
+    statusBar()->addWidget(_intervalLabel);
+    statusBar()->addWidget(_intervalValue);
 
     ui->stop_btn->setChecked(true);
 
@@ -305,7 +305,7 @@ void MainWindow::on_start_btn_clicked()
     {
         ui->start_btn->setChecked(false);
         ui->stop_btn->setChecked(true);
-        modeValue->setText(tr("No mode"));
+        _modeValue->setText(tr("No mode"));
         return;
     }
     _isWorking = true;
@@ -321,7 +321,7 @@ void MainWindow::on_stop_btn_clicked()
     _dataOperator->stopWorking();
     _plotBufferZero = 0;
     _plotBufferOne = 0;
-    modeValue->setText(tr("No mode"));
+    _modeValue->setText(tr("No mode"));
 }
 
 bool MainWindow::_setupParameters()
@@ -368,7 +368,7 @@ bool MainWindow::_setupParameters()
                         _parameters.blockSize);
         }
 
-        modeValue->setText(tr("Block measuring mode"));
+        _modeValue->setText(tr("Block measuring mode"));
     }
     else if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
     {
@@ -394,7 +394,7 @@ bool MainWindow::_setupParameters()
         _plotBufferZero = 0;
         _plotBufferOne = 0;
 
-        modeValue->setText(tr("Singleshot measuring mode"));
+        _modeValue->setText(tr("Singleshot measuring mode"));
     }
 
     _plot->setChannels(ui->channelZero_check->isChecked(),
@@ -483,6 +483,11 @@ void MainWindow::on_channelZero_check_toggled(bool state)
         _plotBufferZero = 0;
     }
     _channelZeroState(state);
+    if (_dataOperator != 0)
+    {
+        _dataOperator->setChannelStatus(CHANNEL_0,
+                                        _parameters.channelZeroState);
+    }
 }
 
 void MainWindow::on_channelOne_check_toggled(bool state)
@@ -500,6 +505,11 @@ void MainWindow::on_channelOne_check_toggled(bool state)
         _plotBufferOne = 0;
     }
     _channelOneState(state);
+    if (_dataOperator != 0)
+    {
+        _dataOperator->setChannelStatus(CHANNEL_1,
+                                        _parameters.channelOneState);
+    }
 }
 
 void MainWindow::_displayError()
@@ -512,6 +522,8 @@ void MainWindow::_displayError()
 
 void MainWindow::_channelZeroState(bool state)
 {
+    _plot->setChannels(ui->channelZero_check->isChecked(),
+                       ui->channelOne_check->isChecked());
     _plot->enableAxis(QwtPlot::yLeft, state);
     ui->ch_0_voltage_range_slider->setVisible(state);
     ui->ch_0_zoom_in_btn->setVisible(state);
@@ -520,6 +532,8 @@ void MainWindow::_channelZeroState(bool state)
 
 void MainWindow::_channelOneState(bool state)
 {
+    _plot->setChannels(ui->channelZero_check->isChecked(),
+                       ui->channelOne_check->isChecked());
     _plot->enableAxis(QwtPlot::yRight, state);
     ui->ch_1_voltage_range_slider->setVisible(state);
     ui->ch_1_zoom_in_btn->setVisible(state);
@@ -578,5 +592,5 @@ void MainWindow::_delayedSliderNewValue(int value)
     {
         _dataOperator->setMeasuringInterval(value);
     }
-    intervalValue->setText(QString::number(value));
+    _intervalValue->setText(QString::number(value));
 }

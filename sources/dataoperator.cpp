@@ -372,11 +372,11 @@ void DataOperator::setParameters(ModeParameters parameters)
 void DataOperator::_singleshotMeasure()
 {
     _mutex.tryLock();
-    if (_channelZeroMeasuring == true)
+    if (_channelZeroMeasuring == STATE_ON)
     {
         ::D2K_AI_VReadChannel(_cardID, 0, &_voltageSingleshotValue_0);
     }
-    if (_channelOneMeasuring == true)
+    if (_channelOneMeasuring == STATE_ON)
     {
         ::D2K_AI_VReadChannel(_cardID, 1, &_voltageSingleshotValue_1);
     }

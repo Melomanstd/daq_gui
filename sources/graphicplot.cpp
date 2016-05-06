@@ -109,37 +109,6 @@ void GraphicPlot::setPoint(const double &voltage_0,
 
     ++_count;
 
-//    if (--_currentStep <= 0)
-//    {
-//        _currentStep = _displayStep;
-//        _scaleMaximum = _count / _displayStep;
-//        if ((_scaleMaximum - _scaleMinimum) > 10)
-//        {
-//            ++_scaleMinimum;
-//            setAxisScale(QwtPlot::xBottom,
-//                                 _scaleMinimum,
-//                                 _scaleMaximum,
-//                                 1);
-//        }
-//    }
-    /*if (voltage < _scaleMinimum)
-    {
-        while (voltage < _scaleMinimum)
-        {
-            _scaleMinimum -= 0.25;
-        }
-        setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
-    }
-
-    if (voltage > _scaleMaximum)
-    {
-        while (voltage > _scaleMaximum)
-        {
-            _scaleMaximum += 0.25;
-        }
-        setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
-    }*/
-
     if (_initializedPoints < _displayedPoints)
     {
         _initializedPoints++;
@@ -150,11 +119,13 @@ void GraphicPlot::setPoint(const double &voltage_0,
     }
     else
     {
-        if (_channelZeroEnabled)
+        if ((_channelZeroEnabled == true) &&
+                (_pointsZero.size() >= _initializedPoints))
         {
             _pointsZero.pop_front();
         }
-        if (_channelOneEnabled)
+        if ((_channelOneEnabled == true) &&
+                (_pointsOne.size() >= _initializedPoints))
         {
             _pointsOne.pop_front();
         }
@@ -163,18 +134,7 @@ void GraphicPlot::setPoint(const double &voltage_0,
                      _count - _displayedPoints,
                      _count - 1,
                      _displayStep);
-
-//        setAxisScale(QwtPlot::yLeft,
-//                     _points.first().y(),
-//                     voltage);
     }
-
-    /*
-    _points.append(QPointF(++_count, voltage));
-    _curve->setSamples(_points.toVector());
-    */
-
-
 
     replot();
 }
@@ -241,6 +201,27 @@ void GraphicPlot::setChannels(bool ch1, bool ch2)
 {
     _channelOneEnabled = ch2;
     _channelZeroEnabled = ch1;
+
+    if (_channelZeroEnabled == true)
+    {
+        _curveZero->show();
+    }
+    else
+    {
+        _curveZero->hide();
+        _pointsZero.clear();
+    }
+
+    if (_channelOneEnabled == true)
+    {
+        _curveOne->show();
+    }
+    else
+    {
+        _curveOne->hide();
+        _pointsOne.clear();
+    }
+    replot();
 }
 
 double *GraphicPlot::initializeChannelZeroBuffer(

@@ -64,15 +64,15 @@ private:
 
     bool            _isWorking;
 
-    double* _plotBufferZero;
-    double* _plotBufferOne;
+    double*         _plotBufferZero;
+    double*         _plotBufferOne;
 
-    QLabel *modeLabel;
-    QLabel *modeValue;
-    QLabel *intervalLabel;
-    QLabel *intervalValue;
+    QLabel*         _modeLabel;
+    QLabel*         _modeValue;
+    QLabel*         _intervalLabel;
+    QLabel*         _intervalValue;
 
-    TimerSlider *delayedSlider;
+    TimerSlider*    delayedSlider;
 };
 
 #endif // MAINWINDOW_H
