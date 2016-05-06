@@ -210,6 +210,7 @@ void GraphicPlot::setChannels(bool ch1, bool ch2)
     {
         _curveZero->hide();
         _pointsZero.clear();
+        _curveZero->setSamples(_pointsZero);
     }
 
     if (_channelOneEnabled == true)
@@ -220,6 +221,7 @@ void GraphicPlot::setChannels(bool ch1, bool ch2)
     {
         _curveOne->hide();
         _pointsOne.clear();
+        _curveOne->setSamples(_pointsOne);
     }
     replot();
 }
