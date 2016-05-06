@@ -14,6 +14,28 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setWindowTitle(tr("DAQ 2213 Signal visualizer"));
+
+    modeLabel = new QLabel(tr("Current mode:"));
+    modeValue = new QLabel(tr("No mode"));
+    intervalLabel = new QLabel(tr("Measuring interval(msec):"));
+    intervalValue = new QLabel(QString::number(
+                               (ui->speed_slider->value())));
+
+    QFont font = modeLabel->font();
+    font.setBold(true);
+    font.setPointSize(12);
+
+    modeLabel->setFont(font);
+    modeValue->setFont(font);
+    intervalLabel->setFont(font);
+    intervalValue->setFont(font);
+
+    statusBar()->addWidget(modeLabel);
+    statusBar()->addWidget(modeValue);
+    statusBar()->addWidget(intervalLabel);
+    statusBar()->addWidget(intervalValue);
+
     ui->stop_btn->setChecked(true);
 
     _updateTimer = new QTimer;
@@ -278,6 +300,7 @@ void MainWindow::on_start_btn_clicked()
     {
         ui->start_btn->setChecked(false);
         ui->stop_btn->setChecked(true);
+        modeValue->setText(tr("No mode"));
         return;
     }
     _isWorking = true;
@@ -293,6 +316,7 @@ void MainWindow::on_stop_btn_clicked()
     _dataOperator->stopWorking();
     _plotBufferZero = 0;
     _plotBufferOne = 0;
+    modeValue->setText(tr("No mode"));
 }
 
 bool MainWindow::_setupParameters()
@@ -317,6 +341,7 @@ bool MainWindow::_setupParameters()
         ui->speed_slider->setMinimum(10);
         ui->speed_slider->setValue(10);
 
+        _parameters.measuringInterval = 990;
         _parameters.blockSize = p.getSamplesPerMeasuring();
         _parameters.scaningInterval = p.getScaningInterval();
         _parameters.samplingInterval = p.getSamplesInterval();
@@ -337,6 +362,8 @@ bool MainWindow::_setupParameters()
             _plotBufferOne = _plot->initializeChannelOneBuffer(
                         _parameters.blockSize);
         }
+
+        modeValue->setText(tr("Block measuring mode"));
     }
     else if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
     {
@@ -361,6 +388,8 @@ bool MainWindow::_setupParameters()
 
         _plotBufferZero = 0;
         _plotBufferOne = 0;
+
+        modeValue->setText(tr("Singleshot measuring mode"));
     }
 
     _plot->setChannels(ui->channelZero_check->isChecked(),
@@ -544,4 +573,5 @@ void MainWindow::on_speed_slider_valueChanged(int value)
     {
         _dataOperator->setMeasuringInterval(value);
     }
+    intervalValue->setText(QString::number(value));
 }

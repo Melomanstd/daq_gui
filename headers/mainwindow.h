@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QTimer>
 #include <QSettings>
+#include <QLabel>
 
 #include "dataoperator.h"
 #include "graphicplot.h"
@@ -64,6 +65,11 @@ private:
 
     double* _plotBufferZero;
     double* _plotBufferOne;
+
+    QLabel *modeLabel;
+    QLabel *modeValue;
+    QLabel *intervalLabel;
+    QLabel *intervalValue;
 };
 
 #endif // MAINWINDOW_H
