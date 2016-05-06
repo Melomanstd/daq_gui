@@ -8,6 +8,7 @@
 
 #include "dataoperator.h"
 #include "graphicplot.h"
+#include "timerslider.h"
 
 namespace Ui {
 class MainWindow;
@@ -46,7 +47,7 @@ private slots:
     void on_channelOne_check_toggled(bool state);
     void on_forward_btn_clicked();
     void on_backward_btn_clicked();
-    void on_speed_slider_valueChanged(int value);
+    void _delayedSliderNewValue(int value);
 
     void _updatePlot();
     void _displayError();
@@ -70,6 +71,8 @@ private:
     QLabel *modeValue;
     QLabel *intervalLabel;
     QLabel *intervalValue;
+
+    TimerSlider *delayedSlider;
 };
 
 #endif // MAINWINDOW_H

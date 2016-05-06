@@ -16,11 +16,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setWindowTitle(tr("DAQ 2213 Signal visualizer"));
 
+    delayedSlider = new TimerSlider(Qt::Horizontal, 0);
+    connect(delayedSlider, SIGNAL(NewValue(int)),
+            this, SLOT(_delayedSliderNewValue(int)));
+    ui->horizontalLayout->insertWidget(4,delayedSlider);
+
     modeLabel = new QLabel(tr("Current mode:"));
     modeValue = new QLabel(tr("No mode"));
     intervalLabel = new QLabel(tr("Measuring interval(msec):"));
     intervalValue = new QLabel(QString::number(
-                               (ui->speed_slider->value())));
+                               (delayedSlider->value())));
 
     QFont font = modeLabel->font();
     font.setBold(true);
@@ -337,9 +342,9 @@ bool MainWindow::_setupParameters()
 
     if (_parameters.mode == MODE_BLOCK_MEASURING)
     {
-        ui->speed_slider->setMaximum(990);
-        ui->speed_slider->setMinimum(10);
-        ui->speed_slider->setValue(10);
+        delayedSlider->setMaximum(990);
+        delayedSlider->setMinimum(10);
+        delayedSlider->setValue(10);
 
         _parameters.measuringInterval = 990;
         _parameters.blockSize = p.getSamplesPerMeasuring();
@@ -367,11 +372,11 @@ bool MainWindow::_setupParameters()
     }
     else if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
     {
-        ui->speed_slider->setMaximum(100);
-        ui->speed_slider->setMinimum(1);
-        ui->speed_slider->setValue(1);
-        ui->speed_slider->setPageStep(1);
-        ui->speed_slider->setSingleStep(1);
+        delayedSlider->setMaximum(100);
+        delayedSlider->setMinimum(1);
+        delayedSlider->setValue(1);
+        delayedSlider->setPageStep(1);
+        delayedSlider->setSingleStep(1);
 
         _parameters.displayedInterval = p.getDisplayedInterval();
         _parameters.measuringInterval = p.getMeasuringsPerSecond();
@@ -532,7 +537,7 @@ void MainWindow::on_forward_btn_clicked()
     {
         temp = 1;
     }
-    ui->speed_slider->setValue(ui->speed_slider->value() + temp);
+    delayedSlider->setValue(delayedSlider->value() + temp);
 }
 
 void MainWindow::on_backward_btn_clicked()
@@ -546,10 +551,10 @@ void MainWindow::on_backward_btn_clicked()
     {
         temp = 1;
     }
-    ui->speed_slider->setValue(ui->speed_slider->value() - temp);
+    delayedSlider->setValue(delayedSlider->value() - temp);
 }
 
-void MainWindow::on_speed_slider_valueChanged(int value)
+void MainWindow::_delayedSliderNewValue(int value)
 {
     QSettings settings("settings.ini", QSettings::IniFormat, this);
     _parameters.measuringInterval = value;

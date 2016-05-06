@@ -16,16 +16,23 @@ SOURCES +=  sources/main.cpp\
             sources/mainwindow.cpp \
             sources/dataoperator.cpp \
             sources/parametersdialog.cpp \
-            sources/graphicplot.cpp
+            sources/graphicplot.cpp \
+            sources/timerslider.cpp
 
 HEADERS  += headers/mainwindow.h \
             headers/dataoperator.h \
             headers/parametersdialog.h \
             headers/defines.h \
-            headers/graphicplot.h
+            headers/graphicplot.h \
+            headers/timerslider.h
 
 FORMS    += ui/mainwindow.ui \
             ui/parametersdialog.ui
+
+RESOURCES += \
+    resources.qrc
+
+TRANSLATIONS += daq_signal_visualizer_ru.ts
 
 #QWT
 INCLUDEPATH +=  C:\\Qt\\Qwt-6.0.1\\include
@@ -37,5 +44,3 @@ INCLUDEPATH +=  C:\\ADLINK\\D2K-DASK\\Include
 LIBS        +=  -LC:\\ADLINK\\D2K-DASK\\Lib \
                 -lD2K-Dask
 
-RESOURCES += \
-    resources.qrc
