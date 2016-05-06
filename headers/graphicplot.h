@@ -29,6 +29,7 @@ public:
     void        displayBlock();
 
     void        rescaleAxis(Axis ax, int value);
+    void        setCurveProperties(qint8 channel, QPen pen);
 
 private:
     QwtPlotCurve*       _curveZero;

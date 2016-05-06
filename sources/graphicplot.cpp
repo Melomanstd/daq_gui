@@ -300,3 +300,15 @@ void GraphicPlot::rescaleAxis(Axis ax, int value)
     setAxisScale(ax,_scaleMinimum, _scaleMaximum);
     replot();
 }
+
+void GraphicPlot::setCurveProperties(qint8 channel, QPen pen)
+{
+    if (channel == 0)
+    {
+        _curveZero->setPen(pen);
+    }
+    else if (channel == 1)
+    {
+        _curveOne->setPen(pen);
+    }
+}

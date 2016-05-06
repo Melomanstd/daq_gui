@@ -14,12 +14,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QPalette pal = ui->channelZero_check->palette();
-    pal.setColor(QPalette::WindowText, Qt::blue);
-    ui->channelZero_check->setPalette(pal);
-    pal.setColor(QPalette::WindowText, Qt::darkCyan);
-    ui->channelOne_check->setPalette(pal);
-
     ui->stop_btn->setChecked(true);
 
     _updateTimer = new QTimer;
@@ -59,6 +53,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->ch_0_voltage_range_slider->setValue(80);
     ui->ch_1_voltage_range_slider->setValue(80);
+
+    QColor channelZeroColor = Qt::blue;
+    QColor channelOneColor = Qt::darkCyan;
+
+    QPalette pal = ui->channelZero_check->palette();
+    pal.setColor(QPalette::WindowText, channelZeroColor);
+    ui->channelZero_check->setPalette(pal);
+    pal.setColor(QPalette::WindowText, channelOneColor);
+    ui->channelOne_check->setPalette(pal);
+
+    _plot->setCurveProperties(0, QPen(channelZeroColor, 6));
+    _plot->setCurveProperties(1, QPen(channelOneColor, 6));
 }
 
 MainWindow::~MainWindow()
