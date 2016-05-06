@@ -331,7 +331,7 @@ bool DataOperator::isDataReady()
 void DataOperator::setMeasuringInterval(quint32 msec)
 {
     _mutex.tryLock();
-    _measuringInterval = msec;
+    _measuringInterval = 1000 / msec;
     _mutex.unlock();
 }
 
@@ -352,7 +352,6 @@ void DataOperator::setParameters(ModeParameters parameters)
     _channelZeroMeasuring = parameters.channelZeroState;
     _channelOneMeasuring = parameters.channelOneState;
 
-    //singleshot mode
     _measuringInterval      =
             static_cast<quint32> (1000 / parameters.measuringInterval);
 
@@ -360,9 +359,9 @@ void DataOperator::setParameters(ModeParameters parameters)
     _measureSampleCount     =
             static_cast<U32> (parameters.blockSize);
     _measureSampleInterval  =
-            static_cast<U32> (parameters.measuringInterval);
+            static_cast<U32> (parameters.samplingInterval);
     _measuringBlockInterval =
-            static_cast<U32> (parameters.measuringInterval);
+            static_cast<U32> (parameters.scaningInterval);
 
     _samplesBlockBuffer_0 = new U16[_measureSampleCount];
     _samplesBlockBuffer_1 = new U16[_measureSampleCount];
@@ -420,7 +419,7 @@ void DataOperator::_blockMeasure()
             qDebug() << "error";
         }
     }
-    msleep(80);
+    msleep(/*_measuringInterval*/100);
     _newDataReady = true;
     _mutex.unlock();
 }

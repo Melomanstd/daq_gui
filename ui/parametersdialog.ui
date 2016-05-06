@@ -113,15 +113,9 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLabel" name="meas_time_lbl">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
+         <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Measuring interval</string>
+           <string>TextLabel</string>
           </property>
          </widget>
         </item>
@@ -139,11 +133,17 @@
          </spacer>
         </item>
         <item>
-         <widget class="QSpinBox" name="meas_time_spin">
+         <widget class="QSpinBox" name="spin_0">
           <property name="minimumSize">
            <size>
             <width>60</width>
             <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="minimum">
@@ -159,15 +159,9 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLabel" name="meas_samples_count_lbl">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
+         <widget class="QLabel" name="label_4">
           <property name="text">
-           <string>Samples per block</string>
+           <string>TextLabel</string>
           </property>
          </widget>
         </item>
@@ -185,11 +179,63 @@
          </spacer>
         </item>
         <item>
-         <widget class="QSpinBox" name="meas_samples_count_spin">
+         <widget class="QSpinBox" name="spin_1">
           <property name="minimumSize">
            <size>
             <width>60</width>
             <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>65530</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spin_2">
+          <property name="minimumSize">
+           <size>
+            <width>60</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="minimum">

@@ -34,13 +34,15 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     setAxisMaxMinor(yLeft, 2);
     setAxisMaxMajor(yRight, 10);
     setAxisMaxMinor(yRight, 2);
+    setAxisMaxMajor(xBottom, 10);
+    setAxisMaxMinor(xBottom, 2);
 
 //    insertLegend(new QwtLegend);
     QwtPlotGrid *g = new QwtPlotGrid();
     g->setMajPen(QPen(Qt::gray, 2));
-    g->setMinPen(QPen(Qt::gray, 2));
-    g->enableXMin(true);
-    g->enableYMin(true);
+//    g->setMinPen(QPen(Qt::gray, 2));
+    g->enableXMin(false);
+    g->enableYMin(false);
     g->attach(this);
 
     _curveZero = new QwtPlotCurve();
@@ -68,6 +70,7 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 
     QwtPlotPanner *panner = new QwtPlotPanner(canvas());
     panner->setMouseButton(Qt::LeftButton);
+    replot();
 
 //    setAutoReplot(true);
 //    setAxisMaxMajor(QwtPlot::xBottom, 1);

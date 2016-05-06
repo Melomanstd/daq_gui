@@ -16,9 +16,18 @@ public:
     explicit ParametersDialog(QWidget *parent = 0);
     ~ParametersDialog();
 
-    qint32 getMeasuringTime();
-    qint32 getSamplesCount();
     qint32 getMeasuringMode();
+
+    //singleshot mode
+    qint32 getMeasuringsPerSecond();
+    qint32 getDisplayedInterval();
+    //
+
+    //block mode
+    qint32 getSamplesPerMeasuring();
+    qint32 getScaningInterval();
+    qint32 getSamplesInterval();
+    //
 
     void   setDefaultParameters(ModeParameters parameters);
 

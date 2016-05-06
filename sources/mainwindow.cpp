@@ -63,8 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
     pal.setColor(QPalette::WindowText, channelOneColor);
     ui->channelOne_check->setPalette(pal);
 
-    _plot->setCurveProperties(0, QPen(channelZeroColor, 6));
-    _plot->setCurveProperties(1, QPen(channelOneColor, 6));
+    _plot->setCurveProperties(0, QPen(channelZeroColor, 3));
+    _plot->setCurveProperties(1, QPen(channelOneColor, 3));
 }
 
 MainWindow::~MainWindow()
@@ -289,6 +289,7 @@ void MainWindow::on_stop_btn_clicked()
     ui->start_btn->setChecked(false);
     ui->stop_btn->setChecked(true);
     _isWorking = false;
+    _updateTimer->stop();
     _dataOperator->stopWorking();
     _plotBufferZero = 0;
     _plotBufferOne = 0;
@@ -307,39 +308,56 @@ bool MainWindow::_setupParameters()
     QSettings settings("settings.ini", QSettings::IniFormat, this);
 
     _parameters.mode = p.getMeasuringMode();
-    _parameters.measuringInterval = p.getMeasuringTime();
-    int value = p.getSamplesCount();
 
     settings.setValue("measuring_mode", _parameters.mode);
-    settings.setValue("measuring_interval", _parameters.measuringInterval);
+
     if (_parameters.mode == MODE_BLOCK_MEASURING)
     {
-        _parameters.blockSize = value;
-        _plot->setDisplayStep(value / 10);
-        _plot->setDisplayedPoints(value, !_isWorking, _parameters.mode);
-        settings.setValue("samples_count", value);
+        ui->speed_slider->setMaximum(1000);
+        ui->speed_slider->setMinimum(10);
+        ui->speed_slider->setValue(10);
+
+        _parameters.blockSize = p.getSamplesPerMeasuring();
+        _parameters.scaningInterval = p.getScaningInterval();
+        _parameters.samplingInterval = p.getSamplesInterval();
+        _plot->setDisplayStep(_parameters.blockSize / 10);
+        _plot->setDisplayedPoints(_parameters.blockSize,
+                                  !_isWorking,
+                                  _parameters.mode);
+        settings.setValue("samples_count",
+                          _parameters.blockSize);
 
         if (ui->channelZero_check->isChecked() == true)
         {
-            _plotBufferZero = _plot->initializeChannelZeroBuffer(value);
+            _plotBufferZero = _plot->initializeChannelZeroBuffer(
+                        _parameters.blockSize);
         }
         if (ui->channelOne_check->isChecked() == true)
         {
-            _plotBufferOne = _plot->initializeChannelOneBuffer(value);
+            _plotBufferOne = _plot->initializeChannelOneBuffer(
+                        _parameters.blockSize);
         }
     }
     else if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
     {
-        _parameters.displayedInterval = value;
+        ui->speed_slider->setMaximum(100);
+        ui->speed_slider->setMinimum(1);
+        ui->speed_slider->setValue(1);
+        ui->speed_slider->setPageStep(1);
+        ui->speed_slider->setSingleStep(1);
+
+        _parameters.displayedInterval = p.getDisplayedInterval();
+        _parameters.measuringInterval = p.getMeasuringsPerSecond();
 //        _plot->setAxisTitle(QwtPlot::xBottom, tr("Seconds"));
 
-        //points per sec * displayed seconds
         _plot->setDisplayStep(_parameters.measuringInterval);
+        //points per sec * displayed seconds
         _plot->setDisplayedPoints(_parameters.measuringInterval *
                                   _parameters.displayedInterval,
                                   !_isWorking,
                                   _parameters.mode);
-        settings.setValue("displayed_interval", value);
+        settings.setValue("displayed_interval",
+                          _parameters.displayedInterval);
 
         _plotBufferZero = 0;
         _plotBufferOne = 0;
@@ -347,8 +365,6 @@ bool MainWindow::_setupParameters()
 
     _plot->setChannels(ui->channelZero_check->isChecked(),
                        ui->channelOne_check->isChecked());
-
-//    int updateInterval = 1000 / _parameters.measuringInterval;
 
     if (_dataOperator != 0)
     {
@@ -474,4 +490,50 @@ void MainWindow::_channelOneState(bool state)
     ui->ch_1_voltage_range_slider->setVisible(state);
     ui->ch_1_zoom_in_btn->setVisible(state);
     ui->ch_1_zoom_out_btn->setVisible(state);
+}
+
+void MainWindow::on_forward_btn_clicked()
+{
+    int temp = 0;
+    if (_parameters.mode == MODE_BLOCK_MEASURING)
+    {
+        temp = 5;
+    }
+    else
+    {
+        temp = 1;
+    }
+    ui->speed_slider->setValue(ui->speed_slider->value() + temp);
+}
+
+void MainWindow::on_backward_btn_clicked()
+{
+    int temp = 0;
+    if (_parameters.mode == MODE_BLOCK_MEASURING)
+    {
+        temp = 5;
+    }
+    else
+    {
+        temp = 1;
+    }
+    ui->speed_slider->setValue(ui->speed_slider->value() - temp);
+}
+
+void MainWindow::on_speed_slider_valueChanged(int value)
+{
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    _parameters.measuringInterval = value;
+    settings.setValue("measuring_interval", value);
+    if (_dataOperator != 0)
+    {
+        _dataOperator->setMeasuringInterval(value);
+    }
+
+    _plot->setDisplayStep(_parameters.measuringInterval);
+    //points per sec * displayed seconds
+    _plot->setDisplayedPoints(_parameters.measuringInterval *
+                              _parameters.displayedInterval,
+                              !_isWorking,
+                              _parameters.mode);
 }

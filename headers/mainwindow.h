@@ -43,6 +43,9 @@ private slots:
     void on_ch_1_zoom_out_btn_clicked();
     void on_channelZero_check_toggled(bool state);
     void on_channelOne_check_toggled(bool state);
+    void on_forward_btn_clicked();
+    void on_backward_btn_clicked();
+    void on_speed_slider_valueChanged(int value);
 
     void _updatePlot();
     void _displayError();
