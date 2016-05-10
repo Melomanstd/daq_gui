@@ -235,6 +235,10 @@ void GraphicPlot::setChannels(bool ch1, bool ch2)
         _pointsOne.clear();
         _curveOne->setSamples(_pointsOne);
     }
+
+    _grid->drawLeftScale(ch1);
+    _grid->drawRightScale(ch2);
+
     replot();
 }
 
