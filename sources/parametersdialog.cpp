@@ -8,6 +8,24 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    for (int i = 0; i < 3; i++)
+    {
+        _channelsPin[i] = -1;
+    }
+
+    QStringList items;
+    for (int i = 0; i < 16; i++)
+    {
+        items.append(QString::number(i));
+    }
+    ui->ch1_combo->addItems(items);
+    ui->ch2_combo->addItems(items);
+    ui->ch3_combo->addItems(items);
+
+    ui->ch1_combo->setCurrentIndex(0);
+    ui->ch2_combo->setCurrentIndex(1);
+    ui->ch3_combo->setCurrentIndex(2);
+
     ui->singleshot_btn->setChecked(true);
     _singleshotMode();
 }
@@ -115,4 +133,80 @@ qint32 ParametersDialog::getScaningInterval()
 qint32 ParametersDialog::getSamplesInterval()
 {
     return ui->spin_2->value();
+}
+
+void ParametersDialog::on_ch1_combo_currentIndexChanged(int index)
+{
+    _checkChannelsCommutation();
+}
+
+void ParametersDialog::on_ch2_combo_currentIndexChanged(int index)
+{
+    _checkChannelsCommutation();
+}
+
+void ParametersDialog::on_ch3_combo_currentIndexChanged(int index)
+{
+    _checkChannelsCommutation();
+}
+
+void ParametersDialog::_checkChannelsCommutation()
+{
+    QPalette palette = QLabel().palette();
+
+    if ((ui->ch1_combo->currentIndex() == ui->ch2_combo->currentIndex()) ||
+            (ui->ch1_combo->currentIndex() == ui->ch3_combo->currentIndex()))
+    {
+        palette.setColor(QPalette::WindowText, Qt::red);
+        ui->attention_lbl_1->setPalette(palette);
+        ui->attention_lbl_1->setText(tr("PIN bussy"));
+        _channelsPin[0] = -1;
+    }
+    else
+    {
+        palette.setColor(QPalette::WindowText, Qt::darkGreen);
+        ui->attention_lbl_1->setPalette(palette);
+        ui->attention_lbl_1->setText(tr("Ok"));
+        _channelsPin[0] = ui->ch1_combo->currentIndex();
+    }
+
+    if ((ui->ch2_combo->currentIndex() == ui->ch1_combo->currentIndex()) ||
+            (ui->ch2_combo->currentIndex() == ui->ch3_combo->currentIndex()))
+    {
+        palette.setColor(QPalette::WindowText, Qt::red);
+        ui->attention_lbl_2->setPalette(palette);
+        ui->attention_lbl_2->setText(tr("PIN bussy"));
+        _channelsPin[1] = -1;
+    }
+    else
+    {
+        palette.setColor(QPalette::WindowText, Qt::darkGreen);
+        ui->attention_lbl_2->setPalette(palette);
+        ui->attention_lbl_2->setText(tr("Ok"));
+        _channelsPin[1] = ui->ch1_combo->currentIndex();
+    }
+
+    if ((ui->ch3_combo->currentIndex() == ui->ch2_combo->currentIndex()) ||
+            (ui->ch3_combo->currentIndex() == ui->ch1_combo->currentIndex()))
+    {
+        palette.setColor(QPalette::WindowText, Qt::red);
+        ui->attention_lbl_3->setPalette(palette);
+        ui->attention_lbl_3->setText(tr("PIN bussy"));
+        _channelsPin[2] = -1;
+    }
+    else
+    {
+        palette.setColor(QPalette::WindowText, Qt::darkGreen);
+        ui->attention_lbl_3->setPalette(palette);
+        ui->attention_lbl_3->setText(tr("Ok"));
+        _channelsPin[2] = ui->ch1_combo->currentIndex();
+    }
+}
+
+void ParametersDialog::getChannelsPin(char *ch)
+{
+    for (int i = 0; i < 3; i++)
+    {
+        ch[i] = _channelsPin[i];
+    }
 }

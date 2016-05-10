@@ -11,7 +11,6 @@ class ParametersDialog;
 class ParametersDialog : public QDialog
 {
     Q_OBJECT
-
 public:
     explicit ParametersDialog(QWidget *parent = 0);
     ~ParametersDialog();
@@ -29,20 +28,27 @@ public:
     qint32 getSamplesInterval();
     //
 
+    void getChannelsPin(char/*[3]*/ *ch);
+
     void   setDefaultParameters(ModeParameters parameters);
 
 private:
     void _singleshotMode();
     void _blockMode();
+    void _checkChannelsCommutation();
 
 private slots:
     void on_singleshot_btn_clicked();
     void on_block_btn_clicked();
+    void on_ch1_combo_currentIndexChanged(int index);
+    void on_ch2_combo_currentIndexChanged(int index);
+    void on_ch3_combo_currentIndexChanged(int index);
 
 private:
     Ui::ParametersDialog*   ui;
 
     qint32                  _mode;
+    char                    _channelsPin[3];
 };
 
 #endif // PARAMETERSDIALOG_H
