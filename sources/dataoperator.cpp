@@ -31,7 +31,10 @@ DataOperator::DataOperator(QObject *parent)
         _resultBufferIdZero(0),
         _cardID(-1)
 {
-    //
+    for (int i = 0; i < 3; i++)
+    {
+        _channelsPins[i] = -1;
+    }
 }
 
 DataOperator::~DataOperator()
@@ -392,7 +395,7 @@ void DataOperator::_blockMeasure()
     if (_channelZeroMeasuring == true)
     {
         _errorCode = ::D2K_AI_ContReadChannel (_cardID,
-                                  0,
+                                  _channelsPins[0],
                                   _resultBufferIdZero,
                                   _measureSampleCount,
                                   _measuringBlockInterval,
@@ -407,7 +410,7 @@ void DataOperator::_blockMeasure()
     if (_channelOneMeasuring == true)
     {
         _errorCode = ::D2K_AI_ContReadChannel (_cardID,
-                                  1,
+                                  _channelsPins[1],
                                   _resultBufferIdOne,
                                   _measureSampleCount,
                                   _measuringBlockInterval,
@@ -427,4 +430,12 @@ void DataOperator::_blockMeasure()
 QString DataOperator::getLastError()
 {
     return _lastError;
+}
+
+void DataOperator::setChannelsPins(char pins[])
+{
+    for (int i = 0; i < 3; i++)
+    {
+        _channelsPins[i] = static_cast<I16> (pins[i]);
+    }
 }

@@ -337,6 +337,9 @@ bool MainWindow::_setupParameters()
     QSettings settings("settings.ini", QSettings::IniFormat, this);
 
     _parameters.mode = p.getMeasuringMode();
+    char pins[3]  = {-1};
+    p.getChannelsPin(pins);
+    _dataOperator->setChannelsPins(pins);
 
     settings.setValue("measuring_mode", _parameters.mode);
 

@@ -41,6 +41,7 @@ public:
 
     bool        isDataReady();
     QString     getLastError();
+    void        setChannelsPins(char pins[]);
 
 protected:
     virtual void run();
@@ -94,6 +95,8 @@ private:
     U16             _resultBufferIdOne;
 
     I16             _cardID;
+
+    I16             _channelsPins[3];
 };
 
 #endif // DATAOPERATOR_H
