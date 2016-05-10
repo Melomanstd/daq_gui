@@ -5,6 +5,8 @@
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 
+#include "plotgrid.h"
+
 class GraphicPlot : public QwtPlot
 {
     Q_OBJECT
@@ -32,7 +34,7 @@ public:
     void        setCurveProperties(qint8 channel, QPen pen);
 
 private:
-    void        _rescaleAxis(Axis axis);
+    void        _rescaleAxis(Axis axis, double minimum, double maximum);
 
 private slots:
     void        _plotPanned(int x, int y);
@@ -50,11 +52,6 @@ private:
     double              _scaleMinimum;
     double              _scaleMaximum;
 
-    double              _lScaleMinimum;
-    double              _lScaleMaximum;
-    double              _rScaleMinimum;
-    double              _rScaleMaximum;
-
     QVector<QPointF>    _pointsZero;
     QVector<QPointF>    _pointsOne;
 
@@ -69,6 +66,8 @@ private:
 
     int                 _lastZoom_0;
     int                 _lastZoom_1;
+
+    PlotGrid*           _grid;
 };
 
 #endif // GRAPHICPLOT_H

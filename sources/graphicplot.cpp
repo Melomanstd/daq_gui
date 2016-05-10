@@ -21,10 +21,6 @@ GraphicPlot::GraphicPlot(QWidget *parent)
         _currentStep(0),
         _scaleMinimum(0.0),
         _scaleMaximum(0.0),
-        _lScaleMinimum(0.0),
-        _lScaleMaximum(0.0),
-        _rScaleMinimum(0.0),
-        _rScaleMaximum(0.0),
         _channelZeroEnabled(false),
         _channelOneEnabled(false),
         _channelZeroVoltageBuffer(0),
@@ -50,12 +46,12 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 //    setAxisMaxMinor(xBottom, 2);
 
 //    insertLegend(new QwtLegend);
-    PlotGrid *g = new PlotGrid();
-    g->setMajPen(QPen(Qt::gray, 1, Qt::DotLine));
+    _grid = new PlotGrid();
+    _grid->setMajPen(QPen(Qt::gray, 1, Qt::DotLine));
 //    g->setMinPen(QPen(Qt::gray, 2));
 //    g->enableXMin(false);
 //    g->enableYMin(false);
-    g->attach(this);
+    _grid->attach(this);
 
     _curveZero = new QwtPlotCurve();
     _curveZero->setTitle(tr("Channel 0"));
@@ -323,18 +319,8 @@ void GraphicPlot::rescaleAxis(Axis ax, int value)
     _scaleMinimum = _scaleMinimum - zoomDiff;
     _scaleMaximum = _scaleMaximum + zoomDiff;
 
-    if (ax == yLeft)
-    {
-        _lScaleMinimum = _scaleMinimum;
-        _lScaleMaximum = _scaleMaximum;
-    }
-    else if (ax == yRight)
-    {
-        _rScaleMinimum = _scaleMinimum;
-        _rScaleMaximum = _scaleMaximum;
-    }
-
-    QwtScaleDiv *division = 0;
+    _rescaleAxis(ax, _scaleMinimum, _scaleMaximum);
+    /*QwtScaleDiv *division = 0;
     zoomDiff = _scaleMaximum - _scaleMinimum;
     zoomDiff = zoomDiff / 10.0;
 
@@ -351,8 +337,7 @@ void GraphicPlot::rescaleAxis(Axis ax, int value)
     }
     division = new QwtScaleDiv(_scaleMinimum, _scaleMaximum, ticks);
     setAxisScaleDiv(ax, *division);
-    delete division;
-
+    delete division;*/
 //    setAxisScale(ax,_scaleMinimum, _scaleMaximum);
     replot();
 }
@@ -371,33 +356,42 @@ void GraphicPlot::setCurveProperties(qint8 channel, QPen pen)
 
 void GraphicPlot::_plotPanned(int x, int y)
 {
-    _rescaleAxis(yLeft);
-    _rescaleAxis(yRight);
+    _scaleMinimum = axisInterval(yLeft).minValue();
+    _scaleMaximum = axisInterval(yLeft).maxValue();
+    _rescaleAxis(yLeft, _scaleMinimum, _scaleMaximum);
+    _scaleMinimum = axisInterval(yRight).minValue();
+    _scaleMaximum = axisInterval(yRight).maxValue();
+    _rescaleAxis(yRight, _scaleMinimum, _scaleMaximum);
 //    setAxisScale(ax,_scaleMinimum, _scaleMaximum);
     replot();
 }
 
-void GraphicPlot::_rescaleAxis(Axis axis)
+void GraphicPlot::_rescaleAxis(Axis axis,
+                               double minimum,
+                               double maximum)
 {
-    _scaleMinimum = axisInterval(axis).minValue();
-    _scaleMaximum = axisInterval(axis).maxValue();
-
     QwtScaleDiv *division = 0;
-    double zoomDiff = _scaleMaximum - _scaleMinimum;
+    double zoomDiff = maximum - minimum;
     zoomDiff = zoomDiff / 10.0;
 
     QList<double> ticks[QwtScaleDiv::NTickTypes];
-    ticks[2].append(_scaleMinimum);
+    ticks[2].append(minimum);
     for (int i = 1; i < 10; i++)
     {
-        ticks[2].append(_scaleMinimum + (zoomDiff * i));
+        ticks[2].append(minimum + (zoomDiff * i));
     }
-    ticks[2].append(_scaleMaximum);
-    if (qAbs(_scaleMinimum) == qAbs(_scaleMaximum))
+    ticks[2].append(maximum);
+    if (qAbs(minimum) == qAbs(maximum))
     {
         ticks[2][5] = 0.0;
     }
-    division = new QwtScaleDiv(_scaleMinimum, _scaleMaximum, ticks);
+    division = new QwtScaleDiv(minimum, maximum, ticks);
     setAxisScaleDiv(axis, *division);
+
+    if (axis == yRight)
+    {
+        _grid->setRightScaleDivider(*division);
+    }
+
     delete division;
 }
