@@ -7,6 +7,9 @@
 #include <qwt_plot_magnifier.h>
 #include <qwt_plot_panner.h>
 #include <qwt_plot_zoomer.h>
+#include <qwt_scale_div.h>
+
+#include <QList>
 
 GraphicPlot::GraphicPlot(QWidget *parent)
     :   QwtPlot(parent),
@@ -306,7 +309,29 @@ void GraphicPlot::rescaleAxis(Axis ax, int value)
 
     _scaleMinimum = _scaleMinimum - zoomDiff;
     _scaleMaximum = _scaleMaximum + zoomDiff;
-    setAxisScale(ax,_scaleMinimum, _scaleMaximum);
+
+
+
+    QwtScaleDiv *division = 0;
+    zoomDiff = _scaleMaximum - _scaleMinimum;
+    zoomDiff = zoomDiff / 10.0;
+
+    QList<double> ticks[QwtScaleDiv::NTickTypes];
+    ticks[2].append(_scaleMinimum);
+    for (int i = 1; i < 10; i++)
+    {
+        ticks[2].append(_scaleMinimum + (zoomDiff * i));
+    }
+    ticks[2].append(_scaleMaximum);
+    if (qAbs(_scaleMinimum) == qAbs(_scaleMinimum))
+    {
+        ticks[2][5] = 0.0;
+    }
+    division = new QwtScaleDiv(_scaleMinimum, _scaleMaximum, ticks);
+    setAxisScaleDiv(ax, *division);
+    delete division;
+
+//    setAxisScale(ax,_scaleMinimum, _scaleMaximum);
     replot();
 }
 
