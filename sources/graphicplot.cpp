@@ -54,6 +54,7 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     _grid->attach(this);
 
     _curveZero = new QwtPlotCurve();
+    _curveZero->setStyle(QwtPlotCurve::Dots);
     _curveZero->setTitle(tr("Channel 0"));
     _curveZero->setPen(QPen(Qt::blue, 6));
     _curveZero->setRenderHint(QwtPlotItem::RenderAntialiased, true);
@@ -328,25 +329,6 @@ void GraphicPlot::rescaleAxis(Axis ax, int value)
     _scaleMaximum = _scaleMaximum + zoomDiff;
 
     _rescaleAxis(ax, _scaleMinimum, _scaleMaximum);
-    /*QwtScaleDiv *division = 0;
-    zoomDiff = _scaleMaximum - _scaleMinimum;
-    zoomDiff = zoomDiff / 10.0;
-
-    QList<double> ticks[QwtScaleDiv::NTickTypes];
-    ticks[2].append(_scaleMinimum);
-    for (int i = 1; i < 10; i++)
-    {
-        ticks[2].append(_scaleMinimum + (zoomDiff * i));
-    }
-    ticks[2].append(_scaleMaximum);
-    if (qAbs(_scaleMinimum) == qAbs(_scaleMaximum))
-    {
-        ticks[2][5] = 0.0;
-    }
-    division = new QwtScaleDiv(_scaleMinimum, _scaleMaximum, ticks);
-    setAxisScaleDiv(ax, *division);
-    delete division;*/
-//    setAxisScale(ax,_scaleMinimum, _scaleMaximum);
     replot();
 }
 

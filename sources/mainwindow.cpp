@@ -134,18 +134,34 @@ void MainWindow::_updatePlot()
         return;
     }
 
-    double ch0, ch1;
+    double ch0 = 0, ch1 = 0;
 
     if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
     {
         _dataOperator->getVoltage(ch0, ch1);
         _plot->setPoint(ch0, ch1);
+
+        ui->ch1_output_lbl->setText(tr("Channel 1 voltage: ") +
+                                    QString::number(ch0));
+        ui->ch2_output_lbl->setText(tr("Channel 2 voltage: ") +
+                                    QString::number(ch1));
     }
     else if (_parameters.mode == MODE_BLOCK_MEASURING)
     {
         _dataOperator->getSamplesBuffer(_plotBufferZero,
                                         _plotBufferOne);
         _plot->displayBlock();
+
+        if (_plotBufferZero != 0)
+        {
+            ui->ch1_output_lbl->setText(tr("Channel 1 voltage: ") +
+                                        QString::number(_plotBufferZero[_parameters.blockSize-1]));
+        }
+        if (_plotBufferOne != 0)
+        {
+            ui->ch2_output_lbl->setText(tr("Channel 2 voltage: ") +
+                                        QString::number(_plotBufferOne[_parameters.blockSize-1]));
+        }
     }
 }
 
@@ -478,6 +494,8 @@ void MainWindow::on_channelZero_check_toggled(bool state)
     {
         _parameters.channelZeroState = STATE_ON;
         settings.setValue("channel_zero", STATE_ON);
+        _plotBufferZero = _plot->initializeChannelZeroBuffer(
+                    _parameters.blockSize);
     }
     else
     {
@@ -500,6 +518,8 @@ void MainWindow::on_channelOne_check_toggled(bool state)
     {
         _parameters.channelOneState = STATE_ON;
         settings.setValue("channel_one", STATE_ON);
+        _plotBufferOne = _plot->initializeChannelOneBuffer(
+                    _parameters.blockSize);
     }
     else
     {
