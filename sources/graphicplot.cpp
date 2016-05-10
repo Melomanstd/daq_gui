@@ -1,6 +1,6 @@
 #include "headers/graphicplot.h"
 #include "headers/defines.h"
-#include "plotgrid.h"
+#include "headers/plotgrid.h"
 
 #include <qwt_plot_grid.h>
 #include <qwt_symbol.h>
@@ -81,8 +81,9 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     connect(panner, SIGNAL(panned(int,int)),
             this, SLOT(_plotPanned(int,int)));
 
-
     replot();
+
+    _rescaleAxis(xBottom, 0, 100);
 
 //    setAutoReplot(true);
 //    setAxisMaxMajor(QwtPlot::xBottom, 1);
@@ -124,7 +125,8 @@ void GraphicPlot::setPoint(const double &voltage_0,
     if (_initializedPoints < _displayedPoints)
     {
         _initializedPoints++;
-        setAxisScale(QwtPlot::xBottom,
+//        _rescaleAxis(xBottom, 0, _initializedPoints - 1);
+        setAxisScale(xBottom,
                      0,
                      _initializedPoints - 1,
                      _displayStep);
@@ -142,10 +144,13 @@ void GraphicPlot::setPoint(const double &voltage_0,
             _pointsOne.pop_front();
         }
 
-        setAxisScale(QwtPlot::xBottom,
+        _rescaleAxis(xBottom,
                      _count - _displayedPoints,
-                     _count - 1,
-                     _displayStep);
+                     _count - 1);
+//        setAxisScale(QwtPlot::xBottom,
+//                     _count - _displayedPoints,
+//                     _count - 1,
+//                     _displayStep);
     }
 
     replot();
@@ -272,10 +277,9 @@ void GraphicPlot::displayBlock()
     _pointsOne.clear();
     _count = 1;
 
-    setAxisScale(QwtPlot::xBottom,
-                 _count,
-                 _displayedPoints,
-                 _displayStep);
+    _rescaleAxis(QwtPlot::xBottom,
+                 _count-1,
+                 _displayedPoints);
 
     for (int i = 0; i < _displayedPoints; i++)
     {
@@ -366,6 +370,10 @@ void GraphicPlot::_plotPanned(int x, int y)
     _scaleMinimum = axisInterval(yRight).minValue();
     _scaleMaximum = axisInterval(yRight).maxValue();
     _rescaleAxis(yRight, _scaleMinimum, _scaleMaximum);
+    _scaleMinimum = axisInterval(xBottom).minValue();
+    _scaleMaximum = axisInterval(xBottom).maxValue();
+    _rescaleAxis(xBottom, _scaleMinimum, _scaleMaximum);
+
 //    setAxisScale(ax,_scaleMinimum, _scaleMaximum);
     replot();
 }
@@ -390,12 +398,20 @@ void GraphicPlot::_rescaleAxis(Axis axis,
         ticks[2][5] = 0.0;
     }
     division = new QwtScaleDiv(minimum, maximum, ticks);
-    setAxisScaleDiv(axis, *division);
 
     if (axis == yRight)
     {
         _grid->setRightScaleDivider(*division);
     }
 
+    /*if (axis == xBottom)
+    {
+        for (int i = 0; i < ticks[2].size(); i++)
+        {
+            ticks[2][i] = qRound(ticks[2][i]);
+        }
+    }*/
+
+    setAxisScaleDiv(axis, *division);
     delete division;
 }

@@ -114,8 +114,8 @@ void MainWindow::_initializePlot()
 //    ui->v_lay->addWidget(_plot);
     ui->v_lay->insertWidget(1, _plot);
 
-    _plot->setAxisTitle(QwtPlot::yLeft, tr("Channel 0 Voltage"));
-    _plot->setAxisTitle(QwtPlot::yRight, tr("Channel 1 Voltage"));
+//    _plot->setAxisTitle(QwtPlot::yLeft, tr("Channel 0 Voltage"));
+//    _plot->setAxisTitle(QwtPlot::yRight, tr("Channel 1 Voltage"));
 //    _plot->enableAxis(QwtPlot::yRight);
 }
 
@@ -374,8 +374,8 @@ bool MainWindow::_setupParameters()
     {
         delayedSlider->setMaximum(100);
         delayedSlider->setMinimum(1);
-        delayedSlider->setValue(1);
-        delayedSlider->setPageStep(1);
+        delayedSlider->setValue(p.getMeasuringsPerSecond());
+        delayedSlider->setPageStep(3);
         delayedSlider->setSingleStep(1);
 
         _parameters.displayedInterval = p.getDisplayedInterval();

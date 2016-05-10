@@ -39,8 +39,8 @@ void ParametersDialog::_singleshotMode()
     ui->spin_1->setMaximum(100);//displayed measuring interval(sec)
     ui->spin_1->setValue(10);
     _mode = MODE_SINGLESHOT_MEASURING;
-    ui->label_3->setText(tr("Displayed interval"));
-    ui->label_4->setText(tr("Measuring per second"));
+    ui->label_3->setText(tr("Measuring per second"));
+    ui->label_4->setText(tr("Displayed interval"));
     ui->label_5->setText(tr("Disabled"));
 }
 
