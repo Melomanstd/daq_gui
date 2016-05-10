@@ -116,7 +116,7 @@ void MainWindow::_initializePlot()
 
     _plot->setAxisTitle(QwtPlot::yLeft, tr("Channel 0 Voltage"));
     _plot->setAxisTitle(QwtPlot::yRight, tr("Channel 1 Voltage"));
-    _plot->enableAxis(QwtPlot::yRight);
+//    _plot->enableAxis(QwtPlot::yRight);
 }
 
 void MainWindow::_initializeDataOperator()
@@ -150,7 +150,7 @@ void MainWindow::_updatePlot()
 }
 
 void MainWindow::singleShot()
-{
+{//test function
     //constants definition
     #define CardNumber	0
     #define ADChan	0
@@ -188,7 +188,7 @@ void MainWindow::singleShot()
 }
 
 void MainWindow::blocks()
-{
+{//test function
     //constants definition
     #define CardNumber    0
     #define ADChan	     0
@@ -524,7 +524,7 @@ void MainWindow::_channelZeroState(bool state)
 {
     _plot->setChannels(ui->channelZero_check->isChecked(),
                        ui->channelOne_check->isChecked());
-    _plot->enableAxis(QwtPlot::yLeft, state);
+//    _plot->enableAxis(QwtPlot::yLeft, false);
     ui->ch_0_voltage_range_slider->setVisible(state);
     ui->ch_0_zoom_in_btn->setVisible(state);
     ui->ch_0_zoom_out_btn->setVisible(state);
@@ -534,7 +534,7 @@ void MainWindow::_channelOneState(bool state)
 {
     _plot->setChannels(ui->channelZero_check->isChecked(),
                        ui->channelOne_check->isChecked());
-    _plot->enableAxis(QwtPlot::yRight, state);
+//    _plot->enableAxis(QwtPlot::yRight, false);
     ui->ch_1_voltage_range_slider->setVisible(state);
     ui->ch_1_zoom_in_btn->setVisible(state);
     ui->ch_1_zoom_out_btn->setVisible(state);

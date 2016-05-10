@@ -32,6 +32,12 @@ public:
     void        setCurveProperties(qint8 channel, QPen pen);
 
 private:
+    void        _rescaleAxis(Axis axis);
+
+private slots:
+    void        _plotPanned(int x, int y);
+
+private:
     QwtPlotCurve*       _curveZero;
     QwtPlotCurve*       _curveOne;
 //    QList<QPointF>      _points;
@@ -43,6 +49,11 @@ private:
     int                 _currentStep;
     double              _scaleMinimum;
     double              _scaleMaximum;
+
+    double              _lScaleMinimum;
+    double              _lScaleMaximum;
+    double              _rScaleMinimum;
+    double              _rScaleMaximum;
 
     QVector<QPointF>    _pointsZero;
     QVector<QPointF>    _pointsOne;

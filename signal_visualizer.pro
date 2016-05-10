@@ -17,14 +17,16 @@ SOURCES +=  sources/main.cpp\
             sources/dataoperator.cpp \
             sources/parametersdialog.cpp \
             sources/graphicplot.cpp \
-            sources/timerslider.cpp
+            sources/timerslider.cpp \
+    plotgrid.cpp
 
 HEADERS  += headers/mainwindow.h \
             headers/dataoperator.h \
             headers/parametersdialog.h \
             headers/defines.h \
             headers/graphicplot.h \
-            headers/timerslider.h
+            headers/timerslider.h \
+    plotgrid.h
 
 FORMS    += ui/mainwindow.ui \
             ui/parametersdialog.ui
