@@ -10,17 +10,21 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     _isWorking(false),
+    _isLogging(false),
     _plotBufferZero(0),
-    _plotBufferOne(0)
+    _plotBufferOne(0),
+    _workingTime(0)
 {
     ui->setupUi(this);
-
     setWindowTitle(tr("DAQ 2213 Signal visualizer"));
+
+    _logFile.setFileName("log.csv");
+    _workingTime = new QTime;
 
     delayedSlider = new TimerSlider(Qt::Horizontal, 0);
     connect(delayedSlider, SIGNAL(NewValue(int)),
             this, SLOT(_delayedSliderNewValue(int)));
-    ui->horizontalLayout->insertWidget(4,delayedSlider);
+    ui->horizontalLayout->insertWidget(6,delayedSlider);
 
     _modeLabel = new QLabel(tr("Current mode:"));
     _modeValue = new QLabel(tr("No mode"));
@@ -97,6 +101,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    _stopLogging();
+
+    delete _workingTime;
+    _workingTime = 0;
+
     delete _updateTimer;
     _dataOperator->stopWorking();
     delete _dataOperator;
@@ -135,7 +144,7 @@ void MainWindow::_updatePlot()
         return;
     }
 
-    double ch0 = 0, ch1 = 0;
+    double ch0 = 0.0, ch1 = 0.0;
 
     if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
     {
@@ -155,14 +164,31 @@ void MainWindow::_updatePlot()
 
         if (_plotBufferZero != 0)
         {
+            ch0 = _plotBufferZero[_parameters.blockSize-1];
             ui->ch1_output_lbl->setText(tr("Channel 1 voltage: ") +
-                                        QString::number(_plotBufferZero[_parameters.blockSize-1]));
+                                        QString::number(ch0));
         }
+
         if (_plotBufferOne != 0)
         {
+            ch1 = _plotBufferOne[_parameters.blockSize-1];
             ui->ch2_output_lbl->setText(tr("Channel 2 voltage: ") +
-                                        QString::number(_plotBufferOne[_parameters.blockSize-1]));
+                                        QString::number(ch1));
         }
+    }
+
+    if (_isLogging == true)
+    {
+        QString logString;
+        logString.append(_workingTime->toString("mm:ss:zzz"));
+        logString.append("|");
+        logString.append(QString::number(ch0));
+        logString.append("|");
+        logString.append(QString::number(ch1));
+        logString.append("|");
+        logString.append(";\r\n");
+
+        _logFile.write(logString.toAscii());
     }
 }
 
@@ -327,6 +353,7 @@ void MainWindow::on_start_btn_clicked()
     }
     _isWorking = true;
     _dataOperator->startWorking();
+    _workingTime->restart();
 }
 
 void MainWindow::on_stop_btn_clicked()
@@ -339,6 +366,9 @@ void MainWindow::on_stop_btn_clicked()
     _plotBufferZero = 0;
     _plotBufferOne = 0;
     _modeValue->setText(tr("No mode"));
+
+    ui->log_btn->setChecked(false);
+    _stopLogging();
 }
 
 bool MainWindow::_setupParameters()
@@ -636,4 +666,44 @@ void MainWindow::on_screenshot_btn_clicked()
     }
 
     screenshot.save(filename, format.toAscii());
+}
+
+void MainWindow::on_log_btn_clicked()
+{
+    _stopLogging();
+    _startLogging();
+}
+
+void MainWindow::_startLogging()
+{
+    if (ui->log_btn->isChecked() == true)
+    {
+        bool result = _logFile.open(QFile::WriteOnly);
+        if (result == false)
+        {
+            QMessageBox::critical(this,
+                                  tr("Attention"),
+                                  _logFile.errorString(),
+                                  QMessageBox::Ok);
+            return;
+        }
+        _isLogging = true;
+
+        QString header;
+        header.append(tr("TIME|"));
+        header.append(tr("CHANNEL_0|"));
+        header.append(tr("CHANNEL_1|"));
+        header.append(tr("HF_CHANNEL|;"));
+        header.append("\r\n");
+        _logFile.write(header.toAscii());
+    }
+}
+
+void MainWindow::_stopLogging()
+{
+    if (_logFile.isOpen() == true)
+    {
+        _logFile.close();
+        _isLogging = false;
+    }
 }

@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QDir>
 #include <QFileDialog>
+#include <QTime>
 
 #include "dataoperator.h"
 #include "graphicplot.h"
@@ -34,6 +35,8 @@ private:
     ModeParameters  _lastParameters();
     void            _channelZeroState(bool state);
     void            _channelOneState(bool state);
+    void            _stopLogging();
+    void            _startLogging();
 
 private slots:
     void on_parameters_btn_clicked();
@@ -50,6 +53,7 @@ private slots:
     void on_forward_btn_clicked();
     void on_backward_btn_clicked();
     void on_screenshot_btn_clicked();
+    void on_log_btn_clicked();
     void _delayedSliderNewValue(int value);
 
     void _updatePlot();
@@ -66,6 +70,7 @@ private:
     ModeParameters  _parameters;
 
     bool            _isWorking;
+    bool            _isLogging;
 
     double*         _plotBufferZero;
     double*         _plotBufferOne;
@@ -76,6 +81,9 @@ private:
     QLabel*         _intervalValue;
 
     TimerSlider*    delayedSlider;
+
+    QFile           _logFile;
+    QTime*          _workingTime;
 };
 
 #endif // MAINWINDOW_H

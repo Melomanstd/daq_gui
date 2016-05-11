@@ -10,5 +10,6 @@
         <file>images/play-button.png</file>
         <file>images/stop-button-black-rounded-square.png</file>
         <file>images/screenshot.png</file>
+        <file>images/write.png</file>
     </qresource>
 </RCC>

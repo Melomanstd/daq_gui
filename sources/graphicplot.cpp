@@ -54,7 +54,7 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     _grid->attach(this);
 
     _curveZero = new QwtPlotCurve();
-    _curveZero->setStyle(QwtPlotCurve::Dots);
+//    _curveZero->setStyle(QwtPlotCurve::Dots);
     _curveZero->setTitle(tr("Channel 0"));
     _curveZero->setPen(QPen(Qt::blue, 6));
     _curveZero->setRenderHint(QwtPlotItem::RenderAntialiased, true);
