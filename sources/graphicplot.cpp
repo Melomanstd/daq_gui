@@ -30,40 +30,28 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 {
     setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
     setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
-//    setAxisAutoScale(QwtPlot::yLeft, true);
-//    setAxisAutoScale(QwtPlot::yRight, true);
+
     setCanvasBackground(Qt::white);
 
     enableAxis(yLeft, false);
     enableAxis(yRight, false);
     enableAxis(xBottom, false);
 
-//    setAxisMaxMajor(yLeft, 10);
-//    setAxisMaxMinor(yLeft, 2);
-//    setAxisMaxMajor(yRight, 10);
-//    setAxisMaxMinor(yRight, 2);
-//    setAxisMaxMajor(xBottom, 10);
-//    setAxisMaxMinor(xBottom, 2);
-
-//    insertLegend(new QwtLegend);
     _grid = new PlotGrid();
     _grid->setMajPen(QPen(Qt::gray, 1, Qt::DotLine));
-//    g->setMinPen(QPen(Qt::gray, 2));
-//    g->enableXMin(false);
-//    g->enableYMin(false);
+
     _grid->attach(this);
 
     _curveZero = new QwtPlotCurve();
-//    _curveZero->setStyle(QwtPlotCurve::Dots);
     _curveZero->setTitle(tr("Channel 0"));
-    _curveZero->setPen(QPen(Qt::blue, 6));
+    _curveZero->setPen(QPen(Qt::blue, 6, Qt::DashLine));
     _curveZero->setRenderHint(QwtPlotItem::RenderAntialiased, true);
     _curveZero->setRenderHint(QwtPlotCurve::RenderAntialiased);
     _curveZero->attach(this);
 
     _curveOne = new QwtPlotCurve();
     _curveOne->setTitle(tr("Channel 1"));
-    _curveOne->setPen(QPen(Qt::darkCyan, 6));
+    _curveOne->setPen(QPen(Qt::darkCyan, 6, Qt::DotLine));
     _curveOne->setRenderHint(QwtPlotItem::RenderAntialiased, true);
     _curveOne->setYAxis(QwtPlot::yRight);
     _curveOne->setRenderHint(QwtPlotCurve::RenderAntialiased);
@@ -85,10 +73,6 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     replot();
 
     _rescaleAxis(xBottom, 0, 100);
-
-//    setAutoReplot(true);
-//    setAxisMaxMajor(QwtPlot::xBottom, 1);
-//    setAxisMaxMinor(QwtPlot::xBottom, 6);
 }
 
 GraphicPlot::~GraphicPlot()
@@ -192,9 +176,9 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
                                          QSize(8,8));
         _curveZero->setSymbol(simba);
 
-        simba = new QwtSymbol(QwtSymbol::Ellipse,
-                              QBrush(Qt::yellow),
-                              QPen(Qt::red),
+        simba = new QwtSymbol(QwtSymbol::Rect,
+                              QBrush(Qt::green),
+                              QPen(Qt::darkCyan),
                               QSize(8,8));
         _curveOne->setSymbol(simba);
 

@@ -87,7 +87,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->ch_1_voltage_range_slider->setValue(80);
 
     QColor channelZeroColor = Qt::blue;
-    QColor channelOneColor = Qt::darkCyan;
+    QColor channelOneColor = Qt::magenta;
 
     QPalette pal = ui->channelZero_check->palette();
     pal.setColor(QPalette::WindowText, channelZeroColor);
@@ -95,8 +95,8 @@ MainWindow::MainWindow(QWidget *parent) :
     pal.setColor(QPalette::WindowText, channelOneColor);
     ui->channelOne_check->setPalette(pal);
 
-    _plot->setCurveProperties(0, QPen(channelZeroColor, 3));
-    _plot->setCurveProperties(1, QPen(channelOneColor, 3));
+    _plot->setCurveProperties(0, QPen(channelZeroColor, 3, Qt::DashLine));
+    _plot->setCurveProperties(1, QPen(channelOneColor, 3, Qt::DotLine));
 }
 
 MainWindow::~MainWindow()
