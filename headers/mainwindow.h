@@ -5,6 +5,8 @@
 #include <QTimer>
 #include <QSettings>
 #include <QLabel>
+#include <QDir>
+#include <QFileDialog>
 
 #include "dataoperator.h"
 #include "graphicplot.h"

@@ -4,8 +4,7 @@
 
 #include <QDebug>
 #include <QMessageBox>
-#include <QDir>
-#include <QFileDialog>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -622,7 +621,7 @@ void MainWindow::_delayedSliderNewValue(int value)
 
 void MainWindow::on_screenshot_btn_clicked()
 {
-    /*QPixmap screenshot = QPixmap::grabWidget(this);
+    QPixmap screenshot = QPixmap::grabWidget(this);
     QString format = "png";
     QString defaultPath = QDir::currentPath();
     QString filename = QFileDialog::getSaveFileName(this,
@@ -636,5 +635,5 @@ void MainWindow::on_screenshot_btn_clicked()
         return;
     }
 
-    screenshot.save(filename, format.toAscii());*/
+    screenshot.save(filename, format.toAscii());
 }
