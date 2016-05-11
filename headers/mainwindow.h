@@ -47,6 +47,7 @@ private slots:
     void on_channelOne_check_toggled(bool state);
     void on_forward_btn_clicked();
     void on_backward_btn_clicked();
+    void on_screenshot_btn_clicked();
     void _delayedSliderNewValue(int value);
 
     void _updatePlot();

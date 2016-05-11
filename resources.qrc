@@ -9,5 +9,6 @@
         <file>images/forward.png</file>
         <file>images/play-button.png</file>
         <file>images/stop-button-black-rounded-square.png</file>
+        <file>images/screenshot.png</file>
     </qresource>
 </RCC>
