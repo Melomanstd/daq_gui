@@ -18,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle(tr("DAQ 2213 Signal visualizer"));
 
+    //    singleShot();
+//        blocks();
+
     _logFile.setFileName("log.csv");
     _workingTime = new QTime;
 
@@ -57,8 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _updateTimer->setInterval(1);
     _updateTimer->start();
     showMaximized();
-//    singleShot();
-//    blocks();
+
 
     QSettings settings("settings.ini", QSettings::IniFormat, this);
     if (settings.value("channel_zero", STATE_ON) == STATE_ON)
@@ -233,17 +235,21 @@ void MainWindow::singleShot()
 void MainWindow::blocks()
 {//test function
     //constants definition
+
+    QTime time;
+
     #define CardNumber    0
     #define ADChan	     0
-    #define ScanCount    1000
-    #define ScanIntrv     30000
-    #define SampleIntrv   30000
+    #define ScanCount    250
+    #define ScanIntrv     160
+    #define SampleIntrv   160
+    int max = 1000;
 
     //AI config constants definition
     #define ConfigCtrl    DAQ2K_AI_ADCONVSRC_Int
     #define TrigCtrl       DAQ2K_AI_TRGSRC_SOFT|DAQ2K_AI_TRGMOD_POST
     #define ReTrgCnt  0
-    #define BufAutoReset    1
+    #define BufAutoReset    0
 
     //variables definition
     I16 cardID = -1;
@@ -253,8 +259,8 @@ void MainWindow::blocks()
     U32 MemSize   = 0;
     U16 BufId   = 0;
 //    I16 InBuf[1000]; //AI data buffer
-    U16 *InBuf = new U16[1000];
-    F64 *VoltBuf = new F64[1000];
+    U16 *InBuf = new U16[ScanCount];
+//    F64 *VoltBuf = new F64[ScanCount];
     U16 vi = 0;
 
     cardID = D2K_Register_Card(DAQ_2213, CardNumber);
@@ -301,21 +307,38 @@ void MainWindow::blocks()
            //ToDo : Handle error here
     }
 
-    err=D2K_AI_ContReadChannel (cardID, ADChan, BufId, ScanCount, ScanIntrv, SampleIntrv, SYNCH_OP);
-    if (err!=NoError) {
-        qDebug() <<"D2K_AI_ContReadChannel";
-           //Error occurs !!
-           //ToDo : Handle error here
-    }
 
-    err=::D2K_AI_ContVScale(cardID, AD_B_10_V, (void*) InBuf, VoltBuf, 1000);
+    qDebug() << "Measuring";
+    time.start();
+    for (int i = 0; i < max; i ++)
+    {
+        err=D2K_AI_ContReadChannel (cardID,
+                                    ADChan,
+                                    BufId,
+                                    ScanCount,
+                                    ScanIntrv,
+                                    SampleIntrv,
+                                    SYNCH_OP);
+        if (err!=NoError) {
+            qDebug() <<"D2K_AI_ContReadChannel";
+               //Error occurs !!
+               //ToDo : Handle error here
+        }
+    }
+    qDebug() <<time.elapsed();
+    qDebug() << max * ScanCount;
+
+    /*err=::D2K_AI_ContVScale(cardID, AD_B_10_V, (void*) InBuf, VoltBuf, 1000);
     if (err!=NoError) {
         qDebug() <<"D2K_AI_ContVScale";
            //Error occurs !!
            //ToDo : Handle error here
-    }
+    }*/
 
     D2K_Release_Card(cardID);
+
+    delete [] InBuf;
+//    delete [] VoltBuf;
 }
 
 void MainWindow::on_parameters_btn_clicked()
