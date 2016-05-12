@@ -338,9 +338,16 @@ void DataOperator::setMeasuringInterval(quint32 msec)
     _mutex.unlock();
 }
 
-void DataOperator::setParameters(ModeParameters parameters)
+void DataOperator::setParameters(ModeParameters parameters, bool update)
 {
     _mutex.tryLock();
+
+    if ((_workingMode != MODE_SINGLESHOT_MEASURING) &&
+            (update == true))
+    {
+        ::D2K_AI_ContBufferReset(_cardID);
+    }
+
     if (_samplesBlockBuffer_0 != 0)
     {
         delete [] _samplesBlockBuffer_0;
@@ -368,6 +375,12 @@ void DataOperator::setParameters(ModeParameters parameters)
 
     _samplesBlockBuffer_0 = new U16[_measureSampleCount];
     _samplesBlockBuffer_1 = new U16[_measureSampleCount];
+
+    if ((_workingMode != MODE_SINGLESHOT_MEASURING) &&
+            (update == true))
+    {
+        _initializeBlockMode();
+    }
 
     _mutex.unlock();
 }

@@ -30,7 +30,7 @@ public:
     void        setBlockMeasuringInterval(quint32 interval);
     void        setMeasureSampleInterval(quint32 interval);
     void        setSampleCount(quint32 count); //samples per block
-    void        setParameters(ModeParameters parameters);
+    void        setParameters(ModeParameters parameters, bool update);
 
     void        getVoltage(double &ch0, double &ch1);
     F64*        getVoltageBuffer();

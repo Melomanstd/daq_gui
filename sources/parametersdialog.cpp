@@ -45,28 +45,46 @@ void ParametersDialog::on_singleshot_btn_clicked()
     _singleshotMode();
 }
 
+void ParametersDialog::on_hf_btn_clicked()
+{
+    _hfMode();
+}
+
 void ParametersDialog::_singleshotMode()
 {
+    ui->spin_0->setEnabled(true);
+    ui->spin_1->setEnabled(true);
     ui->spin_2->setEnabled(false);
+
+    ui->hf_btn->setChecked(false);
     ui->block_btn->setChecked(false);
     ui->singleshot_btn->setChecked(true);
+
     ui->spin_0->setMinimum(1);  //measuring per second
     ui->spin_0->setMaximum(100);//measuring per second
     ui->spin_0->setValue(1);
+
     ui->spin_1->setMinimum(1);  //displayed measuring interval(sec)
     ui->spin_1->setMaximum(100);//displayed measuring interval(sec)
     ui->spin_1->setValue(10);
-    _mode = MODE_SINGLESHOT_MEASURING;
+
     ui->label_3->setText(tr("Measuring per second"));
     ui->label_4->setText(tr("Displayed interval"));
     ui->label_5->setText(tr("Disabled"));
+
+    _mode = MODE_SINGLESHOT_MEASURING;
 }
 
 void ParametersDialog::_blockMode()
 {
+    ui->spin_0->setEnabled(true);
+    ui->spin_1->setEnabled(true);
     ui->spin_2->setEnabled(true);
+
+    ui->hf_btn->setChecked(false);
     ui->singleshot_btn->setChecked(false);
     ui->block_btn->setChecked(true);
+
     ui->spin_0->setMinimum(2);          //Samples per measure
     ui->spin_0->setMaximum(16777215);   //Samples per measure
     ui->spin_0->setSingleStep(2);
@@ -80,10 +98,41 @@ void ParametersDialog::_blockMode()
     ui->spin_2->setMaximum(65535);      //Samples interval
     ui->spin_2->setValue(160);
 
-    _mode = MODE_BLOCK_MEASURING;
     ui->label_3->setText(tr("Samples per measure"));
     ui->label_4->setText(tr("Scaning interval"));
     ui->label_5->setText(tr("Samples interval"));
+
+    _mode = MODE_BLOCK_MEASURING;
+}
+
+void ParametersDialog::_hfMode()
+{
+    ui->spin_0->setEnabled(false);
+    ui->spin_1->setEnabled(false);
+    ui->spin_2->setEnabled(false);
+
+    ui->singleshot_btn->setChecked(false);
+    ui->hf_btn->setChecked(true);
+    ui->block_btn->setChecked(false);
+
+    ui->spin_0->setMinimum(2);          //Samples per measure
+    ui->spin_0->setMaximum(16777215);   //Samples per measure
+    ui->spin_0->setSingleStep(2);
+    ui->spin_0->setValue(250);
+
+    ui->spin_1->setMinimum(160);        //Scaning interval
+    ui->spin_1->setMaximum(16777215);   //Scaning interval
+    ui->spin_1->setValue(160);
+
+    ui->spin_2->setMinimum(160);        //Samples interval
+    ui->spin_2->setMaximum(65535);      //Samples interval
+    ui->spin_2->setValue(160);
+
+    ui->label_3->setText(tr("Samples per measure"));
+    ui->label_4->setText(tr("Scaning interval"));
+    ui->label_5->setText(tr("Samples interval"));
+
+    _mode = MODE_HF_MEASURING;
 }
 
 qint32 ParametersDialog::getMeasuringMode()

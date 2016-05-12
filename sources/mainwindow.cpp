@@ -475,7 +475,7 @@ bool MainWindow::_setupParameters()
 
     if (_dataOperator != 0)
     {
-        _dataOperator->setParameters(_parameters);
+        _dataOperator->setParameters(_parameters, _isWorking);
     }
     _updateTimer->start();
     return true;

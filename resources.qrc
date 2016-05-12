@@ -11,5 +11,6 @@
         <file>images/stop-button-black-rounded-square.png</file>
         <file>images/screenshot.png</file>
         <file>images/write.png</file>
+        <file>images/fm_0.png</file>
     </qresource>
 </RCC>

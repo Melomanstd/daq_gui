@@ -35,11 +35,13 @@ public:
 private:
     void _singleshotMode();
     void _blockMode();
+    void _hfMode();
     void _checkChannelsCommutation();
 
 private slots:
     void on_singleshot_btn_clicked();
     void on_block_btn_clicked();
+    void on_hf_btn_clicked();
     void on_ch1_combo_currentIndexChanged(int index);
     void on_ch2_combo_currentIndexChanged(int index);
     void on_ch3_combo_currentIndexChanged(int index);
