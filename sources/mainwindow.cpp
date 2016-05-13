@@ -88,8 +88,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->ch_0_voltage_range_slider->setValue(80);
     ui->ch_1_voltage_range_slider->setValue(80);
 
-    QColor channelZeroColor = Qt::blue;
-    QColor channelOneColor = Qt::magenta;
+    QColor channelZeroColor = Qt::red;
+    QColor channelOneColor = Qt::yellow;
 
     QPalette pal = ui->channelZero_check->palette();
     pal.setColor(QPalette::WindowText, channelZeroColor);

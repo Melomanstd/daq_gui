@@ -31,7 +31,7 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
     setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
 
-    setCanvasBackground(Qt::white);
+//    setCanvasBackground(Qt::white);
 
     canvas()->setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
 
@@ -40,6 +40,14 @@ GraphicPlot::GraphicPlot(QWidget *parent)
         canvas()->setAttribute(Qt::WA_PaintOnScreen, true);
         canvas()->setAttribute(Qt::WA_NoSystemBackground, true);
     }
+
+    QPalette pal = canvas()->palette();
+    QLinearGradient gradient(0.0, 0.0, 1.0, 1.0);
+    gradient.setCoordinateMode(QLinearGradient::StretchToDeviceMode);
+    gradient.setColorAt(0.0, QColor(0, 49, 110));
+    gradient.setColorAt(1.0, QColor(0, 87, 174));
+    pal.setBrush(QPalette::Window, QBrush(gradient));
+    canvas()->setPalette(pal);
 
     enableAxis(yLeft, false);
     enableAxis(yRight, false);
@@ -185,7 +193,7 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
         _curveZero->setSymbol(simba);
 
         simba = new QwtSymbol(QwtSymbol::Rect,
-                              QBrush(Qt::green),
+                              QBrush(Qt::red),
                               QPen(Qt::darkCyan),
                               QSize(10,10));
         _curveOne->setSymbol(simba);
