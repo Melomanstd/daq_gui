@@ -35,6 +35,8 @@ DataOperator::DataOperator(QObject *parent)
     {
         _channelsPins[i] = -1;
     }
+
+    _hfBuffer = new U16[1000];
 }
 
 DataOperator::~DataOperator()
@@ -53,13 +55,15 @@ DataOperator::~DataOperator()
     {
         delete [] _samplesBlockBuffer_1;
     }
+
+    delete [] _hfBuffer;
 }
 
 void DataOperator::run()
 {
     _initializeCard();
 
-    if (_workingMode == MODE_BLOCK_MEASURING)
+    if (_workingMode != MODE_SINGLESHOT_MEASURING)
     {
         if (_initializeBlockMode() == false)
         {
@@ -83,6 +87,10 @@ void DataOperator::run()
         else if (_workingMode == MODE_BLOCK_MEASURING)
         {
             _blockMeasure();
+        }
+        else if (_workingMode == MODE_HF_MEASURING)
+        {
+            _hfMeasure();
         }
 //        _isWorking = false;
     }
@@ -451,4 +459,49 @@ void DataOperator::setChannelsPins(char pins[])
     {
         _channelsPins[i] = static_cast<I16> (pins[i]);
     }
+}
+
+void DataOperator::getHfVoltageBuffer(double *buffer)
+{
+    _mutex.tryLock();
+    if (buffer != 0)
+    {
+        ::D2K_AI_ContVScale(_cardID,
+                            AD_B_10_V,
+                            _hfBuffer,
+                            buffer,
+                            1000);
+    }
+    _newDataReady = false;
+    _mutex.unlock();
+}
+
+void DataOperator::_hfMeasure()
+{
+    _mutex.tryLock();
+    _errorCode = NoError;
+
+    U16* bufferPos = _hfBuffer;
+
+    for (int i = 0; i < 1000; i++)
+    {
+        _errorCode = ::D2K_AI_ContReadChannel (_cardID,
+                                  _channelsPins[2],
+                                  _resultBufferIdZero,
+                                  _measureSampleCount,
+                                  _measuringBlockInterval,
+                                  _measureSampleInterval,
+                                  SYNCH_OP);
+
+        if (_errorCode != NoError)
+        {
+            qDebug() << "error";
+        }
+
+        *bufferPos = _samplesBlockBuffer_0[_measureSampleCount - 1];
+        ++bufferPos;
+    }
+
+    _newDataReady = true;
+    _mutex.unlock();
 }

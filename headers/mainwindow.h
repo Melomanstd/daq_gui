@@ -12,6 +12,7 @@
 #include "dataoperator.h"
 #include "graphicplot.h"
 #include "timerslider.h"
+#include "parametersdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -37,6 +38,9 @@ private:
     void            _channelOneState(bool state);
     void            _stopLogging();
     void            _startLogging();
+    void            _setupSingleshotParameters(ParametersDialog &p);
+    void            _setupBlockParameters(ParametersDialog &p);
+    void            _setupHfParameters(ParametersDialog &p);
 
 private slots:
     void on_parameters_btn_clicked();

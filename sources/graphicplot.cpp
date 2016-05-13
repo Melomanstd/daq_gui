@@ -33,6 +33,14 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 
     setCanvasBackground(Qt::white);
 
+    canvas()->setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
+
+    if (canvas()->testPaintAttribute(QwtPlotCanvas::BackingStore) == true)
+    {
+        canvas()->setAttribute(Qt::WA_PaintOnScreen, true);
+        canvas()->setAttribute(Qt::WA_NoSystemBackground, true);
+    }
+
     enableAxis(yLeft, false);
     enableAxis(yRight, false);
     enableAxis(xBottom, false);
@@ -173,16 +181,17 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
         QwtSymbol *simba = new QwtSymbol(QwtSymbol::Ellipse,
                                          QBrush(Qt::yellow),
                                          QPen(Qt::red),
-                                         QSize(8,8));
+                                         QSize(10,10));
         _curveZero->setSymbol(simba);
 
         simba = new QwtSymbol(QwtSymbol::Rect,
                               QBrush(Qt::green),
                               QPen(Qt::darkCyan),
-                              QSize(8,8));
+                              QSize(10,10));
         _curveOne->setSymbol(simba);
 
-    } else if (mode == MODE_BLOCK_MEASURING)
+    } else if ((mode == MODE_BLOCK_MEASURING) ||
+               (mode == MODE_HF_MEASURING))
     {
         _curveZero->setSymbol(0);
         _curveOne->setSymbol(0);

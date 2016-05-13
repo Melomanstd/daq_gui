@@ -39,6 +39,8 @@ public:
     void        getSamplesBuffer(double *bufferZero,
                                  double *bufferOne);
 
+    void        getHfVoltageBuffer(double *buffer);
+
     bool        isDataReady();
     QString     getLastError();
     void        setChannelsPins(char pins[]);
@@ -52,6 +54,7 @@ private:
     void        _updateParameters();
     inline void _singleshotMeasure();
     inline void _blockMeasure();
+    inline void _hfMeasure();
 
 signals:
     void someError();
@@ -97,6 +100,8 @@ private:
     I16             _cardID;
 
     I16             _channelsPins[3];
+
+    U16*            _hfBuffer;
 };
 
 #endif // DATAOPERATOR_H
