@@ -62,7 +62,6 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     _curveZero->setTitle(tr("Channel 0"));
     _curveZero->setPen(QPen(Qt::blue, 6, Qt::DashLine));
     _curveZero->setRenderHint(QwtPlotItem::RenderAntialiased, true);
-    _curveZero->setRenderHint(QwtPlotCurve::RenderAntialiased);
     _curveZero->attach(this);
 
     _curveOne = new QwtPlotCurve();
@@ -70,7 +69,6 @@ GraphicPlot::GraphicPlot(QWidget *parent)
     _curveOne->setPen(QPen(Qt::darkCyan, 6, Qt::DotLine));
     _curveOne->setRenderHint(QwtPlotItem::RenderAntialiased, true);
     _curveOne->setYAxis(QwtPlot::yRight);
-    _curveOne->setRenderHint(QwtPlotCurve::RenderAntialiased);
     _curveOne->attach(this);
 
 //    _curve->setXAxis(QwtPlot::xTop);
@@ -198,11 +196,21 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
                               QSize(10,10));
         _curveOne->setSymbol(simba);
 
+        setLineStyle_0(Qt::DashLine);
+        setLineStyle_1(Qt::DotLine);
+        setLineWidth_0(3);
+        setLineWidth_1(3);
+
     } else if ((mode == MODE_BLOCK_MEASURING) ||
                (mode == MODE_HF_MEASURING))
     {
         _curveZero->setSymbol(0);
         _curveOne->setSymbol(0);
+
+        setLineStyle_0(Qt::SolidLine);
+        setLineStyle_1(Qt::SolidLine);
+        setLineWidth_0(2);
+        setLineWidth_1(2);
     }
 
 //    _points.resize(size);
@@ -397,4 +405,48 @@ void GraphicPlot::_rescaleAxis(Axis axis,
 
     setAxisScaleDiv(axis, *division);
     delete division;
+}
+
+void GraphicPlot::setColor_0(QColor color)
+{
+    _channelColor_0 = color;
+    QPen pen = _curveZero->pen();
+    pen.setColor(color);
+    _curveZero->setPen(pen);
+}
+
+void GraphicPlot::setColor_1(QColor color)
+{
+    _channelColor_1 = color;
+    QPen pen = _curveOne->pen();
+    pen.setColor(color);
+    _curveOne->setPen(pen);
+}
+
+void GraphicPlot::setLineStyle_0(Qt::PenStyle style)
+{
+    QPen pen = _curveZero->pen();
+    pen.setStyle(style);
+    _curveZero->setPen(pen);
+}
+
+void GraphicPlot::setLineStyle_1(Qt::PenStyle style)
+{
+    QPen pen = _curveOne->pen();
+    pen.setStyle(style);
+    _curveOne->setPen(pen);
+}
+
+void GraphicPlot::setLineWidth_0(int width)
+{
+    QPen pen = _curveZero->pen();
+    pen.setWidth(width);
+    _curveZero->setPen(pen);
+}
+
+void GraphicPlot::setLineWidth_1(int width)
+{
+    QPen pen = _curveOne->pen();
+    pen.setWidth(width);
+    _curveOne->setPen(pen);
 }

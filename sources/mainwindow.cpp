@@ -99,6 +99,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _plot->setCurveProperties(0, QPen(channelZeroColor, 3, Qt::DashLine));
     _plot->setCurveProperties(1, QPen(channelOneColor, 3, Qt::DotLine));
+
+    pal = ui->header_box->palette();
+    QLinearGradient gradient(0.0, 0.0, 1.0, 1.0);
+    gradient.setCoordinateMode(QLinearGradient::StretchToDeviceMode);
+    gradient.setColorAt(0.0, QColor(0, 49, 110));
+    gradient.setColorAt(1.0, QColor(0, 87, 174));
+    pal.setBrush(QPalette::Window, QBrush(gradient));
+    ui->header_box->setPalette(pal);
 }
 
 MainWindow::~MainWindow()

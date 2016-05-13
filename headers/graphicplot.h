@@ -32,6 +32,12 @@ public:
 
     void        rescaleAxis(Axis ax, int value);
     void        setCurveProperties(qint8 channel, QPen pen);
+    void        setColor_0(QColor color);
+    void        setColor_1(QColor color);
+    void        setLineStyle_0(Qt::PenStyle style);
+    void        setLineStyle_1(Qt::PenStyle style);
+    void        setLineWidth_0(int width);
+    void        setLineWidth_1(int width);
 
 private:
     void        _rescaleAxis(Axis axis, double minimum, double maximum);
@@ -68,6 +74,8 @@ private:
     int                 _lastZoom_1;
 
     PlotGrid*           _grid;
+    QColor              _channelColor_0;
+    QColor              _channelColor_1;
 };
 
 #endif // GRAPHICPLOT_H
