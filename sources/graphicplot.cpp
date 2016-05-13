@@ -79,7 +79,7 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 //    zoomer->setTrackerMode(QwtPlotZoomer::AlwaysOff);
 
 //    QwtPlotMagnifier *magnifier = new QwtPlotMagnifier(canvas());
-//    magnifier->setMouseButton(Qt::RightButton);
+//    magnifier->setMouseButton(Qt::NoButton);
 
     QwtPlotPanner *panner = new QwtPlotPanner(canvas());
     panner->setMouseButton(Qt::LeftButton);
