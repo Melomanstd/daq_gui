@@ -17,15 +17,15 @@
 #include <qpainter.h>
 #include <qpen.h>
 
-
 //! Enables major grid, disables minor grid
 PlotGrid::PlotGrid()
     :   QwtPlotGrid(  ),
         _yRightScale(0),
         _drawLeftScale(0),
-        _drawRightScale(0)
+        _drawRightScale(0),
+        _step(1)
 {
-    //
+    restartTime();
 }
 
 //! Destructor
@@ -190,7 +190,7 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
                                           100,
                                           20,
                                           Qt::AlignHCenter,
-                                          QString::number(qRound(values[i])) );
+                                          QString::number(qRound(values[i] / _step)) );
                 painter->restore();
             }
         }
@@ -217,4 +217,20 @@ void PlotGrid::drawLeftScale(bool draw)
 void PlotGrid::drawRightScale(bool draw)
 {
     _drawRightScale = draw;
+}
+
+void PlotGrid::restartTime()
+{
+    _workingTime.restart();
+    for (int i = 0; i < 10; i++)
+    {
+        _savedTime[i] = 0;
+    }
+    _timeStoragePointer = _savedTime;
+    _lastTime = 0;
+}
+
+void PlotGrid::setStep(int step)
+{
+    _step = step;
 }

@@ -173,6 +173,7 @@ void GraphicPlot::setBlock(unsigned short *samples, int size)
 void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
 {
     _displayedPoints = size;
+    _grid->restartTime();
 
     if (reset == true)
     {
@@ -220,6 +221,7 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
 
 void GraphicPlot::setDisplayStep(int step)
 {
+    _grid->setStep(step);
     _displayStep = step;
     _currentStep = step;
 }

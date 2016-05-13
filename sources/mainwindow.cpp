@@ -500,7 +500,7 @@ void MainWindow::_setupBlockParameters(ParametersDialog &p)
     _parameters.blockSize = p.getSamplesPerMeasuring();
     _parameters.scaningInterval = p.getScaningInterval();
     _parameters.samplingInterval = p.getSamplesInterval();
-    _plot->setDisplayStep(_parameters.blockSize / 10);
+    _plot->setDisplayStep(/*_parameters.blockSize / 10*/1);
     _plot->setDisplayedPoints(_parameters.blockSize,
                               !_isWorking,
                               _parameters.mode);
@@ -534,7 +534,7 @@ void MainWindow::_setupHfParameters(ParametersDialog &p)
     _parameters.blockSize = 250;
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
-    _plot->setDisplayStep(100);
+    _plot->setDisplayStep(1);
     _plot->setDisplayedPoints(1000,
                               !_isWorking,
                               _parameters.mode);
