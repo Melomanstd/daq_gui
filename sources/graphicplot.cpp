@@ -159,7 +159,7 @@ void GraphicPlot::setPoint(const double &voltage_0,
         ch0Point.setY(voltage_0);
         _pointsZero.append(ch0Point);
         _curveZero->setSamples(_pointsZero);
-        _channelOutput_0->setText(tr("Channle 1 Voltage: ") +
+        _channelOutput_0->setText(tr("Channel 1 Voltage: ") +
                                      QString::number(voltage_0));
     }
     if ((_channelOneEnabled == true) &&
@@ -169,7 +169,7 @@ void GraphicPlot::setPoint(const double &voltage_0,
         ch1Point.setY(voltage_1);
         _pointsOne.append(ch1Point);
         _curveOne->setSamples(_pointsOne);
-        _channelOutput_1->setText(tr("Channle 2 Voltage: ") +
+        _channelOutput_1->setText(tr("Channel 2 Voltage: ") +
                                      QString::number(voltage_1));
     }
 
@@ -379,9 +379,19 @@ void GraphicPlot::displayBlock()
     }
 
     if (_curveZero != 0)
+    {
         _curveZero->setSamples(_pointsZero);
+        QString text = _curveZero->title().text() + tr(" Voltage: ") +
+                QString::number(_channelZeroVoltageBuffer[_displayedPoints -1]);
+        _channelOutput_0->setText(text);
+    }
     if (_curveOne != 0)
+    {
         _curveOne->setSamples(_pointsOne);
+        QString text = _curveOne->title().text() + tr(" Voltage: ") +
+                QString::number(_channelOneVoltageBuffer[_displayedPoints-1]);
+        _channelOutput_1->setText(text);
+    }
     replot();
 }
 

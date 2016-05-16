@@ -125,12 +125,12 @@ void MainWindow::_initializePlot()
     QVBoxLayout *lay = dynamic_cast<QVBoxLayout*> (
                 centralWidget()->layout());
 
-    lay->insertWidget(2, _hfPlot);
+    lay->insertWidget(3, _hfPlot);
 
     QColor channelZeroColor = Qt::red;
     QColor channelOneColor = Qt::yellow;
 
-    QPalette pal = ui->channelZero_check->palette();
+//    QPalette pal = ui->channelZero_check->palette();
 //    pal.setColor(QPalette::WindowText, channelZeroColor);
 //    ui->channelZero_check->setPalette(pal);
 //    pal.setColor(QPalette::WindowText, channelOneColor);
@@ -405,9 +405,6 @@ void MainWindow::on_stop_btn_clicked()
 
     ui->log_btn->setChecked(false);
     _stopLogging();
-
-    ui->channelZero_check->setEnabled(false);
-    ui->channelOne_check->setEnabled(false);
 }
 
 bool MainWindow::_setupParameters()
@@ -520,9 +517,6 @@ void MainWindow::_setupBlockParameters(ParametersDialog &p)
 void MainWindow::_setupHfParameters(ParametersDialog &p)
 {
     QSettings settings("settings.ini", QSettings::IniFormat, this);
-
-    ui->channelZero_check->setEnabled(false);
-    ui->channelOne_check->setEnabled(false);
 
     delayedSlider->setMaximum(990);
     delayedSlider->setMinimum(10);
