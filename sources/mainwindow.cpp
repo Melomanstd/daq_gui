@@ -21,13 +21,20 @@ MainWindow::MainWindow(QWidget *parent) :
     //    singleShot();
 //        blocks();
 
+    ui->ch_0_voltage_range_slider->setVisible(false);
+    ui->ch_0_zoom_in_btn->setVisible(false);
+    ui->ch_0_zoom_out_btn->setVisible(false);
+    ui->ch_1_voltage_range_slider->setVisible(false);
+    ui->ch_1_zoom_in_btn->setVisible(false);
+    ui->ch_1_zoom_out_btn->setVisible(false);
+
     _logFile.setFileName("log.csv");
     _workingTime = new QTime;
 
     delayedSlider = new TimerSlider(Qt::Horizontal, 0);
     connect(delayedSlider, SIGNAL(NewValue(int)),
             this, SLOT(_delayedSliderNewValue(int)));
-    ui->horizontalLayout->insertWidget(6,delayedSlider);
+    ui->horizontalLayout->insertWidget(3,delayedSlider);
 
     _modeLabel = new QLabel(tr("Current mode:"));
     _modeValue = new QLabel(tr("No mode"));
@@ -128,15 +135,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::_initializePlot()
 {
-    _plot = new GraphicPlot();
-//    _plot->setDisplayedPoints(10, true, );
-
-//    ui->v_lay->addWidget(_plot);
+    _plot = new GraphicPlot(tr("Channel 1/2"));
     ui->v_lay->insertWidget(1, _plot);
 
-//    _plot->setAxisTitle(QwtPlot::yLeft, tr("Channel 0 Voltage"));
-//    _plot->setAxisTitle(QwtPlot::yRight, tr("Channel 1 Voltage"));
-//    _plot->enableAxis(QwtPlot::yRight);
+    _hfPlot = new GraphicPlot(tr("Channel 3"));
+    _hfPlot->rescaleAxis(QwtPlot::yLeft, -1.0, 1.0);
+    _hfPlot->rescaleAxis(QwtPlot::yRight, -1.0, 1.0);
+    _hfPlot->setChannels(true, false);
+    QVBoxLayout *lay = dynamic_cast<QVBoxLayout*> (
+                centralWidget()->layout());
+
+    lay->insertWidget(2, _hfPlot);
 }
 
 void MainWindow::_initializeDataOperator()
@@ -401,6 +410,9 @@ void MainWindow::on_stop_btn_clicked()
 
     ui->log_btn->setChecked(false);
     _stopLogging();
+
+    ui->channelZero_check->setEnabled(false);
+    ui->channelOne_check->setEnabled(false);
 }
 
 bool MainWindow::_setupParameters()
@@ -513,6 +525,9 @@ void MainWindow::_setupBlockParameters(ParametersDialog &p)
 void MainWindow::_setupHfParameters(ParametersDialog &p)
 {
     QSettings settings("settings.ini", QSettings::IniFormat, this);
+
+    ui->channelZero_check->setEnabled(false);
+    ui->channelOne_check->setEnabled(false);
 
     delayedSlider->setMaximum(990);
     delayedSlider->setMinimum(10);
@@ -655,9 +670,9 @@ void MainWindow::_channelZeroState(bool state)
     _plot->setChannels(ui->channelZero_check->isChecked(),
                        ui->channelOne_check->isChecked());
 //    _plot->enableAxis(QwtPlot::yLeft, false);
-    ui->ch_0_voltage_range_slider->setVisible(state);
-    ui->ch_0_zoom_in_btn->setVisible(state);
-    ui->ch_0_zoom_out_btn->setVisible(state);
+//    ui->ch_0_voltage_range_slider->setVisible(state);
+//    ui->ch_0_zoom_in_btn->setVisible(state);
+//    ui->ch_0_zoom_out_btn->setVisible(state);
 }
 
 void MainWindow::_channelOneState(bool state)
@@ -665,9 +680,9 @@ void MainWindow::_channelOneState(bool state)
     _plot->setChannels(ui->channelZero_check->isChecked(),
                        ui->channelOne_check->isChecked());
 //    _plot->enableAxis(QwtPlot::yRight, false);
-    ui->ch_1_voltage_range_slider->setVisible(state);
-    ui->ch_1_zoom_in_btn->setVisible(state);
-    ui->ch_1_zoom_out_btn->setVisible(state);
+//    ui->ch_1_voltage_range_slider->setVisible(state);
+//    ui->ch_1_zoom_in_btn->setVisible(state);
+//    ui->ch_1_zoom_out_btn->setVisible(state);
 }
 
 void MainWindow::on_forward_btn_clicked()

@@ -13,17 +13,15 @@
 #include <qwt_scale_div.h>
 #include <qwt_plot_layout.h>
 
-
-
-GraphicPlot::GraphicPlot(QWidget *parent)
+GraphicPlot::GraphicPlot(QString title ,QWidget *parent)
     :   QwtPlot(parent),
         _count(0),
         _displayedPoints(1),
         _initializedPoints(0),
         _displayStep(1),
         _currentStep(0),
-        _scaleMinimum(0.0),
-        _scaleMaximum(0.0),
+        _scaleMinimum(-1.0),
+        _scaleMaximum(1.0),
         _channelZeroEnabled(false),
         _channelOneEnabled(false),
         _channelZeroVoltageBuffer(0),
@@ -31,8 +29,12 @@ GraphicPlot::GraphicPlot(QWidget *parent)
         _lastZoom_0(0),
         _lastZoom_1(0)
 {
+//    rescaleAxis(yLeft, _scaleMinimum, _scaleMaximum);
+//    rescaleAxis(yRight, _scaleMinimum, _scaleMaximum);
+
     setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
     setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
+    setTitle(title);
 
 //    setCanvasBackground(Qt::white);
 
@@ -102,14 +104,8 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 //    plotLayout()->setSpacing(0);
 //    legend->setPalette(canvas()->palette());
     legend->insert(_curveZero, _channelOutput_0);
-//    legend->insert(_grid, new QSpacerItem(40,20,
-//                                   QSizePolicy::Maximum,
-//                                   QSizePolicy::Maximum));
     legend->insert(_curveOne, _channelOutput_1);
     insertLegend(legend,QwtPlot::BottomLegend);
-
-
-
 
     replot();
 

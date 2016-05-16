@@ -68,6 +68,8 @@ private:
 
     DataOperator*   _dataOperator;
     GraphicPlot*    _plot;
+    GraphicPlot*    _hfPlot;
+
 
     QTimer*         _updateTimer;
 
