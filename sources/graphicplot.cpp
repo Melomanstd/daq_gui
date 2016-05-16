@@ -13,8 +13,10 @@
 #include <qwt_scale_div.h>
 #include <qwt_plot_layout.h>
 
-GraphicPlot::GraphicPlot(QString title ,QWidget *parent)
+GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
     :   QwtPlot(parent),
+        _curveZero(0),
+        _curveOne(0),
         _count(0),
         _displayedPoints(1),
         _initializedPoints(0),
@@ -63,18 +65,52 @@ GraphicPlot::GraphicPlot(QString title ,QWidget *parent)
 
     _grid->attach(this);
 
-    _curveZero = new QwtPlotCurve();
-    _curveZero->setTitle(tr("Channel 0"));
-    _curveZero->setPen(QPen(Qt::blue, 6, Qt::DashLine));
-    _curveZero->setRenderHint(QwtPlotItem::RenderAntialiased, true);
-    _curveZero->attach(this);
+    QFont font = QwtTextLabel().font();
+    font.setPointSize(14);
+    font.setBold(true);
 
-    _curveOne = new QwtPlotCurve();
-    _curveOne->setTitle(tr("Channel 1"));
-    _curveOne->setPen(QPen(Qt::darkCyan, 6, Qt::DotLine));
-    _curveOne->setRenderHint(QwtPlotItem::RenderAntialiased, true);
-    _curveOne->setYAxis(QwtPlot::yRight);
-    _curveOne->attach(this);
+    if (channelsCount > 0)
+    {
+        _curveZero = new QwtPlotCurve();
+        _curveZero->setTitle(tr("Channel 1"));
+        _curveZero->setPen(QPen(Qt::blue, 6, Qt::DashLine));
+        _curveZero->setRenderHint(QwtPlotItem::RenderAntialiased, true);
+        _curveZero->attach(this);
+
+        QString text = _curveZero->title().text() + tr(" Voltage: 0");
+        _channelOutput_0 = new QwtTextLabel(text);
+        _channelOutput_0->setFont(font);
+    }
+
+    if (channelsCount > 1)
+    {
+        _curveOne = new QwtPlotCurve();
+        _curveOne->setTitle(tr("Channel 2"));
+        _curveOne->setPen(QPen(Qt::darkCyan, 6, Qt::DotLine));
+        _curveOne->setRenderHint(QwtPlotItem::RenderAntialiased, true);
+        _curveOne->setYAxis(QwtPlot::yRight);
+        _curveOne->attach(this);
+
+        QString text = _curveOne->title().text() + tr(" Voltage: 0");
+        _channelOutput_1 = new QwtTextLabel(text);
+        _channelOutput_1->setFont(font);
+    }
+    else
+    {
+        _curveZero->setTitle(tr("Channel 3"));
+        QString text = _curveZero->title().text() + tr(" Voltage: 0");
+        _channelOutput_0->setText(text);
+    }
+
+    PlotLegend *legend = new PlotLegend();
+    legend->setAutoFillBackground(true);
+//    plotLayout()->setSpacing(0);
+//    legend->setPalette(canvas()->palette());
+    if (_curveZero != 0)
+        legend->insert(_curveZero, _channelOutput_0);
+    if (_curveOne != 0)
+        legend->insert(_curveOne, _channelOutput_1);
+    insertLegend(legend,QwtPlot::BottomLegend);
 
 //    _curve->setXAxis(QwtPlot::xTop);
 
@@ -90,22 +126,11 @@ GraphicPlot::GraphicPlot(QString title ,QWidget *parent)
     connect(panner, SIGNAL(panned(int,int)),
             this, SLOT(_plotPanned(int,int)));
 
-    _channelOutput_0 = new QwtTextLabel(QwtText(tr("Channel 1 Voltage: 0")));
-    _channelOutput_1 = new QwtTextLabel(QwtText(tr("Channel 2 Voltage: 0")));
 
-    QFont font = _channelOutput_0->font();
-    font.setPointSize(14);
-    font.setBold(true);
-    _channelOutput_0->setFont(font);
-    _channelOutput_1->setFont(font);
 
-    PlotLegend *legend = new PlotLegend();
-    legend->setAutoFillBackground(true);
-//    plotLayout()->setSpacing(0);
-//    legend->setPalette(canvas()->palette());
-    legend->insert(_curveZero, _channelOutput_0);
-    legend->insert(_curveOne, _channelOutput_1);
-    insertLegend(legend,QwtPlot::BottomLegend);
+
+
+
 
     replot();
 
@@ -127,7 +152,8 @@ GraphicPlot::~GraphicPlot()
 void GraphicPlot::setPoint(const double &voltage_0,
                            const double &voltage_1)
 {
-    if (_channelZeroEnabled == true)
+    if ((_channelZeroEnabled == true) &&
+            (_curveZero != 0))
     {
         ch0Point.setX(_count);
         ch0Point.setY(voltage_0);
@@ -136,7 +162,8 @@ void GraphicPlot::setPoint(const double &voltage_0,
         _channelOutput_0->setText(tr("Channle 1 Voltage: ") +
                                      QString::number(voltage_0));
     }
-    if (_channelOneEnabled == true)
+    if ((_channelOneEnabled == true) &&
+            (_curveOne != 0))
     {
         ch1Point.setX(_count);
         ch1Point.setY(voltage_1);
@@ -216,13 +243,15 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
                                          QBrush(Qt::yellow),
                                          QPen(Qt::red),
                                          QSize(10,10));
-        _curveZero->setSymbol(simba);
+        if (_curveZero != 0)
+            _curveZero->setSymbol(simba);
 
         simba = new QwtSymbol(QwtSymbol::Rect,
                               QBrush(Qt::red),
                               QPen(Qt::darkCyan),
                               QSize(10,10));
-        _curveOne->setSymbol(simba);
+        if (_curveOne != 0)
+            _curveOne->setSymbol(simba);
 
         setLineStyle_0(Qt::DashLine);
         setLineStyle_1(Qt::DotLine);
@@ -232,13 +261,18 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
     } else if ((mode == MODE_BLOCK_MEASURING) ||
                (mode == MODE_HF_MEASURING))
     {
-        _curveZero->setSymbol(0);
-        _curveOne->setSymbol(0);
-
-        setLineStyle_0(Qt::SolidLine);
-        setLineStyle_1(Qt::SolidLine);
-        setLineWidth_0(2);
-        setLineWidth_1(2);
+        if (_curveZero != 0)
+        {
+            _curveZero->setSymbol(0);
+            setLineStyle_0(Qt::SolidLine);
+            setLineWidth_0(2);
+        }
+        if (_curveOne != 0)
+        {
+            _curveOne->setSymbol(0);
+            setLineStyle_1(Qt::SolidLine);
+            setLineWidth_1(2);
+        }
     }
 
 //    _points.resize(size);
@@ -258,26 +292,32 @@ void GraphicPlot::setChannels(bool ch1, bool ch2)
     _channelOneEnabled = ch2;
     _channelZeroEnabled = ch1;
 
-    if (_channelZeroEnabled == true)
+    if (_curveZero != 0)
     {
-        _curveZero->show();
-    }
-    else
-    {
-        _curveZero->hide();
-        _pointsZero.clear();
-        _curveZero->setSamples(_pointsZero);
+        if (_channelZeroEnabled == true)
+        {
+            _curveZero->show();
+        }
+        else
+        {
+            _curveZero->hide();
+            _pointsZero.clear();
+            _curveZero->setSamples(_pointsZero);
+        }
     }
 
-    if (_channelOneEnabled == true)
+    if (_curveOne != 0)
     {
-        _curveOne->show();
-    }
-    else
-    {
-        _curveOne->hide();
-        _pointsOne.clear();
-        _curveOne->setSamples(_pointsOne);
+        if (_channelOneEnabled == true)
+        {
+            _curveOne->show();
+        }
+        else
+        {
+            _curveOne->hide();
+            _pointsOne.clear();
+            _curveOne->setSamples(_pointsOne);
+        }
     }
 
     _grid->drawLeftScale(ch1);
@@ -338,8 +378,10 @@ void GraphicPlot::displayBlock()
         ++_count;
     }
 
-    _curveZero->setSamples(_pointsZero);
-    _curveOne->setSamples(_pointsOne);
+    if (_curveZero != 0)
+        _curveZero->setSamples(_pointsZero);
+    if (_curveOne != 0)
+        _curveOne->setSamples(_pointsOne);
     replot();
 }
 
@@ -372,11 +414,11 @@ void GraphicPlot::zoomAxis(Axis ax, int value)
 
 void GraphicPlot::setCurveProperties(qint8 channel, QPen pen)
 {
-    if (channel == 0)
+    if ((channel == 0) && (_curveZero != 0))
     {
         _curveZero->setPen(pen);
     }
-    else if (channel == 1)
+    else if ((channel == 1) && (_curveOne != 0))
     {
         _curveOne->setPen(pen);
     }
@@ -438,6 +480,11 @@ void GraphicPlot::rescaleAxis(Axis axis,
 
 void GraphicPlot::setColor_0(QColor color)
 {
+    if (_curveZero == 0)
+    {
+        return;
+    }
+
     _channelColor_0 = color;
     QPen pen = _curveZero->pen();
     pen.setColor(color);
@@ -446,6 +493,11 @@ void GraphicPlot::setColor_0(QColor color)
 
 void GraphicPlot::setColor_1(QColor color)
 {
+    if (_curveOne == 0)
+    {
+        return;
+    }
+
     _channelColor_1 = color;
     QPen pen = _curveOne->pen();
     pen.setColor(color);
@@ -454,6 +506,11 @@ void GraphicPlot::setColor_1(QColor color)
 
 void GraphicPlot::setLineStyle_0(Qt::PenStyle style)
 {
+    if (_curveZero == 0)
+    {
+        return;
+    }
+
     QPen pen = _curveZero->pen();
     pen.setStyle(style);
     _curveZero->setPen(pen);
@@ -461,6 +518,11 @@ void GraphicPlot::setLineStyle_0(Qt::PenStyle style)
 
 void GraphicPlot::setLineStyle_1(Qt::PenStyle style)
 {
+    if (_curveOne == 0)
+    {
+        return;
+    }
+
     QPen pen = _curveOne->pen();
     pen.setStyle(style);
     _curveOne->setPen(pen);
@@ -468,6 +530,11 @@ void GraphicPlot::setLineStyle_1(Qt::PenStyle style)
 
 void GraphicPlot::setLineWidth_0(int width)
 {
+    if (_curveZero == 0)
+    {
+        return;
+    }
+
     QPen pen = _curveZero->pen();
     pen.setWidth(width);
     _curveZero->setPen(pen);
@@ -475,6 +542,11 @@ void GraphicPlot::setLineWidth_0(int width)
 
 void GraphicPlot::setLineWidth_1(int width)
 {
+    if (_curveOne == 0)
+    {
+        return;
+    }
+
     QPen pen = _curveOne->pen();
     pen.setWidth(width);
     _curveOne->setPen(pen);

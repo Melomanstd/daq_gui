@@ -135,10 +135,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::_initializePlot()
 {
-    _plot = new GraphicPlot(tr("Channel 1/2"));
+    _plot = new GraphicPlot(tr("Channel 1/2"), 2);
     ui->v_lay->insertWidget(1, _plot);
 
-    _hfPlot = new GraphicPlot(tr("Channel 3"));
+    _hfPlot = new GraphicPlot(tr("Channel 3"), 1);
     _hfPlot->rescaleAxis(QwtPlot::yLeft, -1.0, 1.0);
     _hfPlot->rescaleAxis(QwtPlot::yRight, -1.0, 1.0);
     _hfPlot->setChannels(true, false);
