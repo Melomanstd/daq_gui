@@ -18,7 +18,9 @@ SOURCES +=  sources/main.cpp\
             sources/parametersdialog.cpp \
             sources/graphicplot.cpp \
             sources/timerslider.cpp \
-            sources/plotgrid.cpp
+            sources/plotgrid.cpp \
+            sources/plotlegend.cpp \
+            sources/plotmagnifier.cpp
 
 HEADERS  += headers/mainwindow.h \
             headers/dataoperator.h \
@@ -26,7 +28,9 @@ HEADERS  += headers/mainwindow.h \
             headers/defines.h \
             headers/graphicplot.h \
             headers/timerslider.h \
-            headers/plotgrid.h
+            headers/plotgrid.h \
+            headers/plotgridplotlegend.h \
+            headers/plotgridplotmagnifier.h
 
 FORMS    += ui/mainwindow.ui \
             ui/parametersdialog.ui

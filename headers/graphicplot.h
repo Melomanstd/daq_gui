@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
+#include <qwt_text_label.h>
 
 #include "plotgrid.h"
 
@@ -30,7 +31,7 @@ public:
 
     void        displayBlock();
 
-    void        rescaleAxis(Axis ax, int value);
+    void        zoomAxis(Axis ax, int value);
     void        setCurveProperties(qint8 channel, QPen pen);
     void        setColor_0(QColor color);
     void        setColor_1(QColor color);
@@ -39,8 +40,7 @@ public:
     void        setLineWidth_0(int width);
     void        setLineWidth_1(int width);
 
-private:
-    void        _rescaleAxis(Axis axis, double minimum, double maximum);
+    void        rescaleAxis(Axis axis, double minimum, double maximum);
 
 private slots:
     void        _plotPanned(int x, int y);
@@ -76,6 +76,9 @@ private:
     PlotGrid*           _grid;
     QColor              _channelColor_0;
     QColor              _channelColor_1;
+
+    QwtTextLabel*       _channelOutput_0;
+    QwtTextLabel*       _channelOutput_1;
 };
 
 #endif // GRAPHICPLOT_H

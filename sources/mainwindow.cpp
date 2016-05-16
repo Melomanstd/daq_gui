@@ -92,10 +92,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QColor channelOneColor = Qt::yellow;
 
     QPalette pal = ui->channelZero_check->palette();
-    pal.setColor(QPalette::WindowText, channelZeroColor);
-    ui->channelZero_check->setPalette(pal);
-    pal.setColor(QPalette::WindowText, channelOneColor);
-    ui->channelOne_check->setPalette(pal);
+//    pal.setColor(QPalette::WindowText, channelZeroColor);
+//    ui->channelZero_check->setPalette(pal);
+//    pal.setColor(QPalette::WindowText, channelOneColor);
+//    ui->channelOne_check->setPalette(pal);
 
     _plot->setCurveProperties(0, QPen(channelZeroColor, 3, Qt::DashLine));
     _plot->setCurveProperties(1, QPen(channelOneColor, 3, Qt::DotLine));
@@ -106,7 +106,7 @@ MainWindow::MainWindow(QWidget *parent) :
     gradient.setColorAt(0.0, QColor(0, 49, 110));
     gradient.setColorAt(1.0, QColor(0, 87, 174));
     pal.setBrush(QPalette::Window, QBrush(gradient));
-    ui->header_box->setPalette(pal);
+//    ui->header_box->setPalette(pal);
 }
 
 MainWindow::~MainWindow()
@@ -160,11 +160,6 @@ void MainWindow::_updatePlot()
     {
         _dataOperator->getVoltage(ch0, ch1);
         _plot->setPoint(ch0, ch1);
-
-        ui->ch1_output_lbl->setText(tr("Channel 1 voltage: ") +
-                                    QString::number(ch0));
-        ui->ch2_output_lbl->setText(tr("Channel 2 voltage: ") +
-                                    QString::number(ch1));
     }
     else if (_parameters.mode == MODE_BLOCK_MEASURING)
     {
@@ -175,15 +170,11 @@ void MainWindow::_updatePlot()
         if (_plotBufferZero != 0)
         {
             ch0 = _plotBufferZero[_parameters.blockSize-1];
-            ui->ch1_output_lbl->setText(tr("Channel 1 voltage: ") +
-                                        QString::number(ch0));
         }
 
         if (_plotBufferOne != 0)
         {
             ch1 = _plotBufferOne[_parameters.blockSize-1];
-            ui->ch2_output_lbl->setText(tr("Channel 2 voltage: ") +
-                                        QString::number(ch1));
         }
     }
     else if (_parameters.mode == MODE_HF_MEASURING)
@@ -194,8 +185,6 @@ void MainWindow::_updatePlot()
         if (_plotBufferZero != 0)
         {
             ch0 = _plotBufferZero[_parameters.blockSize-1];
-            ui->ch3_output_lbl->setText(tr("Channel 3 voltage: ") +
-                                        QString::number(ch0));
         }
     }
 
@@ -569,7 +558,7 @@ void MainWindow::on_ch_0_voltage_range_slider_valueChanged(int value)
 {
     if (_plot != 0)
     {
-        _plot->rescaleAxis(QwtPlot::yLeft, 100 - value);
+        _plot->zoomAxis(QwtPlot::yLeft, 100 - value);
     }
 }
 
@@ -577,7 +566,7 @@ void MainWindow::on_ch_1_voltage_range_slider_valueChanged(int value)
 {
     if (_plot != 0)
     {
-        _plot->rescaleAxis(QwtPlot::yRight, 100 - value);
+        _plot->zoomAxis(QwtPlot::yRight, 100 - value);
     }
 }
 

@@ -190,7 +190,7 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
                                           100,
                                           20,
                                           Qt::AlignHCenter,
-                                          QString::number(qRound(values[i] / _step)) );
+                                          QString::number(qRound(values[i]/* / _step*/)) );
                 painter->restore();
             }
         }

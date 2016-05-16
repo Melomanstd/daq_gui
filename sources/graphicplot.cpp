@@ -1,6 +1,8 @@
 #include "headers/graphicplot.h"
 #include "headers/defines.h"
 #include "headers/plotgrid.h"
+#include "headers/plotlegend.h"
+#include "headers/plotmagnifier.h"
 
 #include <qwt_plot_grid.h>
 #include <qwt_symbol.h>
@@ -9,8 +11,9 @@
 #include <qwt_plot_panner.h>
 #include <qwt_plot_zoomer.h>
 #include <qwt_scale_div.h>
+#include <qwt_plot_layout.h>
 
-#include <QList>
+
 
 GraphicPlot::GraphicPlot(QWidget *parent)
     :   QwtPlot(parent),
@@ -76,17 +79,41 @@ GraphicPlot::GraphicPlot(QWidget *parent)
 //    QwtPlotZoomer *zoomer = new QwtPlotZoomer(canvas());
 //    zoomer->setTrackerMode(QwtPlotZoomer::AlwaysOff);
 
-//    QwtPlotMagnifier *magnifier = new QwtPlotMagnifier(canvas());
-//    magnifier->setMouseButton(Qt::NoButton);
+    PlotMagnifier *magnifier = new PlotMagnifier(canvas());
+    magnifier->setMouseButton(Qt::NoButton);
+    magnifier->setWheelFactor(0.8);
 
     QwtPlotPanner *panner = new QwtPlotPanner(canvas());
     panner->setMouseButton(Qt::LeftButton);
     connect(panner, SIGNAL(panned(int,int)),
             this, SLOT(_plotPanned(int,int)));
 
+    _channelOutput_0 = new QwtTextLabel(QwtText(tr("Channel 1 Voltage: 0")));
+    _channelOutput_1 = new QwtTextLabel(QwtText(tr("Channel 2 Voltage: 0")));
+
+    QFont font = _channelOutput_0->font();
+    font.setPointSize(14);
+    font.setBold(true);
+    _channelOutput_0->setFont(font);
+    _channelOutput_1->setFont(font);
+
+    PlotLegend *legend = new PlotLegend();
+    legend->setAutoFillBackground(true);
+//    plotLayout()->setSpacing(0);
+//    legend->setPalette(canvas()->palette());
+    legend->insert(_curveZero, _channelOutput_0);
+//    legend->insert(_grid, new QSpacerItem(40,20,
+//                                   QSizePolicy::Maximum,
+//                                   QSizePolicy::Maximum));
+    legend->insert(_curveOne, _channelOutput_1);
+    insertLegend(legend,QwtPlot::BottomLegend);
+
+
+
+
     replot();
 
-    _rescaleAxis(xBottom, 0, 100);
+    rescaleAxis(xBottom, 0, 100);
 }
 
 GraphicPlot::~GraphicPlot()
@@ -110,6 +137,8 @@ void GraphicPlot::setPoint(const double &voltage_0,
         ch0Point.setY(voltage_0);
         _pointsZero.append(ch0Point);
         _curveZero->setSamples(_pointsZero);
+        _channelOutput_0->setText(tr("Channle 1 Voltage: ") +
+                                     QString::number(voltage_0));
     }
     if (_channelOneEnabled == true)
     {
@@ -117,6 +146,8 @@ void GraphicPlot::setPoint(const double &voltage_0,
         ch1Point.setY(voltage_1);
         _pointsOne.append(ch1Point);
         _curveOne->setSamples(_pointsOne);
+        _channelOutput_1->setText(tr("Channle 2 Voltage: ") +
+                                     QString::number(voltage_1));
     }
 
     ++_count;
@@ -143,7 +174,7 @@ void GraphicPlot::setPoint(const double &voltage_0,
             _pointsOne.pop_front();
         }
 
-        _rescaleAxis(xBottom,
+        rescaleAxis(xBottom,
                      _count - _displayedPoints,
                      _count - 1);
 //        setAxisScale(QwtPlot::xBottom,
@@ -289,7 +320,7 @@ void GraphicPlot::displayBlock()
     _pointsOne.clear();
     _count = 1;
 
-    _rescaleAxis(QwtPlot::xBottom,
+    rescaleAxis(QwtPlot::xBottom,
                  _count-1,
                  _displayedPoints);
 
@@ -316,7 +347,7 @@ void GraphicPlot::displayBlock()
     replot();
 }
 
-void GraphicPlot::rescaleAxis(Axis ax, int value)
+void GraphicPlot::zoomAxis(Axis ax, int value)
 {
     double zoomDiff = 0.0;
 
@@ -339,7 +370,7 @@ void GraphicPlot::rescaleAxis(Axis ax, int value)
     _scaleMinimum = _scaleMinimum - zoomDiff;
     _scaleMaximum = _scaleMaximum + zoomDiff;
 
-    _rescaleAxis(ax, _scaleMinimum, _scaleMaximum);
+    rescaleAxis(ax, _scaleMinimum, _scaleMaximum);
     replot();
 }
 
@@ -359,19 +390,19 @@ void GraphicPlot::_plotPanned(int x, int y)
 {
     _scaleMinimum = axisInterval(yLeft).minValue();
     _scaleMaximum = axisInterval(yLeft).maxValue();
-    _rescaleAxis(yLeft, _scaleMinimum, _scaleMaximum);
+    rescaleAxis(yLeft, _scaleMinimum, _scaleMaximum);
     _scaleMinimum = axisInterval(yRight).minValue();
     _scaleMaximum = axisInterval(yRight).maxValue();
-    _rescaleAxis(yRight, _scaleMinimum, _scaleMaximum);
+    rescaleAxis(yRight, _scaleMinimum, _scaleMaximum);
     _scaleMinimum = axisInterval(xBottom).minValue();
     _scaleMaximum = axisInterval(xBottom).maxValue();
-    _rescaleAxis(xBottom, _scaleMinimum, _scaleMaximum);
+    rescaleAxis(xBottom, _scaleMinimum, _scaleMaximum);
 
 //    setAxisScale(ax,_scaleMinimum, _scaleMaximum);
     replot();
 }
 
-void GraphicPlot::_rescaleAxis(Axis axis,
+void GraphicPlot::rescaleAxis(Axis axis,
                                double minimum,
                                double maximum)
 {
