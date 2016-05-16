@@ -94,26 +94,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->ch_0_voltage_range_slider->setValue(80);
     ui->ch_1_voltage_range_slider->setValue(80);
-
-    QColor channelZeroColor = Qt::red;
-    QColor channelOneColor = Qt::yellow;
-
-    QPalette pal = ui->channelZero_check->palette();
-//    pal.setColor(QPalette::WindowText, channelZeroColor);
-//    ui->channelZero_check->setPalette(pal);
-//    pal.setColor(QPalette::WindowText, channelOneColor);
-//    ui->channelOne_check->setPalette(pal);
-
-    _plot->setCurveProperties(0, QPen(channelZeroColor, 3, Qt::DashLine));
-    _plot->setCurveProperties(1, QPen(channelOneColor, 3, Qt::DotLine));
-
-    pal = ui->header_box->palette();
-    QLinearGradient gradient(0.0, 0.0, 1.0, 1.0);
-    gradient.setCoordinateMode(QLinearGradient::StretchToDeviceMode);
-    gradient.setColorAt(0.0, QColor(0, 49, 110));
-    gradient.setColorAt(1.0, QColor(0, 87, 174));
-    pal.setBrush(QPalette::Window, QBrush(gradient));
-//    ui->header_box->setPalette(pal);
 }
 
 MainWindow::~MainWindow()
@@ -146,6 +126,21 @@ void MainWindow::_initializePlot()
                 centralWidget()->layout());
 
     lay->insertWidget(2, _hfPlot);
+
+    QColor channelZeroColor = Qt::red;
+    QColor channelOneColor = Qt::yellow;
+
+    QPalette pal = ui->channelZero_check->palette();
+//    pal.setColor(QPalette::WindowText, channelZeroColor);
+//    ui->channelZero_check->setPalette(pal);
+//    pal.setColor(QPalette::WindowText, channelOneColor);
+//    ui->channelOne_check->setPalette(pal);
+
+    _plot->setCurveProperties(0, QPen(channelZeroColor, 3, Qt::DashLine));
+    _plot->setCurveProperties(1, QPen(channelOneColor, 3, Qt::DotLine));
+
+    _hfPlot->setCurveProperties(0, QPen(channelZeroColor, 3, Qt::DashLine));
+    _hfPlot->setCurveProperties(1, QPen(channelOneColor, 3, Qt::DotLine));
 }
 
 void MainWindow::_initializeDataOperator()
@@ -189,7 +184,7 @@ void MainWindow::_updatePlot()
     else if (_parameters.mode == MODE_HF_MEASURING)
     {
         _dataOperator->getHfVoltageBuffer(_plotBufferZero);
-        _plot->displayBlock();
+        _hfPlot->displayBlock();
 
         if (_plotBufferZero != 0)
         {
@@ -538,12 +533,12 @@ void MainWindow::_setupHfParameters(ParametersDialog &p)
     _parameters.blockSize = 250;
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
-    _plot->setDisplayStep(1);
-    _plot->setDisplayedPoints(1000,
+    _hfPlot->setDisplayStep(1);
+    _hfPlot->setDisplayedPoints(1000,
                               !_isWorking,
                               _parameters.mode);
 
-    _plotBufferZero = _plot->initializeChannelZeroBuffer(
+    _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
                 1000);
 
     _modeValue->setText(tr("High frequency measuring mode"));
