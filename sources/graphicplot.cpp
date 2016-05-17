@@ -3,6 +3,7 @@
 #include "headers/plotgrid.h"
 #include "headers/plotlegend.h"
 #include "headers/plotmagnifier.h"
+#include "headers/scaledraw.h"
 
 #include <qwt_plot_grid.h>
 #include <qwt_symbol.h>
@@ -63,7 +64,13 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
 
     enableAxis(yLeft, false);
     enableAxis(yRight, false);
-    enableAxis(xBottom, false);
+//    enableAxis(xBottom, false);
+//    setAxisScaleDraw(yLeft, new ScaleDraw());
+//    setAxisTitle(yLeft, tr("Signal 1 Voltage"));
+//    setAxisScaleDraw(yRight, new ScaleDraw());
+//    setAxisTitle(yRight, tr("Signal 2 Voltage"));
+    setAxisScaleDraw(xBottom, new ScaleDraw());
+    setAxisTitle(xBottom, tr("Timescale"));
 
     _grid = new PlotGrid();
     _grid->setMajPen(QPen(Qt::gray, 1, Qt::DotLine));
