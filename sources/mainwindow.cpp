@@ -402,7 +402,7 @@ void MainWindow::on_stop_btn_clicked()
     _plotBufferZero = 0;
     _plotBufferOne = 0;
 //    _modeValue->setText(tr("No mode"));
-
+    _plot->measuringStopped();
     ui->log_btn->setChecked(false);
     _stopLogging();
 }

@@ -57,6 +57,10 @@ private:
     int*            _timeStoragePointer;
     int             _lastTime;
     bool            _useTimeValues;
+
+    double          _value;
+    QList<int>      _time;
+    int             _listPosition;
 };
 
 #endif

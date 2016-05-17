@@ -45,6 +45,7 @@ public:
     void        setLineWidth_1(int width);
 
     void        rescaleAxis(Axis axis, double minimum, double maximum);
+    void        measuringStopped();
 
 private slots:
     void        _plotPanned(int x, int y);

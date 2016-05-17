@@ -204,7 +204,7 @@ void GraphicPlot::setPoint(const double &voltage_0,
 
         rescaleAxis(xBottom,
                      _count - _displayedPoints,
-                     _count - 1);
+                     _count);
 //        setAxisScale(QwtPlot::xBottom,
 //                     _count - _displayedPoints,
 //                     _count - 1,
@@ -457,7 +457,6 @@ void GraphicPlot::_plotPanned(int x, int y)
     _scaleMaximum = axisInterval(xBottom).maxValue();
     rescaleAxis(xBottom, _scaleMinimum, _scaleMaximum);
 
-//    setAxisScale(ax,_scaleMinimum, _scaleMaximum);
     replot();
 }
 
@@ -576,4 +575,11 @@ void GraphicPlot::setLineWidth_1(int width)
 void GraphicPlot::_scaleTimerTimeout()
 {
     _grid->updateTime();
+}
+
+
+void GraphicPlot::measuringStopped()
+{
+    _scaleTimer->stop();
+    _grid->usingTimeValues(false);
 }
