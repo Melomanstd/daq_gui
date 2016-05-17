@@ -575,6 +575,7 @@ void GraphicPlot::setLineWidth_1(int width)
 void GraphicPlot::_scaleTimerTimeout()
 {
     _grid->updateTime();
+    replot();
 }
 
 

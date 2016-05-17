@@ -270,7 +270,7 @@ void PlotGrid::cleanTime()
     _timeStoragePointer = _savedTime;
     _lastTime = 0;
     _value = 0.0;
-    _listPosition = 0;
+    _listPosition = 1;
     _useTimeValues = false;
 }
 
