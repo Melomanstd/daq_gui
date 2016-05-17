@@ -48,7 +48,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Channel 0</string>
+            <string>Signal 1</string>
            </property>
           </widget>
          </item>
@@ -162,7 +162,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Channel 1</string>
+            <string>Signal 2</string>
            </property>
           </widget>
          </item>

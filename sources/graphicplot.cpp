@@ -84,7 +84,7 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
     if (channelsCount > 0)
     {
         _curveZero = new QwtPlotCurve();
-        _curveZero->setTitle(tr("Channel 1"));
+        _curveZero->setTitle(tr("Signal 1"));
         _curveZero->setPen(QPen(Qt::blue, 6, Qt::DashLine));
         _curveZero->setRenderHint(QwtPlotItem::RenderAntialiased, true);
         _curveZero->attach(this);
@@ -97,7 +97,7 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
     if (channelsCount > 1)
     {
         _curveOne = new QwtPlotCurve();
-        _curveOne->setTitle(tr("Channel 2"));
+        _curveOne->setTitle(tr("Signal 2"));
         _curveOne->setPen(QPen(Qt::darkCyan, 6, Qt::DotLine));
         _curveOne->setRenderHint(QwtPlotItem::RenderAntialiased, true);
         _curveOne->setYAxis(QwtPlot::yRight);
@@ -109,7 +109,7 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
     }
     else
     {
-        _curveZero->setTitle(tr("Channel 3"));
+        _curveZero->setTitle(tr("Signal 3"));
         QString text = _curveZero->title().text() + tr(" Voltage: 0");
         _channelOutput_0->setText(text);
     }
@@ -171,7 +171,7 @@ void GraphicPlot::setPoint(const double &voltage_0,
         ch0Point.setY(voltage_0);
         _pointsZero.append(ch0Point);
         _curveZero->setSamples(_pointsZero);
-        _channelOutput_0->setText(tr("Channel 1 Voltage: ") +
+        _channelOutput_0->setText(tr("Signal 1 Voltage: ") +
                                      QString::number(voltage_0));
     }
     if ((_channelOneEnabled == true) &&
@@ -181,7 +181,7 @@ void GraphicPlot::setPoint(const double &voltage_0,
         ch1Point.setY(voltage_1);
         _pointsOne.append(ch1Point);
         _curveOne->setSamples(_pointsOne);
-        _channelOutput_1->setText(tr("Channel 2 Voltage: ") +
+        _channelOutput_1->setText(tr("Signal 2 Voltage: ") +
                                      QString::number(voltage_1));
     }
 

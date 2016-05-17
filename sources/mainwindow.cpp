@@ -115,10 +115,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::_initializePlot()
 {
-    _plot = new GraphicPlot(tr("Channel 1/2"), 2);
+    _plot = new GraphicPlot(tr("Signal 1/2"), 2);
     ui->v_lay->insertWidget(1, _plot);
 
-    _hfPlot = new GraphicPlot(tr("Channel 3"), 1);
+    _hfPlot = new GraphicPlot(tr("Signal 3"), 1);
     _hfPlot->rescaleAxis(QwtPlot::yLeft, -1.0, 1.0);
     _hfPlot->rescaleAxis(QwtPlot::yRight, -1.0, 1.0);
     _hfPlot->setChannels(true, false);
@@ -776,9 +776,9 @@ void MainWindow::_startLogging()
 
         QString header;
         header.append(tr("TIME|"));
-        header.append(tr("CHANNEL_0|"));
-        header.append(tr("CHANNEL_1|"));
-        header.append(tr("HF_CHANNEL|;"));
+        header.append(tr("SIGNAL_1|"));
+        header.append(tr("SIGNAL_2|"));
+        header.append(tr("SIGNAL_3|;"));
         header.append("\r\n");
         _logFile.write(header.toAscii());
     }
