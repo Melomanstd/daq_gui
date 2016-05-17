@@ -22,8 +22,7 @@ PlotGrid::PlotGrid()
     :   QwtPlotGrid(  ),
         _yRightScale(0),
         _drawLeftScale(0),
-        _drawRightScale(0),
-        _step(1)
+        _drawRightScale(0)
 {
     restartTime();
 }
@@ -243,16 +242,10 @@ void PlotGrid::drawRightScale(bool draw)
 
 void PlotGrid::restartTime()
 {
-    _workingTime.restart();
     for (int i = 0; i < 10; i++)
     {
         _savedTime[i] = 0;
     }
     _timeStoragePointer = _savedTime;
     _lastTime = 0;
-}
-
-void PlotGrid::setStep(int step)
-{
-    _step = step;
 }

@@ -199,7 +199,7 @@ void GraphicPlot::setPoint(const double &voltage_0,
 
         rescaleAxis(xBottom,
                      _count - _displayedPoints,
-                     _count);
+                     _count - 1);
 //        setAxisScale(QwtPlot::xBottom,
 //                     _count - _displayedPoints,
 //                     _count - 1,
@@ -285,7 +285,6 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
 
 void GraphicPlot::setDisplayStep(int step)
 {
-    _grid->setStep(step);
     _displayStep = step;
     _currentStep = step;
 }

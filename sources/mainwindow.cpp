@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(_delayedSliderNewValue(int)));
     ui->horizontalLayout->insertWidget(3,delayedSlider);
 
-    _modeLabel = new QLabel(tr("Current mode:"));
+    /*_modeLabel = new QLabel(tr("Current mode:"));
     _modeValue = new QLabel(tr("No mode"));
     _intervalLabel = new QLabel(tr("Measuring interval(msec):"));
     _intervalValue = new QLabel(QString::number(
@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     statusBar()->addWidget(_modeLabel);
     statusBar()->addWidget(_modeValue);
     statusBar()->addWidget(_intervalLabel);
-    statusBar()->addWidget(_intervalValue);
+    statusBar()->addWidget(_intervalValue);*/
 
     ui->stop_btn->setChecked(true);
 
@@ -384,7 +384,7 @@ void MainWindow::on_start_btn_clicked()
     {
         ui->start_btn->setChecked(false);
         ui->stop_btn->setChecked(true);
-        _modeValue->setText(tr("No mode"));
+//        _modeValue->setText(tr("No mode"));
         return;
     }
     _isWorking = true;
@@ -401,7 +401,7 @@ void MainWindow::on_stop_btn_clicked()
     _dataOperator->stopWorking();
     _plotBufferZero = 0;
     _plotBufferOne = 0;
-    _modeValue->setText(tr("No mode"));
+//    _modeValue->setText(tr("No mode"));
 
     ui->log_btn->setChecked(false);
     _stopLogging();
@@ -477,7 +477,7 @@ void MainWindow::_setupSingleshotParameters(ParametersDialog &p)
     _plotBufferZero = 0;
     _plotBufferOne = 0;
 
-    _modeValue->setText(tr("Singleshot measuring mode"));
+//    _modeValue->setText(tr("Singleshot measuring mode"));
 }
 
 void MainWindow::_setupBlockParameters(ParametersDialog &p)
@@ -511,7 +511,7 @@ void MainWindow::_setupBlockParameters(ParametersDialog &p)
                     _parameters.blockSize);
     }
 
-    _modeValue->setText(tr("Block measuring mode"));
+//    _modeValue->setText(tr("Block measuring mode"));
 }
 
 void MainWindow::_setupHfParameters(ParametersDialog &p)
@@ -535,7 +535,7 @@ void MainWindow::_setupHfParameters(ParametersDialog &p)
     _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
                 1000);
 
-    _modeValue->setText(tr("High frequency measuring mode"));
+//    _modeValue->setText(tr("High frequency measuring mode"));
 }
 
 ModeParameters MainWindow::_lastParameters()
@@ -731,7 +731,7 @@ void MainWindow::_delayedSliderNewValue(int value)
     {
         _dataOperator->setMeasuringInterval(value);
     }
-    _intervalValue->setText(QString::number(value));
+//    _intervalValue->setText(QString::number(value));
 }
 
 void MainWindow::on_screenshot_btn_clicked()

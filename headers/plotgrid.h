@@ -40,7 +40,6 @@ public:
         const    QwtScaleMap &xMap, const QwtScaleMap &yMap,
         const    QRectF &rect ) const;
     void         restartTime();
-    void         setStep(int step);
 
 private:
     void drawLines( QPainter *painter, const QRectF &,
@@ -52,11 +51,9 @@ private:
     bool            _drawLeftScale;
     bool            _drawRightScale;
 
-    QTime           _workingTime;
     int             _savedTime[10];
     int*            _timeStoragePointer;
     int             _lastTime;
-    int             _step;
 };
 
 #endif
