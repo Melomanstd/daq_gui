@@ -40,23 +40,23 @@ public:
         const    QwtScaleMap &xMap, const QwtScaleMap &yMap,
         const    QRectF &rect ) const;
     void         cleanTime();
+    void         updateTime();
+    void         usingTimeValues(bool state);
 
 private:
     void drawLines( QPainter *painter, const QRectF &,
         Qt::Orientation orientation, const QwtScaleMap &,
         const QList<double> & ) const;
 
-private slots:
-    void _scaleTimerTimeout();
-
 private:
     QwtScaleDiv*    _yRightScale;
     bool            _drawLeftScale;
     bool            _drawRightScale;
 
-    int             _savedTime[10];
+    int*             _savedTime;
     int*            _timeStoragePointer;
     int             _lastTime;
+    bool            _useTimeValues;
 };
 
 #endif

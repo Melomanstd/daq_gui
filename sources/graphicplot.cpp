@@ -34,6 +34,11 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
 //    rescaleAxis(yLeft, _scaleMinimum, _scaleMaximum);
 //    rescaleAxis(yRight, _scaleMinimum, _scaleMaximum);
 
+    _scaleTimer = new QTimer;
+    _scaleTimer->setInterval(1000);
+    connect(_scaleTimer, SIGNAL(timeout()),
+            this, SLOT(_scaleTimerTimeout()));
+
     setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
     setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
     setTitle(title);
@@ -126,12 +131,6 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
     connect(panner, SIGNAL(panned(int,int)),
             this, SLOT(_plotPanned(int,int)));
 
-
-
-
-
-
-
     replot();
 
     rescaleAxis(xBottom, 0, 100);
@@ -139,6 +138,12 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
 
 GraphicPlot::~GraphicPlot()
 {
+    disconnect(_scaleTimer, SIGNAL(timeout()),
+               this, SLOT(_scaleTimerTimeout()));
+    _scaleTimer->stop();
+    delete _scaleTimer;
+    _scaleTimer = 0;
+
     if (_channelZeroVoltageBuffer != 0)
     {
         delete [] _channelZeroVoltageBuffer;
@@ -239,6 +244,10 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
 
     if (mode == MODE_SINGLESHOT_MEASURING)
     {
+
+        _grid->usingTimeValues(true);
+        _scaleTimer->start();
+
         QwtSymbol *simba = new QwtSymbol(QwtSymbol::Ellipse,
                                          QBrush(Qt::yellow),
                                          QPen(Qt::red),
@@ -562,4 +571,9 @@ void GraphicPlot::setLineWidth_1(int width)
     QPen pen = _curveOne->pen();
     pen.setWidth(width);
     _curveOne->setPen(pen);
+}
+
+void GraphicPlot::_scaleTimerTimeout()
+{
+    _grid->updateTime();
 }

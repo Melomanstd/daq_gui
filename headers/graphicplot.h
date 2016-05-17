@@ -2,6 +2,8 @@
 #define GRAPHICPLOT_H
 
 #include <QWidget>
+#include <QTimer>
+
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 #include <qwt_text_label.h>
@@ -46,6 +48,7 @@ public:
 
 private slots:
     void        _plotPanned(int x, int y);
+    void        _scaleTimerTimeout();
 
 private:
     QwtPlotCurve*       _curveZero;
@@ -81,6 +84,8 @@ private:
 
     QwtTextLabel*       _channelOutput_0;
     QwtTextLabel*       _channelOutput_1;
+
+    QTimer*             _scaleTimer;
 };
 
 #endif // GRAPHICPLOT_H

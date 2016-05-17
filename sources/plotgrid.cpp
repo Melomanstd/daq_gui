@@ -17,13 +17,18 @@
 #include <qpainter.h>
 #include <qpen.h>
 
+#define BUFFER_SIZE 10
+
 //! Enables major grid, disables minor grid
 PlotGrid::PlotGrid()
     :   QwtPlotGrid(  ),
         _yRightScale(0),
         _drawLeftScale(0),
-        _drawRightScale(0)
+        _drawRightScale(0),
+        _useTimeValues(false)
 {
+    _savedTime = new int[BUFFER_SIZE];
+
     cleanTime();
 }
 
@@ -182,7 +187,18 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
                 font.setPointSize(12);
                 font.setBold(true);
                 painter->setFont(font);
-                if (i != 0 && i != values.count() - 1)
+
+                if (_useTimeValues == true)
+                {
+                    QwtPainter::drawText( painter,
+                                          value-50,
+                                          y2-20,
+                                          100,
+                                          20,
+                                          Qt::AlignHCenter,
+                                          QString::number(_savedTime[_lastTime - i]) );
+                }
+                else if (i != 0 && i != values.count() - 1)
                 {
                     QwtPainter::drawText( painter,
                                           value-50,
@@ -242,15 +258,29 @@ void PlotGrid::drawRightScale(bool draw)
 
 void PlotGrid::cleanTime()
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < BUFFER_SIZE; i++)
     {
         _savedTime[i] = 0;
     }
     _timeStoragePointer = _savedTime;
     _lastTime = 0;
+    _useTimeValues = false;
 }
 
-void PlotGrid::_scaleTimerTimeout()
+void PlotGrid::updateTime()
 {
-    //
+    if (_lastTime < BUFFER_SIZE)
+    {
+        ++_lastTime;
+    }
+
+    for (int i = 0; i < _lastTime; i++)
+    {
+        _savedTime[i] = _savedTime[i] + 1;
+    }
+}
+
+void PlotGrid::usingTimeValues(bool state)
+{
+    _useTimeValues = state;
 }
