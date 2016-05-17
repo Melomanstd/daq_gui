@@ -11,7 +11,7 @@
 #define PLOT_GRID_H
 
 #include "qwt_plot_grid.h"
-#include <QTime>
+#include <QTimer>
 
 /*!
   \brief A class which draws a coordinate grid
@@ -39,12 +39,15 @@ public:
     virtual void draw( QPainter *p,
         const    QwtScaleMap &xMap, const QwtScaleMap &yMap,
         const    QRectF &rect ) const;
-    void         restartTime();
+    void         cleanTime();
 
 private:
     void drawLines( QPainter *painter, const QRectF &,
         Qt::Orientation orientation, const QwtScaleMap &,
         const QList<double> & ) const;
+
+private slots:
+    void _scaleTimerTimeout();
 
 private:
     QwtScaleDiv*    _yRightScale;

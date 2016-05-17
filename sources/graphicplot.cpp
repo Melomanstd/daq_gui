@@ -227,7 +227,7 @@ void GraphicPlot::setBlock(unsigned short *samples, int size)
 void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
 {
     _displayedPoints = size;
-    _grid->restartTime();
+    _grid->cleanTime();
 
     if (reset == true)
     {

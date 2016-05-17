@@ -24,7 +24,7 @@ PlotGrid::PlotGrid()
         _drawLeftScale(0),
         _drawRightScale(0)
 {
-    restartTime();
+    cleanTime();
 }
 
 //! Destructor
@@ -240,7 +240,7 @@ void PlotGrid::drawRightScale(bool draw)
     _drawRightScale = draw;
 }
 
-void PlotGrid::restartTime()
+void PlotGrid::cleanTime()
 {
     for (int i = 0; i < 10; i++)
     {
@@ -248,4 +248,9 @@ void PlotGrid::restartTime()
     }
     _timeStoragePointer = _savedTime;
     _lastTime = 0;
+}
+
+void PlotGrid::_scaleTimerTimeout()
+{
+    //
 }

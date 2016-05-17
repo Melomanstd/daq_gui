@@ -1,4 +1,4 @@
-#include "plotlegend.h"
+#include "headers/plotlegend.h"
 
 PlotLegend::PlotLegend(QWidget *parent):
     QwtLegend(parent)
