@@ -2,6 +2,8 @@
 #define GRAPHICPLOT_H
 
 #include <QWidget>
+#include <QTimer>
+
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 #include <qwt_text_label.h>
@@ -12,7 +14,9 @@ class GraphicPlot : public QwtPlot
 {
     Q_OBJECT
 public:
-    explicit    GraphicPlot(QWidget *parent = 0);
+    explicit    GraphicPlot(QString title,
+                            int channelsCount,
+                            QWidget *parent = 0);
     virtual     ~GraphicPlot();
 
     void        setDisplayedPoints(int size, bool reset, qint8 mode);
@@ -41,9 +45,11 @@ public:
     void        setLineWidth_1(int width);
 
     void        rescaleAxis(Axis axis, double minimum, double maximum);
+    void        measuringStopped();
 
 private slots:
     void        _plotPanned(int x, int y);
+    void        _scaleTimerTimeout();
 
 private:
     QwtPlotCurve*       _curveZero;
@@ -79,6 +85,8 @@ private:
 
     QwtTextLabel*       _channelOutput_0;
     QwtTextLabel*       _channelOutput_1;
+
+    QTimer*             _scaleTimer;
 };
 
 #endif // GRAPHICPLOT_H

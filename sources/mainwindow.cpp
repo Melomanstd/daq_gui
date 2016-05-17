@@ -21,15 +21,22 @@ MainWindow::MainWindow(QWidget *parent) :
     //    singleShot();
 //        blocks();
 
+    ui->ch_0_voltage_range_slider->setVisible(false);
+    ui->ch_0_zoom_in_btn->setVisible(false);
+    ui->ch_0_zoom_out_btn->setVisible(false);
+    ui->ch_1_voltage_range_slider->setVisible(false);
+    ui->ch_1_zoom_in_btn->setVisible(false);
+    ui->ch_1_zoom_out_btn->setVisible(false);
+
     _logFile.setFileName("log.csv");
     _workingTime = new QTime;
 
     delayedSlider = new TimerSlider(Qt::Horizontal, 0);
     connect(delayedSlider, SIGNAL(NewValue(int)),
             this, SLOT(_delayedSliderNewValue(int)));
-    ui->horizontalLayout->insertWidget(6,delayedSlider);
+    ui->horizontalLayout->insertWidget(3,delayedSlider);
 
-    _modeLabel = new QLabel(tr("Current mode:"));
+    /*_modeLabel = new QLabel(tr("Current mode:"));
     _modeValue = new QLabel(tr("No mode"));
     _intervalLabel = new QLabel(tr("Measuring interval(msec):"));
     _intervalValue = new QLabel(QString::number(
@@ -47,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     statusBar()->addWidget(_modeLabel);
     statusBar()->addWidget(_modeValue);
     statusBar()->addWidget(_intervalLabel);
-    statusBar()->addWidget(_intervalValue);
+    statusBar()->addWidget(_intervalValue);*/
 
     ui->stop_btn->setChecked(true);
 
@@ -87,26 +94,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->ch_0_voltage_range_slider->setValue(80);
     ui->ch_1_voltage_range_slider->setValue(80);
-
-    QColor channelZeroColor = Qt::red;
-    QColor channelOneColor = Qt::yellow;
-
-    QPalette pal = ui->channelZero_check->palette();
-//    pal.setColor(QPalette::WindowText, channelZeroColor);
-//    ui->channelZero_check->setPalette(pal);
-//    pal.setColor(QPalette::WindowText, channelOneColor);
-//    ui->channelOne_check->setPalette(pal);
-
-    _plot->setCurveProperties(0, QPen(channelZeroColor, 3, Qt::DashLine));
-    _plot->setCurveProperties(1, QPen(channelOneColor, 3, Qt::DotLine));
-
-    pal = ui->header_box->palette();
-    QLinearGradient gradient(0.0, 0.0, 1.0, 1.0);
-    gradient.setCoordinateMode(QLinearGradient::StretchToDeviceMode);
-    gradient.setColorAt(0.0, QColor(0, 49, 110));
-    gradient.setColorAt(1.0, QColor(0, 87, 174));
-    pal.setBrush(QPalette::Window, QBrush(gradient));
-//    ui->header_box->setPalette(pal);
 }
 
 MainWindow::~MainWindow()
@@ -128,15 +115,32 @@ MainWindow::~MainWindow()
 
 void MainWindow::_initializePlot()
 {
-    _plot = new GraphicPlot();
-//    _plot->setDisplayedPoints(10, true, );
-
-//    ui->v_lay->addWidget(_plot);
+    _plot = new GraphicPlot(tr("Channel 1/2"), 2);
     ui->v_lay->insertWidget(1, _plot);
 
-//    _plot->setAxisTitle(QwtPlot::yLeft, tr("Channel 0 Voltage"));
-//    _plot->setAxisTitle(QwtPlot::yRight, tr("Channel 1 Voltage"));
-//    _plot->enableAxis(QwtPlot::yRight);
+    _hfPlot = new GraphicPlot(tr("Channel 3"), 1);
+    _hfPlot->rescaleAxis(QwtPlot::yLeft, -1.0, 1.0);
+    _hfPlot->rescaleAxis(QwtPlot::yRight, -1.0, 1.0);
+    _hfPlot->setChannels(true, false);
+    QVBoxLayout *lay = dynamic_cast<QVBoxLayout*> (
+                centralWidget()->layout());
+
+    lay->insertWidget(3, _hfPlot);
+
+    QColor channelZeroColor = Qt::red;
+    QColor channelOneColor = Qt::yellow;
+
+//    QPalette pal = ui->channelZero_check->palette();
+//    pal.setColor(QPalette::WindowText, channelZeroColor);
+//    ui->channelZero_check->setPalette(pal);
+//    pal.setColor(QPalette::WindowText, channelOneColor);
+//    ui->channelOne_check->setPalette(pal);
+
+    _plot->setCurveProperties(0, QPen(channelZeroColor, 3, Qt::DashLine));
+    _plot->setCurveProperties(1, QPen(channelOneColor, 3, Qt::DotLine));
+
+    _hfPlot->setCurveProperties(0, QPen(channelZeroColor, 3, Qt::DashLine));
+    _hfPlot->setCurveProperties(1, QPen(channelOneColor, 3, Qt::DotLine));
 }
 
 void MainWindow::_initializeDataOperator()
@@ -180,7 +184,7 @@ void MainWindow::_updatePlot()
     else if (_parameters.mode == MODE_HF_MEASURING)
     {
         _dataOperator->getHfVoltageBuffer(_plotBufferZero);
-        _plot->displayBlock();
+        _hfPlot->displayBlock();
 
         if (_plotBufferZero != 0)
         {
@@ -380,7 +384,7 @@ void MainWindow::on_start_btn_clicked()
     {
         ui->start_btn->setChecked(false);
         ui->stop_btn->setChecked(true);
-        _modeValue->setText(tr("No mode"));
+//        _modeValue->setText(tr("No mode"));
         return;
     }
     _isWorking = true;
@@ -397,8 +401,8 @@ void MainWindow::on_stop_btn_clicked()
     _dataOperator->stopWorking();
     _plotBufferZero = 0;
     _plotBufferOne = 0;
-    _modeValue->setText(tr("No mode"));
-
+//    _modeValue->setText(tr("No mode"));
+    _plot->measuringStopped();
     ui->log_btn->setChecked(false);
     _stopLogging();
 }
@@ -473,7 +477,7 @@ void MainWindow::_setupSingleshotParameters(ParametersDialog &p)
     _plotBufferZero = 0;
     _plotBufferOne = 0;
 
-    _modeValue->setText(tr("Singleshot measuring mode"));
+//    _modeValue->setText(tr("Singleshot measuring mode"));
 }
 
 void MainWindow::_setupBlockParameters(ParametersDialog &p)
@@ -507,7 +511,7 @@ void MainWindow::_setupBlockParameters(ParametersDialog &p)
                     _parameters.blockSize);
     }
 
-    _modeValue->setText(tr("Block measuring mode"));
+//    _modeValue->setText(tr("Block measuring mode"));
 }
 
 void MainWindow::_setupHfParameters(ParametersDialog &p)
@@ -523,15 +527,15 @@ void MainWindow::_setupHfParameters(ParametersDialog &p)
     _parameters.blockSize = 250;
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
-    _plot->setDisplayStep(1);
-    _plot->setDisplayedPoints(1000,
+    _hfPlot->setDisplayStep(1);
+    _hfPlot->setDisplayedPoints(1000,
                               !_isWorking,
                               _parameters.mode);
 
-    _plotBufferZero = _plot->initializeChannelZeroBuffer(
+    _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
                 1000);
 
-    _modeValue->setText(tr("High frequency measuring mode"));
+//    _modeValue->setText(tr("High frequency measuring mode"));
 }
 
 ModeParameters MainWindow::_lastParameters()
@@ -655,9 +659,9 @@ void MainWindow::_channelZeroState(bool state)
     _plot->setChannels(ui->channelZero_check->isChecked(),
                        ui->channelOne_check->isChecked());
 //    _plot->enableAxis(QwtPlot::yLeft, false);
-    ui->ch_0_voltage_range_slider->setVisible(state);
-    ui->ch_0_zoom_in_btn->setVisible(state);
-    ui->ch_0_zoom_out_btn->setVisible(state);
+//    ui->ch_0_voltage_range_slider->setVisible(state);
+//    ui->ch_0_zoom_in_btn->setVisible(state);
+//    ui->ch_0_zoom_out_btn->setVisible(state);
 }
 
 void MainWindow::_channelOneState(bool state)
@@ -665,9 +669,9 @@ void MainWindow::_channelOneState(bool state)
     _plot->setChannels(ui->channelZero_check->isChecked(),
                        ui->channelOne_check->isChecked());
 //    _plot->enableAxis(QwtPlot::yRight, false);
-    ui->ch_1_voltage_range_slider->setVisible(state);
-    ui->ch_1_zoom_in_btn->setVisible(state);
-    ui->ch_1_zoom_out_btn->setVisible(state);
+//    ui->ch_1_voltage_range_slider->setVisible(state);
+//    ui->ch_1_zoom_in_btn->setVisible(state);
+//    ui->ch_1_zoom_out_btn->setVisible(state);
 }
 
 void MainWindow::on_forward_btn_clicked()
@@ -727,7 +731,7 @@ void MainWindow::_delayedSliderNewValue(int value)
     {
         _dataOperator->setMeasuringInterval(value);
     }
-    _intervalValue->setText(QString::number(value));
+//    _intervalValue->setText(QString::number(value));
 }
 
 void MainWindow::on_screenshot_btn_clicked()
