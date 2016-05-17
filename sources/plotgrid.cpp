@@ -184,6 +184,7 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
                 font.setBold(true);
                 painter->setFont(font);
                 if (i != 0 && i != values.count() - 1)
+                {
                     QwtPainter::drawText( painter,
                                           value-50,
                                           y2-20,
@@ -191,6 +192,27 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
                                           20,
                                           Qt::AlignHCenter,
                                           QString::number(qRound(values[i]/* / _step*/)) );
+                }
+                else if (i == 0)
+                {
+                    QwtPainter::drawText( painter,
+                                          value-30,
+                                          y2-20,
+                                          100,
+                                          20,
+                                          Qt::AlignHCenter,
+                                          QString::number(qRound(values[i]/* / _step*/)) );
+                }
+                else /*i == values.count() - 1*/
+                {
+                    QwtPainter::drawText( painter,
+                                          value-80,
+                                          y2-20,
+                                          100,
+                                          20,
+                                          Qt::AlignHCenter,
+                                          QString::number(qRound(values[i]/* / _step*/)) );
+                }
                 painter->restore();
             }
         }

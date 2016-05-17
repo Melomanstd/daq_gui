@@ -179,10 +179,10 @@ void GraphicPlot::setPoint(const double &voltage_0,
     {
         _initializedPoints++;
 //        _rescaleAxis(xBottom, 0, _initializedPoints - 1);
-        setAxisScale(xBottom,
-                     0,
-                     _initializedPoints - 1,
-                     _displayStep);
+//        setAxisScale(xBottom,
+//                     0,
+//                     _initializedPoints - 1,
+//                     _displayStep);
     }
     else
     {
@@ -199,7 +199,7 @@ void GraphicPlot::setPoint(const double &voltage_0,
 
         rescaleAxis(xBottom,
                      _count - _displayedPoints,
-                     _count - 1);
+                     _count);
 //        setAxisScale(QwtPlot::xBottom,
 //                     _count - _displayedPoints,
 //                     _count - 1,
@@ -243,6 +243,7 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
                                          QBrush(Qt::yellow),
                                          QPen(Qt::red),
                                          QSize(10,10));
+
         if (_curveZero != 0)
             _curveZero->setSymbol(simba);
 
@@ -257,6 +258,8 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
         setLineStyle_1(Qt::DotLine);
         setLineWidth_0(3);
         setLineWidth_1(3);
+
+        rescaleAxis(xBottom, 0, size);
 
     } else if ((mode == MODE_BLOCK_MEASURING) ||
                (mode == MODE_HF_MEASURING))
@@ -378,14 +381,14 @@ void GraphicPlot::displayBlock()
         ++_count;
     }
 
-    if (_curveZero != 0)
+    if ((_curveZero != 0) && (_channelZeroEnabled == true))
     {
         _curveZero->setSamples(_pointsZero);
         QString text = _curveZero->title().text() + tr(" Voltage: ") +
                 QString::number(_channelZeroVoltageBuffer[_displayedPoints -1]);
         _channelOutput_0->setText(text);
     }
-    if (_curveOne != 0)
+    if ((_curveOne != 0) && (_channelOneEnabled == true))
     {
         _curveOne->setSamples(_pointsOne);
         QString text = _curveOne->title().text() + tr(" Voltage: ") +
