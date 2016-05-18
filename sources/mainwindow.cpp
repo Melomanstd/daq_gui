@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QMessageBox>
 
+#include "blockdialog.h"
+#include "singleshotdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -380,16 +382,56 @@ void MainWindow::on_start_btn_clicked()
 
     ui->stop_btn->setChecked(false);
     ui->start_btn->setChecked(true);
-    if (_setupParameters() == false)
+
+    SingleshotDialog d;
+
+    if (d.exec() == false)
     {
         ui->start_btn->setChecked(false);
         ui->stop_btn->setChecked(true);
 //        _modeValue->setText(tr("No mode"));
         return;
     }
+
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+
+    _parameters.mode = MODE_SINGLESHOT_MEASURING;
+    int p1, p2;
+    d.selectedPins(p1, p2);
+//    _dataOperator->setChannelsPins(pins);
+    _dataOperator->setPin(0, p1);
+    _dataOperator->setPin(1, p2);
+
+    delayedSlider->setMaximum(99);
+    delayedSlider->setMinimum(1);
+    delayedSlider->setValue(d.getMeasuresCount());
+    delayedSlider->setPageStep(3);
+    delayedSlider->setSingleStep(1);
+    delayedSlider->setEnabled(true);
+
+    _parameters.displayedInterval = 10;
+    _parameters.measuringInterval = d.getMeasuresCount();
+//        _plot->setAxisTitle(QwtPlot::xBottom, tr("Seconds"));
+
+    _plot->setDisplayStep(_parameters.measuringInterval);
+    //points per sec * displayed seconds
+    _plot->setDisplayedPoints(_parameters.measuringInterval *
+                              _parameters.displayedInterval,
+                              !_isWorking,
+                              _parameters.mode);
+
+    _plotBufferZero = 0;
+    _plotBufferOne = 0;
+
+    _plot->setChannels(ui->channelZero_check->isChecked(),
+                       ui->channelOne_check->isChecked());
+
+    _dataOperator->setParameters(_parameters, _isWorking);
+
     _isWorking = true;
     _dataOperator->startWorking();
     _workingTime->restart();
+    _updateTimer->start();
 }
 
 void MainWindow::on_stop_btn_clicked()
@@ -704,6 +746,7 @@ void MainWindow::on_backward_btn_clicked()
 
 void MainWindow::_delayedSliderNewValue(int value)
 {
+    return;
     if (delayedSlider->isEnabled() == false)
     {
         return;
@@ -791,4 +834,14 @@ void MainWindow::_stopLogging()
         _logFile.close();
         _isLogging = false;
     }
+}
+
+void MainWindow::on_meas_per_second_spin_editingFinished()
+{
+//    _dataOperator->setMeasuringInterval(ui->meas_per_second_spin->value());
+}
+
+void MainWindow::on_meas_block_count_spin_editingFinished()
+{
+
 }

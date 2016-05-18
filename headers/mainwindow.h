@@ -60,6 +60,9 @@ private slots:
     void on_log_btn_clicked();
     void _delayedSliderNewValue(int value);
 
+    void on_meas_per_second_spin_editingFinished();
+    void on_meas_block_count_spin_editingFinished();
+
     void _updatePlot();
     void _displayError();
 

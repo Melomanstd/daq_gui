@@ -31,6 +31,7 @@ public:
     void        setMeasureSampleInterval(quint32 interval);
     void        setSampleCount(quint32 count); //samples per block
     void        setParameters(ModeParameters parameters, bool update);
+    void        setPin(int id, char value);
 
     void        getVoltage(double &ch0, double &ch1);
     F64*        getVoltageBuffer();

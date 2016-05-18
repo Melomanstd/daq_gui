@@ -342,7 +342,7 @@ bool DataOperator::isDataReady()
 void DataOperator::setMeasuringInterval(quint32 msec)
 {
     _mutex.tryLock();
-    _measuringInterval = msec;
+    _measuringInterval = 1000 / msec;
     _mutex.unlock();
 }
 
@@ -370,7 +370,7 @@ void DataOperator::setParameters(ModeParameters parameters, bool update)
     _channelZeroMeasuring = parameters.channelZeroState;
     _channelOneMeasuring = parameters.channelOneState;
 
-    _measuringInterval      = parameters.measuringInterval;
+    _measuringInterval      = 1000 / parameters.measuringInterval;
 //            static_cast<quint32> (1000 / );
 
     //block mode
@@ -404,7 +404,7 @@ void DataOperator::_singleshotMeasure()
     {
         ::D2K_AI_VReadChannel(_cardID, 1, &_voltageSingleshotValue_1);
     }
-    msleep(1000 / _measuringInterval);
+    msleep(_measuringInterval);
     _newDataReady = true;
     _mutex.unlock();
 }
@@ -459,6 +459,11 @@ void DataOperator::setChannelsPins(char pins[])
     {
         _channelsPins[i] = static_cast<I16> (pins[i]);
     }
+}
+
+void DataOperator::setPin(int id, char value)
+{
+    _channelsPins[id] = static_cast<I16> (value);
 }
 
 void DataOperator::getHfVoltageBuffer(double *buffer)
