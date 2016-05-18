@@ -361,7 +361,7 @@ void MainWindow::on_parameters_btn_clicked()
     _setupParameters();
 }
 
-void MainWindow::on_start_btn_clicked()
+void MainWindow::on_start_btn_clicked()//singleshot
 {
     if (_isWorking == true)
     {
@@ -420,9 +420,6 @@ void MainWindow::on_start_btn_clicked()
                               !_isWorking,
                               _parameters.mode);
 
-    _plotBufferZero = 0;
-    _plotBufferOne = 0;
-
     _plot->setChannels(ui->channelZero_check->isChecked(),
                        ui->channelOne_check->isChecked());
 
@@ -434,10 +431,82 @@ void MainWindow::on_start_btn_clicked()
     _updateTimer->start();
 }
 
-void MainWindow::on_stop_btn_clicked()
+void MainWindow::on_stop_btn_clicked()//singleshot
 {
     ui->start_btn->setChecked(false);
     ui->stop_btn->setChecked(true);
+    _isWorking = false;
+    _updateTimer->stop();
+    _dataOperator->stopWorking();
+    _plotBufferZero = 0;
+    _plotBufferOne = 0;
+//    _modeValue->setText(tr("No mode"));
+    _plot->measuringStopped();
+    ui->log_btn->setChecked(false);
+    _stopLogging();
+}
+
+void MainWindow::on_start_btn_2_clicked()//block
+{
+    if (_isWorking == true)
+    {
+        ui->stop_btn_2->setChecked(false);
+        ui->start_btn_2->setChecked(true);
+        return;
+    }
+
+    ui->stop_btn_2->setChecked(false);
+    ui->start_btn_2->setChecked(true);
+
+    BlockDialog d;
+
+    if (d.exec() == false)
+    {
+        ui->start_btn_2->setChecked(false);
+        ui->stop_btn_2->setChecked(true);
+//        _modeValue->setText(tr("No mode"));
+        return;
+    }
+
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+
+    _parameters.mode = MODE_BLOCK_MEASURING;
+    int p1;
+    d.selectedPins(p1);
+//    _dataOperator->setChannelsPins(pins);
+    _dataOperator->setPin(2, p1);
+
+    _parameters.measuringInterval = 1000;
+    _parameters.blockSize = d.getSamplesCount();
+    _parameters.scaningInterval = 160;
+    _parameters.samplingInterval = 160;
+    _plot->setDisplayStep(/*_parameters.blockSize / 10*/1);
+    _plot->setDisplayedPoints(_parameters.blockSize,
+                              !_isWorking,
+                              _parameters.mode);
+    settings.setValue("samples_count",
+                      _parameters.blockSize);
+
+    if (ui->channelZero_check->isChecked() == true)
+    {
+        _plotBufferZero = _plot->initializeChannelZeroBuffer(
+                    _parameters.blockSize);
+    }
+
+
+    _plot->setChannels(true, false);
+
+    _dataOperator->setParameters(_parameters, _isWorking);
+    _isWorking = true;
+    _dataOperator->startWorking();
+    _workingTime->restart();
+    _updateTimer->start();
+}
+
+void MainWindow::on_stop_btn_2_clicked()//block
+{
+    ui->start_btn_2->setChecked(false);
+    ui->stop_btn_2->setChecked(true);
     _isWorking = false;
     _updateTimer->stop();
     _dataOperator->stopWorking();

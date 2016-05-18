@@ -262,6 +262,7 @@ void DataOperator::_initializeCard()
     {
         ::D2K_AI_CH_Config(_cardID, 0, AD_B_10_V|AI_RSE);
         ::D2K_AI_CH_Config(_cardID, 1, AD_B_10_V|AI_RSE);
+        ::D2K_AI_CH_Config(_cardID, 2, AD_B_10_V|AI_RSE);
         _isWorking = true;
         _isUnitialize = false;
     }
@@ -416,7 +417,7 @@ void DataOperator::_blockMeasure()
     if (_channelZeroMeasuring == true)
     {
         _errorCode = ::D2K_AI_ContReadChannel (_cardID,
-                                  _channelsPins[0],
+                                  _channelsPins[2],
                                   _resultBufferIdZero,
                                   _measureSampleCount,
                                   _measuringBlockInterval,
