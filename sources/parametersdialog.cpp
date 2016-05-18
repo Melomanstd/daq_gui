@@ -107,7 +107,7 @@ void ParametersDialog::_blockMode()
 
 void ParametersDialog::_hfMode()
 {
-    ui->spin_0->setEnabled(false);
+    ui->spin_0->setEnabled(true);
     ui->spin_1->setEnabled(false);
     ui->spin_2->setEnabled(false);
 
@@ -118,7 +118,7 @@ void ParametersDialog::_hfMode()
     ui->spin_0->setMinimum(2);          //Samples per measure
     ui->spin_0->setMaximum(16777215);   //Samples per measure
     ui->spin_0->setSingleStep(2);
-    ui->spin_0->setValue(250);
+    ui->spin_0->setValue(1000);
 
     ui->spin_1->setMinimum(160);        //Scaning interval
     ui->spin_1->setMaximum(16777215);   //Scaning interval
@@ -133,6 +133,7 @@ void ParametersDialog::_hfMode()
     ui->label_5->setText(tr("Samples interval"));
 
     _mode = MODE_HF_MEASURING;
+//    _mode = MODE_BLOCK_MEASURING;
 }
 
 qint32 ParametersDialog::getMeasuringMode()
