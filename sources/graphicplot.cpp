@@ -276,12 +276,11 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
         _scaleTimer->start();
         rescaleAxis(xBottom, 0, size);
         setAxisTitle(xBottom, tr("Seconds"));
+        _grid->trannsformScaleValue(false, 1);
 
     } else if ((mode == MODE_BLOCK_MEASURING) ||
                (mode == MODE_HF_MEASURING))
     {
-        rescaleAxis(QwtPlot::xBottom, 0, size);
-
         if (_curveZero != 0)
         {
             _curveZero->setSymbol(0);
@@ -298,15 +297,20 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
         if (time < 1000)
         {
             setAxisTitle(xBottom, tr("Micro Seconds"));
+            _grid->trannsformScaleValue(true, 1);
         }
         else if ((time >= 1000) && (time < 1000000))
         {
             setAxisTitle(xBottom, tr("Milli Seconds"));
+            _grid->trannsformScaleValue(true, 1000);
         }
         else //size > 1 000 000
         {
             setAxisTitle(xBottom, tr("Seconds"));
+            _grid->trannsformScaleValue(true, 1000000);
         }
+
+        rescaleAxis(QwtPlot::xBottom, 0, size);
     }
 
 //    _points.resize(size);
@@ -593,7 +597,7 @@ void GraphicPlot::setLineWidth_1(int width)
 void GraphicPlot::_scaleTimerTimeout()
 {
     _grid->updateTime();
-    replot();
+//    replot();
 }
 
 

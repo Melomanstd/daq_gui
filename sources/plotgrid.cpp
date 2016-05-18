@@ -26,7 +26,9 @@ PlotGrid::PlotGrid()
         _drawLeftScale(0),
         _drawRightScale(0),
         _useTimeValues(false),
-        _value(0.0)
+        _value(0.0),
+        _transformScaleValue(false),
+        _timescaleDivider(1)
 {
     _savedTime = new int[BUFFER_SIZE];
 
@@ -180,7 +182,7 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
         {
             if (_useTimeValues == false)
             {
-                scaleValue = qRound(values[i]);
+                scaleValue = /*qRound*/(values[i] * 40.0 / _timescaleDivider);
             }
             else
             {
@@ -272,6 +274,8 @@ void PlotGrid::cleanTime()
     _value = 0.0;
     _listPosition = 1;
     _useTimeValues = false;
+    _transformScaleValue = false;
+    _timescaleDivider = 1;
 }
 
 void PlotGrid::updateTime()
@@ -301,4 +305,10 @@ void PlotGrid::updateTime()
 void PlotGrid::usingTimeValues(bool state)
 {
     _useTimeValues = state;
+}
+
+void PlotGrid::trannsformScaleValue(bool state, int divider)
+{
+    _transformScaleValue = state;
+    _timescaleDivider = divider;
 }

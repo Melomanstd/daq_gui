@@ -42,6 +42,7 @@ public:
     void         cleanTime();
     void         updateTime();
     void         usingTimeValues(bool state);
+    void         trannsformScaleValue(bool state, int divider);
 
 private:
     void drawLines( QPainter *painter, const QRectF &,
@@ -61,6 +62,8 @@ private:
     double          _value;
     QList<int>      _time;
     int             _listPosition;
+    bool            _transformScaleValue;
+    int             _timescaleDivider;
 };
 
 #endif
