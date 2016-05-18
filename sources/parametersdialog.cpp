@@ -28,6 +28,10 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
 
     ui->singleshot_btn->setChecked(true);
     _singleshotMode();
+
+    ui->hf_btn->setVisible(false);
+    ui->label_10->setVisible(false);
+    resize(minimumSize());
 }
 
 ParametersDialog::~ParametersDialog()
