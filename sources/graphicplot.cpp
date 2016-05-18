@@ -240,6 +240,7 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
 {
     _displayedPoints = size;
     _grid->cleanTime();
+    int time = size * 40;
 
     if (reset == true)
     {
@@ -251,10 +252,6 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
 
     if (mode == MODE_SINGLESHOT_MEASURING)
     {
-
-        _grid->usingTimeValues(true);
-        _scaleTimer->start();
-
         QwtSymbol *simba = new QwtSymbol(QwtSymbol::Ellipse,
                                          QBrush(Qt::yellow),
                                          QPen(Qt::red),
@@ -275,11 +272,16 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
         setLineWidth_0(3);
         setLineWidth_1(3);
 
+        _grid->usingTimeValues(true);
+        _scaleTimer->start();
         rescaleAxis(xBottom, 0, size);
+        setAxisTitle(xBottom, tr("Seconds"));
 
     } else if ((mode == MODE_BLOCK_MEASURING) ||
                (mode == MODE_HF_MEASURING))
     {
+        rescaleAxis(QwtPlot::xBottom, 0, size);
+
         if (_curveZero != 0)
         {
             _curveZero->setSymbol(0);
@@ -291,6 +293,19 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
             _curveOne->setSymbol(0);
             setLineStyle_1(Qt::SolidLine);
             setLineWidth_1(2);
+        }
+
+        if (time < 1000)
+        {
+            setAxisTitle(xBottom, tr("Micro Seconds"));
+        }
+        else if ((time >= 1000) && (time < 1000000))
+        {
+            setAxisTitle(xBottom, tr("Milli Seconds"));
+        }
+        else //size > 1 000 000
+        {
+            setAxisTitle(xBottom, tr("Seconds"));
         }
     }
 
@@ -373,10 +388,6 @@ void GraphicPlot::displayBlock()
     _pointsZero.clear();
     _pointsOne.clear();
     _count = 1;
-
-    rescaleAxis(QwtPlot::xBottom,
-                 _count-1,
-                 _displayedPoints);
 
     for (int i = 0; i < _displayedPoints; i++)
     {
