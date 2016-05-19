@@ -476,7 +476,28 @@
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="meas_per_second_spin"/>
+       <widget class="QSpinBox" name="meas_per_second_spin">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>80</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="forward_btn">
@@ -717,7 +738,34 @@
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="meas_block_count_spin"/>
+       <widget class="QSpinBox" name="meas_block_count_spin">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>80</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="minimum">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <number>16777214</number>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="forward_btn_2">

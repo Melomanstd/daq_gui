@@ -33,12 +33,24 @@ MainWindow::MainWindow(QWidget *parent) :
     _logFile.setFileName("log.csv");
     _workingTime = new QTime;
 
+    int maxSamplesRange = 250000;
+    int maxMeasureInterval = 99;
+
+    ui->meas_block_count_spin->setMaximum(maxSamplesRange);
+    ui->meas_per_second_spin->setMaximum(maxMeasureInterval);
+
     delayedSlider = new TimerSlider(Qt::Horizontal, 0);
+    delayedSlider->setRange(1,maxMeasureInterval);
+    delayedSlider->setSingleStep(1);
+    delayedSlider->setPageStep(3);
     connect(delayedSlider, SIGNAL(NewValue(int)),
             this, SLOT(_delayedSliderNewValue(int)));
     ui->horizontalLayout->insertWidget(5,delayedSlider);
 
     delayedSlider_2 = new TimerSlider(Qt::Horizontal, 0);
+    delayedSlider_2->setRange(2, maxSamplesRange);
+    delayedSlider_2->setSingleStep(1000);
+    delayedSlider_2->setPageStep(5000);
     connect(delayedSlider_2, SIGNAL(NewValue(int)),
             this, SLOT(_delayedSliderNewValue_2(int)));
     ui->horizontalLayout_3->insertWidget(3,delayedSlider_2);
@@ -663,34 +675,27 @@ void MainWindow::_channelOneState(bool state)
 
 void MainWindow::on_forward_btn_clicked()
 {
-    int temp = 0;
-    if (_parameters.mode == MODE_BLOCK_MEASURING)
-    {
-        temp = 5;
-    }
-    else
-    {
-        temp = 1;
-    }
-    delayedSlider->setValue(delayedSlider->value() + temp);
+    delayedSlider->setValue(delayedSlider->value() + 1);
 }
 
 void MainWindow::on_backward_btn_clicked()
 {
-    int temp = 0;
-    if (_parameters.mode == MODE_BLOCK_MEASURING)
-    {
-        temp = 5;
-    }
-    else
-    {
-        temp = 1;
-    }
-    delayedSlider->setValue(delayedSlider->value() - temp);
+    delayedSlider->setValue(delayedSlider->value() - 1);
+}
+
+void MainWindow::on_forward_btn_2_clicked()
+{
+    delayedSlider_2->setValue(delayedSlider_2->value() + 100);
+}
+
+void MainWindow::on_backward_btn_2_clicked()
+{
+    delayedSlider_2->setValue(delayedSlider_2->value() - 100);
 }
 
 void MainWindow::_delayedSliderNewValue(int value)
 {
+    ui->meas_per_second_spin->setValue(value);
     return;
 
     QSettings settings("settings.ini", QSettings::IniFormat, this);
@@ -711,6 +716,7 @@ void MainWindow::_delayedSliderNewValue(int value)
 
 void MainWindow::_delayedSliderNewValue_2(int value)
 {
+    ui->meas_block_count_spin->setValue(value);
     return;
 
     QSettings settings("settings.ini", QSettings::IniFormat, this);
@@ -782,12 +788,20 @@ void MainWindow::_stopLogging()
     }
 }
 
-void MainWindow::on_meas_per_second_spin_editingFinished()
+void MainWindow::on_meas_per_second_spin_valueChanged(int value)
 {
-//    _dataOperator->setMeasuringInterval(ui->meas_per_second_spin->value());
+    if (delayedSlider == 0)
+    {
+        return;
+    }
+    delayedSlider->setValue(value);
 }
 
-void MainWindow::on_meas_block_count_spin_editingFinished()
+void MainWindow::on_meas_block_count_spin_valueChanged(int value)
 {
-
+    if (delayedSlider_2 == 0)
+    {
+        return;
+    }
+    delayedSlider_2->setValue(value);
 }

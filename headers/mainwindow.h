@@ -60,13 +60,15 @@ private slots:
     void on_channelOne_check_toggled(bool state);
     void on_forward_btn_clicked();
     void on_backward_btn_clicked();
+    void on_forward_btn_2_clicked();
+    void on_backward_btn_2_clicked();
     void on_screenshot_btn_clicked();
     void on_log_btn_clicked();
     void _delayedSliderNewValue(int value);
     void _delayedSliderNewValue_2(int value);
 
-    void on_meas_per_second_spin_editingFinished();
-    void on_meas_block_count_spin_editingFinished();
+    void on_meas_per_second_spin_valueChanged(int value);
+    void on_meas_block_count_spin_valueChanged(int value);
 
     void _updatePlot();
     void _displayError();
