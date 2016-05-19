@@ -1,4 +1,4 @@
-#include "singleshotdialog.h"
+#include "headers/singleshotdialog.h"
 #include "ui_singleshotdialog.h"
 
 SingleshotDialog::SingleshotDialog(QWidget *parent) :

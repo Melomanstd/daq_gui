@@ -528,10 +528,14 @@ void DataOperator::_hfMeasure()
 
 void DataOperator::singleshotMeasuring(bool state)
 {
+    _mutex.tryLock();
     _measuringSingleshot = state;
+    _mutex.unlock();
 }
 
 void DataOperator::blockMeasuring(bool state)
 {
+    _mutex.tryLock();
     _measuringBlock = state;
+    _mutex.unlock();
 }

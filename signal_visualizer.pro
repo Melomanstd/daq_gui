@@ -22,8 +22,8 @@ SOURCES +=  sources/main.cpp\
             sources/plotlegend.cpp \
             sources/plotmagnifier.cpp \
             sources/scaledraw.cpp \
-    singleshotdialog.cpp \
-    blockdialog.cpp
+            sources/singleshotdialog.cpp \
+            sources/blockdialog.cpp
 
 HEADERS  += headers/mainwindow.h \
             headers/dataoperator.h \
@@ -35,8 +35,8 @@ HEADERS  += headers/mainwindow.h \
             headers/plotgridplotlegend.h \
             headers/plotgridplotmagnifier.h \
             headers/scaledraw.h \
-    singleshotdialog.h \
-    blockdialog.h
+            headers/singleshotdialog.h \
+            headers/blockdialog.h
 
 FORMS    += ui/mainwindow.ui \
             ui/parametersdialog.ui \

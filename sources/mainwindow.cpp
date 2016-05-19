@@ -5,8 +5,8 @@
 #include <QDebug>
 #include <QMessageBox>
 
-#include "blockdialog.h"
-#include "singleshotdialog.h"
+#include "headers/blockdialog.h"
+#include "headers/singleshotdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
