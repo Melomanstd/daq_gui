@@ -403,6 +403,8 @@ void DataOperator::setParameters(ModeParameters parameters, bool update)
         _initializeBlockMode();
     }
 
+    _initializeChannels();
+
     _mutex.unlock();
 }
 
@@ -540,11 +542,19 @@ void DataOperator::blockMeasuring(bool state)
 
 void DataOperator::_initializeChannels()
 {
+    if (_cardID == -1)
+    {
+        return;
+    }
+
+    _errorCode = NoError;
+
     for (int i = 0; i < MAXIMUM_CHANNELS; i++)
     {
-        if (_channelsPins[i] > 0)
+        if (_channelsPins[i] != -1)
         {
-            ::D2K_AI_CH_Config(_cardID, _channelsPins[i], AD_B_10_V|AI_RSE);
+            _errorCode = ::D2K_AI_CH_Config(
+                        _cardID, _channelsPins[i], AD_B_10_V|AI_RSE);
         }
     }
 }

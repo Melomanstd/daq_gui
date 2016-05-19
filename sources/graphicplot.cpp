@@ -231,19 +231,18 @@ void GraphicPlot::setBlock(unsigned short *samples, int size)
 
 }
 
-void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
+void GraphicPlot::setDisplayedPoints(int size, qint8 mode)
 {
     _displayedPoints = size;
     _grid->cleanTime();
     int time = size * 40;
 
-    if (reset == true)
-    {
-        _count = 0;
-        _initializedPoints = 0;
-        _pointsZero.clear();
-        _pointsOne.clear();
-    }
+    //reset
+    _count = 0;
+    _initializedPoints = 0;
+    _pointsZero.clear();
+    _pointsOne.clear();
+    //
 
     if (mode == MODE_SINGLESHOT_MEASURING)
     {

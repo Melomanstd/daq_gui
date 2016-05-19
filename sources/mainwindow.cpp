@@ -364,6 +364,8 @@ void MainWindow::on_parameters_btn_clicked()
     {
         return;
     }
+
+    _setupSingleshotParameters(d);
 }
 
 void MainWindow::on_start_btn_clicked()//singleshot
@@ -510,7 +512,6 @@ void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
     //points per sec * displayed seconds
     _plot->setDisplayedPoints(_parameters.measuringInterval *
                               _parameters.displayedInterval,
-                              !_isWorking,
                               _parameters.mode);
 
     _dataOperator->setParameters(_parameters, _isWorking);
@@ -528,9 +529,7 @@ void MainWindow::_setupBlockParameters(BlockDialog &p)
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
     _hfPlot->setDisplayStep(/*_parameters.blockSize / 10*/1);
-    _hfPlot->setDisplayedPoints(_parameters.blockSize,
-                              !_isWorking,
-                              _parameters.mode);
+    _hfPlot->setDisplayedPoints(_parameters.blockSize, _parameters.mode);
 
     _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
                 _parameters.blockSize);
@@ -724,7 +723,6 @@ void MainWindow::_delayedSliderNewValue(int value)
         //points per sec * displayed seconds
         _plot->setDisplayedPoints(_parameters.measuringInterval *
                                   _parameters.displayedInterval,
-                                  true,
                                   _parameters.mode);
     }
 
