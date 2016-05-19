@@ -20,7 +20,6 @@ public:
     virtual     ~GraphicPlot();
 
     void        setDisplayedPoints(int size, qint8 mode);
-    void        setDisplayStep(int step);
 
     void        setPoint(const double/*F64*/ &voltage_0,
                          const double &voltage_1);
@@ -59,8 +58,6 @@ private:
     int                 _count;
     int                 _displayedPoints;
     int                 _initializedPoints;
-    int                 _displayStep;
-    int                 _currentStep;
     double              _scaleMinimum;
     double              _scaleMaximum;
 

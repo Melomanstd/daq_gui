@@ -508,7 +508,6 @@ void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
     _parameters.displayedInterval = 10;
     _parameters.measuringInterval = p.getMeasuresCount();
 
-    _plot->setDisplayStep(_parameters.measuringInterval);
     //points per sec * displayed seconds
     _plot->setDisplayedPoints(_parameters.measuringInterval *
                               _parameters.displayedInterval,
@@ -528,7 +527,6 @@ void MainWindow::_setupBlockParameters(BlockDialog &p)
     _parameters.blockSize = p.getSamplesCount();
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
-    _hfPlot->setDisplayStep(/*_parameters.blockSize / 10*/1);
     _hfPlot->setDisplayedPoints(_parameters.blockSize, _parameters.mode);
 
     _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
@@ -702,11 +700,8 @@ void MainWindow::_delayedSliderNewValue(int value)
     _parameters.measuringInterval = value;
     settings.setValue("measuring_interval", value);
 
-    _plot->setDisplayStep(_parameters.measuringInterval);
     //points per sec * displayed seconds
-    _plot->setDisplayedPoints(_parameters.measuringInterval *
-                              _parameters.displayedInterval,
-                              _parameters.mode);
+    _plot->setDisplayedPoints(value * 10, _parameters.mode);
     if (_dataOperator != 0)
     {
         _dataOperator->setMeasuringInterval(value);
@@ -721,6 +716,8 @@ void MainWindow::_delayedSliderNewValue_2(int value)
 
     QSettings settings("settings.ini", QSettings::IniFormat, this);
     settings.setValue("measuring_samples_count", value);
+
+    _hfPlot->setDisplayedPoints(value, _parameters.mode);
 
     if (_dataOperator != 0)
     {

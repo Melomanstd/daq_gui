@@ -21,8 +21,6 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
         _count(0),
         _displayedPoints(1),
         _initializedPoints(0),
-        _displayStep(1),
-        _currentStep(0),
         _scaleMinimum(-1.0),
         _scaleMaximum(1.0),
         _channelZeroEnabled(false),
@@ -310,12 +308,6 @@ void GraphicPlot::setDisplayedPoints(int size, qint8 mode)
 //    _points.resize(size);
     _pointsZero.reserve(size);
     _pointsOne.reserve(size);
-}
-
-void GraphicPlot::setDisplayStep(int step)
-{
-    _displayStep = step;
-    _currentStep = step;
 }
 
 void GraphicPlot::setChannels(bool ch1, bool ch2)
