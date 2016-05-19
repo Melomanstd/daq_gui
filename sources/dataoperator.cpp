@@ -542,6 +542,9 @@ void DataOperator::_initializeChannels()
 {
     for (int i = 0; i < MAXIMUM_CHANNELS; i++)
     {
-        ::D2K_AI_CH_Config(_cardID, _channelsPins[i], AD_B_10_V|AI_RSE);
+        if (_channelsPins[i] > 0)
+        {
+            ::D2K_AI_CH_Config(_cardID, _channelsPins[i], AD_B_10_V|AI_RSE);
+        }
     }
 }

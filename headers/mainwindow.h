@@ -14,6 +14,9 @@
 #include "timerslider.h"
 #include "parametersdialog.h"
 
+class BlockDialog;
+class SingleshotDialog;
+
 namespace Ui {
 class MainWindow;
 }
@@ -32,15 +35,13 @@ public:
 private:
     void            _initializePlot();
     void            _initializeDataOperator();
-    bool            _setupParameters();
     ModeParameters  _lastParameters();
     void            _channelZeroState(bool state);
     void            _channelOneState(bool state);
     void            _stopLogging();
     void            _startLogging();
-    void            _setupSingleshotParameters(ParametersDialog &p);
-    void            _setupBlockParameters(ParametersDialog &p);
-    void            _setupHfParameters(ParametersDialog &p);
+    void            _setupSingleshotParameters(SingleshotDialog &p);
+    void            _setupBlockParameters(BlockDialog &p);
 
 private slots:
     void on_parameters_btn_clicked();
@@ -48,6 +49,7 @@ private slots:
     void on_stop_btn_clicked();
     void on_start_btn_2_clicked();
     void on_stop_btn_2_clicked();
+    void on_parameters_btn_2_clicked();
     void on_ch_0_voltage_range_slider_valueChanged(int value);
     void on_ch_1_voltage_range_slider_valueChanged(int value);
     void on_ch_0_zoom_in_btn_clicked();
