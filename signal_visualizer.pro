@@ -40,8 +40,8 @@ HEADERS  += headers/mainwindow.h \
 
 FORMS    += ui/mainwindow.ui \
             ui/parametersdialog.ui \
-    singleshotdialog.ui \
-    blockdialog.ui
+            ui/singleshotdialog.ui \
+            ui/blockdialog.ui
 
 RESOURCES += \
     resources.qrc

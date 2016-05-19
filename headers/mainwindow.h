@@ -63,6 +63,7 @@ private slots:
     void on_screenshot_btn_clicked();
     void on_log_btn_clicked();
     void _delayedSliderNewValue(int value);
+    void _delayedSliderNewValue_2(int value);
 
     void on_meas_per_second_spin_editingFinished();
     void on_meas_block_count_spin_editingFinished();
@@ -88,12 +89,8 @@ private:
     double*         _plotBufferZero;
     double*         _plotBufferOne;
 
-    QLabel*         _modeLabel;
-    QLabel*         _modeValue;
-    QLabel*         _intervalLabel;
-    QLabel*         _intervalValue;
-
     TimerSlider*    delayedSlider;
+    TimerSlider*    delayedSlider_2;
 
     QFile           _logFile;
     QTime*          _workingTime;

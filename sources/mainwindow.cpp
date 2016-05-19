@@ -36,27 +36,15 @@ MainWindow::MainWindow(QWidget *parent) :
     delayedSlider = new TimerSlider(Qt::Horizontal, 0);
     connect(delayedSlider, SIGNAL(NewValue(int)),
             this, SLOT(_delayedSliderNewValue(int)));
-    ui->horizontalLayout->insertWidget(3,delayedSlider);
+    ui->horizontalLayout->insertWidget(5,delayedSlider);
 
-    /*_modeLabel = new QLabel(tr("Current mode:"));
-    _modeValue = new QLabel(tr("No mode"));
-    _intervalLabel = new QLabel(tr("Measuring interval(msec):"));
-    _intervalValue = new QLabel(QString::number(
-                               (delayedSlider->value())));
+    delayedSlider_2 = new TimerSlider(Qt::Horizontal, 0);
+    connect(delayedSlider_2, SIGNAL(NewValue(int)),
+            this, SLOT(_delayedSliderNewValue_2(int)));
+    ui->horizontalLayout_3->insertWidget(3,delayedSlider_2);
 
-    QFont font = _modeLabel->font();
-    font.setBold(true);
-    font.setPointSize(12);
-
-    _modeLabel->setFont(font);
-    _modeValue->setFont(font);
-    _intervalLabel->setFont(font);
-    _intervalValue->setFont(font);
-
-    statusBar()->addWidget(_modeLabel);
-    statusBar()->addWidget(_modeValue);
-    statusBar()->addWidget(_intervalLabel);
-    statusBar()->addWidget(_intervalValue);*/
+    delayedSlider->setFixedSize(300, 32);
+    delayedSlider_2->setFixedSize(300, 32);
 
     ui->stop_btn->setChecked(true);
 
@@ -704,31 +692,33 @@ void MainWindow::on_backward_btn_clicked()
 void MainWindow::_delayedSliderNewValue(int value)
 {
     return;
-    if (delayedSlider->isEnabled() == false)
-    {
-        return;
-    }
 
     QSettings settings("settings.ini", QSettings::IniFormat, this);
     _parameters.measuringInterval = value;
     settings.setValue("measuring_interval", value);
 
-    if (_parameters.mode == MODE_BLOCK_MEASURING)
-    {
-        value = 1000 - value;
-    }
-    else
-    {
-        _plot->setDisplayStep(_parameters.measuringInterval);
-        //points per sec * displayed seconds
-        _plot->setDisplayedPoints(_parameters.measuringInterval *
-                                  _parameters.displayedInterval,
-                                  _parameters.mode);
-    }
-
+    _plot->setDisplayStep(_parameters.measuringInterval);
+    //points per sec * displayed seconds
+    _plot->setDisplayedPoints(_parameters.measuringInterval *
+                              _parameters.displayedInterval,
+                              _parameters.mode);
     if (_dataOperator != 0)
     {
         _dataOperator->setMeasuringInterval(value);
+    }
+//    _intervalValue->setText(QString::number(value));
+}
+
+void MainWindow::_delayedSliderNewValue_2(int value)
+{
+    return;
+
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    settings.setValue("measuring_samples_count", value);
+
+    if (_dataOperator != 0)
+    {
+        _dataOperator->setSampleCount(value);
     }
 //    _intervalValue->setText(QString::number(value));
 }

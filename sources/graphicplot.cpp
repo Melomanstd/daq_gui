@@ -42,7 +42,7 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
 
     setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
     setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
-    setTitle(title);
+//    setTitle(title);
 
 //    setCanvasBackground(Qt::white);
 
@@ -122,7 +122,7 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
         legend->insert(_curveZero, _channelOutput_0);
     if (_curveOne != 0)
         legend->insert(_curveOne, _channelOutput_1);
-    insertLegend(legend,QwtPlot::BottomLegend);
+    insertLegend(legend,QwtPlot::TopLegend);
 
 //    _curve->setXAxis(QwtPlot::xTop);
 
