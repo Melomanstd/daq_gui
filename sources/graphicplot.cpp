@@ -233,7 +233,7 @@ void GraphicPlot::setDisplayedPoints(int size, qint8 mode)
 {
     _displayedPoints = size;
     _grid->cleanTime();
-    int time = size * 40;
+    int time = size * 4;
 
     //reset
     _count = 0;

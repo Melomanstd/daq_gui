@@ -182,7 +182,7 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
         {
             if (_useTimeValues == false)
             {
-                scaleValue = /*qRound*/(values[i] * 40.0 / _timescaleDivider);
+                scaleValue = /*qRound*/(values[i] * 4.0 / _timescaleDivider);
             }
             else
             {
