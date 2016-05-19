@@ -46,6 +46,9 @@ public:
     QString     getLastError();
     void        setChannelsPins(char pins[]);
 
+    void        singleshotMeasuring(bool state);
+    void        blockMeasuring(bool state);
+
 protected:
     virtual void run();
 
@@ -103,6 +106,9 @@ private:
     I16             _channelsPins[3];
 
     U16*            _hfBuffer;
+
+    bool            _measuringSingleshot;
+    bool            _measuringBlock;
 };
 
 #endif // DATAOPERATOR_H

@@ -426,6 +426,7 @@ void MainWindow::on_start_btn_clicked()//singleshot
     _dataOperator->setParameters(_parameters, _isWorking);
 
     _isWorking = true;
+    _dataOperator->singleshotMeasuring(true);
     _dataOperator->startWorking();
     _workingTime->restart();
     _updateTimer->start();
@@ -437,6 +438,7 @@ void MainWindow::on_stop_btn_clicked()//singleshot
     ui->stop_btn->setChecked(true);
     _isWorking = false;
     _updateTimer->stop();
+    _dataOperator->singleshotMeasuring(false);
     _dataOperator->stopWorking();
     _plotBufferZero = 0;
     _plotBufferOne = 0;
@@ -498,6 +500,7 @@ void MainWindow::on_start_btn_2_clicked()//block
 
     _dataOperator->setParameters(_parameters, _isWorking);
     _isWorking = true;
+    _dataOperator->blockMeasuring(true);
     _dataOperator->startWorking();
     _workingTime->restart();
     _updateTimer->start();
@@ -508,6 +511,7 @@ void MainWindow::on_stop_btn_2_clicked()//block
     ui->start_btn_2->setChecked(false);
     ui->stop_btn_2->setChecked(true);
     _isWorking = false;
+    _dataOperator->blockMeasuring(false);
     _updateTimer->stop();
     _dataOperator->stopWorking();
     _plotBufferZero = 0;

@@ -29,7 +29,9 @@ DataOperator::DataOperator(QObject *parent)
         _measureSampleCount(2),
         _measuringBlockInterval(160),
         _resultBufferIdZero(0),
-        _cardID(-1)
+        _cardID(-1),
+        _measuringBlock(false),
+        _measuringSingleshot(false)
 {
     for (int i = 0; i < 3; i++)
     {
@@ -45,6 +47,7 @@ DataOperator::~DataOperator()
     {
         ::D2K_Release_Card(_cardID);
         ::D2K_AI_ContBufferReset(_cardID);
+        _cardID = -1;
     }
 
     if (_samplesBlockBuffer_0 != 0)
@@ -80,33 +83,44 @@ void DataOperator::run()
             break;
         }
 
-        if (_workingMode == MODE_SINGLESHOT_MEASURING)
+//        if (_workingMode == MODE_SINGLESHOT_MEASURING)
+        if (_measuringSingleshot == true)
         {
             _singleshotMeasure();
         }
-        else if (_workingMode == MODE_BLOCK_MEASURING)
+
+//        else if (_workingMode == MODE_BLOCK_MEASURING)
+        if (_measuringBlock == true)
         {
             _blockMeasure();
         }
-        else if (_workingMode == MODE_HF_MEASURING)
+        /*else if (_workingMode == MODE_HF_MEASURING)
         {
             _hfMeasure();
-        }
+        }*/
 //        _isWorking = false;
     }
 
     ::D2K_AI_ContBufferReset(_cardID);
     ::D2K_Release_Card(_cardID);
+    _cardID = -1;
     _isUnitialize = true;
 }
 
 void DataOperator::startWorking()
 {
-    start();
+    if (isRunning() == false)
+    {
+        start();
+    }
 }
 
 void DataOperator::stopWorking()
 {
+    if ((_measuringSingleshot == true) || (_measuringBlock == true))
+    {
+        return;
+    }
     _mutex.tryLock();
     _isWorking = false;
     _mutex.unlock();
@@ -510,4 +524,14 @@ void DataOperator::_hfMeasure()
 
     _newDataReady = true;
     _mutex.unlock();
+}
+
+void DataOperator::singleshotMeasuring(bool state)
+{
+    _measuringSingleshot = state;
+}
+
+void DataOperator::blockMeasuring(bool state)
+{
+    _measuringBlock = state;
 }
