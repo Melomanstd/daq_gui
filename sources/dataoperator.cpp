@@ -33,7 +33,7 @@ DataOperator::DataOperator(QObject *parent)
         _measuringBlock(false),
         _measuringSingleshot(false)
 {
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < MAXIMUM_CHANNELS; i++)
     {
         _channelsPins[i] = -1;
     }
@@ -274,9 +274,7 @@ void DataOperator::_initializeCard()
     }
     else
     {
-        ::D2K_AI_CH_Config(_cardID, 0, AD_B_10_V|AI_RSE);
-        ::D2K_AI_CH_Config(_cardID, 1, AD_B_10_V|AI_RSE);
-        ::D2K_AI_CH_Config(_cardID, 2, AD_B_10_V|AI_RSE);
+        _initializeChannels();
         _isWorking = true;
         _isUnitialize = false;
     }
@@ -470,7 +468,7 @@ QString DataOperator::getLastError()
 
 void DataOperator::setChannelsPins(char pins[])
 {
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < MAXIMUM_CHANNELS; i++)
     {
         _channelsPins[i] = static_cast<I16> (pins[i]);
     }
@@ -538,4 +536,12 @@ void DataOperator::blockMeasuring(bool state)
     _mutex.tryLock();
     _measuringBlock = state;
     _mutex.unlock();
+}
+
+void DataOperator::_initializeChannels()
+{
+    for (int i = 0; i < MAXIMUM_CHANNELS; i++)
+    {
+        ::D2K_AI_CH_Config(_cardID, _channelsPins[i], AD_B_10_V|AI_RSE);
+    }
 }

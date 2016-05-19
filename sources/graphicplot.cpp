@@ -190,11 +190,6 @@ void GraphicPlot::setPoint(const double &voltage_0,
     if (_initializedPoints < _displayedPoints)
     {
         _initializedPoints++;
-//        _rescaleAxis(xBottom, 0, _initializedPoints - 1);
-//        setAxisScale(xBottom,
-//                     0,
-//                     _initializedPoints - 1,
-//                     _displayStep);
     }
     else
     {
@@ -391,7 +386,7 @@ void GraphicPlot::displayBlock()
 {
     _pointsZero.clear();
     _pointsOne.clear();
-    _count = 1;
+    _count = 0;
 
     for (int i = 0; i < _displayedPoints; i++)
     {

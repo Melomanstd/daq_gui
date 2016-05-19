@@ -171,7 +171,7 @@ void MainWindow::_updatePlot()
     {
         _dataOperator->getSamplesBuffer(_plotBufferZero,
                                         _plotBufferOne);
-        _plot->displayBlock();
+        _hfPlot->displayBlock();
 
         if (_plotBufferZero != 0)
         {
@@ -482,8 +482,8 @@ void MainWindow::on_start_btn_2_clicked()//block
     _parameters.blockSize = d.getSamplesCount();
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
-    _plot->setDisplayStep(/*_parameters.blockSize / 10*/1);
-    _plot->setDisplayedPoints(_parameters.blockSize,
+    _hfPlot->setDisplayStep(/*_parameters.blockSize / 10*/1);
+    _hfPlot->setDisplayedPoints(_parameters.blockSize,
                               !_isWorking,
                               _parameters.mode);
     settings.setValue("samples_count",
@@ -491,12 +491,12 @@ void MainWindow::on_start_btn_2_clicked()//block
 
     if (ui->channelZero_check->isChecked() == true)
     {
-        _plotBufferZero = _plot->initializeChannelZeroBuffer(
+        _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
                     _parameters.blockSize);
     }
 
 
-    _plot->setChannels(true, false);
+    _hfPlot->setChannels(true, false);
 
     _dataOperator->setParameters(_parameters, _isWorking);
     _isWorking = true;
@@ -517,7 +517,7 @@ void MainWindow::on_stop_btn_2_clicked()//block
     _plotBufferZero = 0;
     _plotBufferOne = 0;
 //    _modeValue->setText(tr("No mode"));
-    _plot->measuringStopped();
+    _hfPlot->measuringStopped();
     ui->log_btn->setChecked(false);
     _stopLogging();
 }

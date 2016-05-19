@@ -6,6 +6,7 @@
 #define MINIMUM_SAMPLES_PER_BLOCK   2
 #define MINIMUM_SAMPLES_INTERVAL    160
 #define MINIMUM_MEASURING_INTERVAL  160 //miliseconds
+#define MAXIMUM_CHANNELS            3
 
 #include <QThread>
 #include <QMutex>
@@ -59,6 +60,7 @@ private:
     inline void _singleshotMeasure();
     inline void _blockMeasure();
     inline void _hfMeasure();
+    void        _initializeChannels();
 
 signals:
     void someError();
@@ -103,7 +105,7 @@ private:
 
     I16             _cardID;
 
-    I16             _channelsPins[3];
+    I16             _channelsPins[MAXIMUM_CHANNELS];
 
     U16*            _hfBuffer;
 
