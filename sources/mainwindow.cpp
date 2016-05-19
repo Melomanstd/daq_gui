@@ -498,12 +498,7 @@ void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
     _dataOperator->setPin(0, p1);
     _dataOperator->setPin(1, p2);
 
-    delayedSlider->setMaximum(99);
-    delayedSlider->setMinimum(1);
     delayedSlider->setValue(p.getMeasuresCount());
-    delayedSlider->setPageStep(1);
-    delayedSlider->setSingleStep(1);
-    delayedSlider->setEnabled(true);
 
     _parameters.displayedInterval = 10;
     _parameters.measuringInterval = p.getMeasuresCount();
@@ -518,6 +513,8 @@ void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
 
 void MainWindow::_setupBlockParameters(BlockDialog &p)
 {
+    delayedSlider_2->setValue(p.getSamplesCount());
+
     int p1;
     p.selectedPins(p1);
 //    _dataOperator->setChannelsPins(pins);
@@ -694,7 +691,8 @@ void MainWindow::on_backward_btn_2_clicked()
 void MainWindow::_delayedSliderNewValue(int value)
 {
     ui->meas_per_second_spin->setValue(value);
-    return;
+//    return;
+    _parameters.mode = MODE_SINGLESHOT_MEASURING;
 
     QSettings settings("settings.ini", QSettings::IniFormat, this);
     _parameters.measuringInterval = value;
@@ -702,28 +700,39 @@ void MainWindow::_delayedSliderNewValue(int value)
 
     //points per sec * displayed seconds
     _plot->setDisplayedPoints(value * 10, _parameters.mode);
+
     if (_dataOperator != 0)
     {
         _dataOperator->setMeasuringInterval(value);
     }
-//    _intervalValue->setText(QString::number(value));
 }
 
 void MainWindow::_delayedSliderNewValue_2(int value)
 {
     ui->meas_block_count_spin->setValue(value);
-    return;
+
+    _parameters.mode = MODE_BLOCK_MEASURING;
+    _parameters.measuringInterval = 1000;
+    _parameters.blockSize = value;
+    _parameters.scaningInterval = 160;
+    _parameters.samplingInterval = 160;
+    _hfPlot->setDisplayedPoints(value, _parameters.mode);
+
+    _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
+                _parameters.blockSize);
+
+    if (_dataOperator != 0)
+    {
+        _dataOperator->setParameters(_parameters, _isWorking);
+    }
 
     QSettings settings("settings.ini", QSettings::IniFormat, this);
     settings.setValue("measuring_samples_count", value);
 
-    _hfPlot->setDisplayedPoints(value, _parameters.mode);
-
-    if (_dataOperator != 0)
-    {
-        _dataOperator->setSampleCount(value);
-    }
-//    _intervalValue->setText(QString::number(value));
+//    if (_dataOperator != 0)
+//    {
+//        _dataOperator->setSampleCount(value);
+//    }
 }
 
 void MainWindow::on_screenshot_btn_clicked()
