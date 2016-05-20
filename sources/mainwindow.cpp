@@ -413,12 +413,14 @@ void MainWindow::on_start_btn_clicked()//singleshot
 
 void MainWindow::on_stop_btn_clicked()//singleshot
 {
+    if (_isSingleshotRunning == false)
+    {
+        return;
+    }
+
     ui->start_btn->setChecked(false);
     ui->stop_btn->setChecked(true);
-    ui->log_btn->setChecked(false);
     _dataOperator->singleshotMeasuring(false);
-    _plotBufferZero = 0;
-    _plotBufferOne = 0;
     _plot->measuringStopped();
     _isSingleshotRunning = false;
 
@@ -480,6 +482,11 @@ void MainWindow::on_start_btn_2_clicked()//block
 
 void MainWindow::on_stop_btn_2_clicked()//block
 {
+    if (_isBlockRunning == false)
+    {
+        return;
+    }
+
     ui->start_btn_2->setChecked(false);
     ui->stop_btn_2->setChecked(true);
     _dataOperator->blockMeasuring(false);
