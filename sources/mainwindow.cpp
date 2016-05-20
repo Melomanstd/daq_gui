@@ -25,9 +25,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle(tr("DAQ 2213 Signal visualizer"));
 
-    //    singleShot();
-//        blocks();
-
     ui->ch_0_voltage_range_slider->setVisible(false);
     ui->ch_0_zoom_in_btn->setVisible(false);
     ui->ch_0_zoom_out_btn->setVisible(false);
@@ -137,12 +134,6 @@ void MainWindow::_initializePlot()
     QColor channelZeroColor = Qt::red;
     QColor channelOneColor = Qt::yellow;
 
-//    QPalette pal = ui->channelZero_check->palette();
-//    pal.setColor(QPalette::WindowText, channelZeroColor);
-//    ui->channelZero_check->setPalette(pal);
-//    pal.setColor(QPalette::WindowText, channelOneColor);
-//    ui->channelOne_check->setPalette(pal);
-
     _plot->setCurveProperties(0, QPen(channelZeroColor, 3, Qt::DashLine));
     _plot->setCurveProperties(1, QPen(channelOneColor, 3, Qt::DotLine));
 
@@ -180,11 +171,6 @@ void MainWindow::_updatePlot()
         {
             _value2 = _plotBufferZero[_parameters.blockSize-1];
         }
-
-        /*if (_plotBufferOne != 0)
-        {
-            ch1 = _plotBufferOne[_parameters.blockSize-1];
-        }*/
     }
 
     if (_isLogging == true)
@@ -202,153 +188,6 @@ void MainWindow::_updatePlot()
 
         _logFile.write(logString.toAscii());
     }
-}
-
-void MainWindow::singleShot()
-{//test function
-    //constants definition
-    #define CardNumber	0
-    #define ADChan	0
-
-    //variables definition
-    I16 cardID = -1;
-    I16 err=0;
-    F64 AdVoltage = 0.0; // returned AI voltage
-    U16 AdValue = 0;
-
-        cardID = D2K_Register_Card(DAQ_2213, CardNumber);
-        if (cardID<0) {
-               //Error occurs !!
-               //ToDo : Handle error here
-        }
-
-        err = D2K_AI_CH_Config(cardID, ADChan, AD_B_10_V|AI_RSE);
-        if (err<0) {
-               //Error occurs !!
-               //ToDo : Handle error here
-        }
-        err = D2K_AI_VReadChannel(cardID, ADChan, &AdVoltage);
-        if (err!=NoError) {
-               //Error occurs !!
-               //ToDo : Handle error here
-        }
-
-        err = ::D2K_AI_ReadChannel(cardID, ADChan, &AdValue);
-        if (err!=NoError) {
-               //Error occurs !!
-               //ToDo : Handle error here
-        }
-
-        D2K_Release_Card(cardID);
-}
-
-void MainWindow::blocks()
-{//test function
-    //constants definition
-
-    QTime time;
-
-    #define CardNumber    0
-    #define ADChan	     0
-    #define ScanCount    250
-    #define ScanIntrv     160
-    #define SampleIntrv   160
-    int max = 1000;
-
-    //AI config constants definition
-    #define ConfigCtrl    DAQ2K_AI_ADCONVSRC_Int
-    #define TrigCtrl       DAQ2K_AI_TRGSRC_SOFT|DAQ2K_AI_TRGMOD_POST
-    #define ReTrgCnt  0
-    #define BufAutoReset    0
-
-    //variables definition
-    I16 cardID = -1;
-    I16 err=0;
-    U32 AccessCnt = 0;
-    U32 startPos = 0;
-    U32 MemSize   = 0;
-    U16 BufId   = 0;
-//    I16 InBuf[1000]; //AI data buffer
-    U16 *InBuf = new U16[ScanCount];
-//    F64 *VoltBuf = new F64[ScanCount];
-    U16 vi = 0;
-
-    cardID = D2K_Register_Card(DAQ_2213, CardNumber);
-    if (cardID<0) {
-        qDebug() <<"D2K_Register_Card";
-           //Error occurs !!
-           //ToDo : Handle error here
-    }
-    err = D2K_AI_InitialMemoryAllocated(cardID, &MemSize);
-    if (err!=NoError) {
-        qDebug() <<"D2K_AI_InitialMemoryAllocated";
-           //Error occurs !!
-           //ToDo : Handle error here
-    }
-    if (MemSize*1024 < ScanCount*sizeof(I16) ) {
-        qDebug() << "MemSize";
-           //available memory size for analog input in the device driver
-           //is smaller than the data size specified!!
-           //ToDo : do something here
-    }
-
-    err = D2K_AI_CH_Config(cardID, ADChan, AD_B_10_V|AI_RSE);
-    if (err<0) {
-        qDebug() <<"D2K_AI_CH_Config";
-           //Error occurs !!
-           //ToDo : Handle error here
-    }
-    err = D2K_AI_AsyncDblBufferMode(cardID, 0);
-    if (err!=NoError) {
-        qDebug() <<"D2K_AI_AsyncDblBufferMode";
-           //Error occurs !!
-           //ToDo : Handle error here
-    }
-    err=D2K_AI_Config(cardID, ConfigCtrl, TrigCtrl, 0, 0, ReTrgCnt, BufAutoReset);
-    if (err!=NoError) {
-        qDebug() <<"D2K_AI_Config";
-           //Error occurs !!
-           //ToDo : Handle error here
-    }
-    err=D2K_AI_ContBufferSetup (cardID, InBuf, ScanCount, &BufId);
-    if (err!=NoError) {
-        qDebug() <<"D2K_AI_ContBufferSetup";
-           //Error occurs !!
-           //ToDo : Handle error here
-    }
-
-
-    qDebug() << "Measuring";
-    time.start();
-    for (int i = 0; i < max; i ++)
-    {
-        err=D2K_AI_ContReadChannel (cardID,
-                                    ADChan,
-                                    BufId,
-                                    ScanCount,
-                                    ScanIntrv,
-                                    SampleIntrv,
-                                    SYNCH_OP);
-        if (err!=NoError) {
-            qDebug() <<"D2K_AI_ContReadChannel";
-               //Error occurs !!
-               //ToDo : Handle error here
-        }
-    }
-    qDebug() <<time.elapsed();
-    qDebug() << max * ScanCount;
-
-    /*err=::D2K_AI_ContVScale(cardID, AD_B_10_V, (void*) InBuf, VoltBuf, 1000);
-    if (err!=NoError) {
-        qDebug() <<"D2K_AI_ContVScale";
-           //Error occurs !!
-           //ToDo : Handle error here
-    }*/
-
-    D2K_Release_Card(cardID);
-
-    delete [] InBuf;
-//    delete [] VoltBuf;
 }
 
 void MainWindow::on_parameters_btn_clicked()
@@ -391,7 +230,6 @@ void MainWindow::on_start_btn_clicked()//singleshot
     {
         ui->start_btn->setChecked(false);
         ui->stop_btn->setChecked(true);
-//        _modeValue->setText(tr("No mode"));
         return;
     }
 
@@ -403,12 +241,7 @@ void MainWindow::on_start_btn_clicked()//singleshot
     _dataOperator->singleshotMeasuring(true);
     _isSingleshotRunning = true;
 
-
     _tryToStart();
-//    _isWorking = true;
-//    _dataOperator->startWorking();
-//    _workingTime->restart();
-//    _updateTimer->start();
 }
 
 void MainWindow::on_stop_btn_clicked()//singleshot
@@ -425,11 +258,6 @@ void MainWindow::on_stop_btn_clicked()//singleshot
     _isSingleshotRunning = false;
 
     _tryToStop();
-//    _stopLogging();
-//    _isWorking = false;
-//     _dataOperator->stopWorking();
-//     _updateTimer->stop();
-//     ui->log_btn->setChecked(false);
 }
 
 void MainWindow::on_parameters_btn_2_clicked()
@@ -462,7 +290,6 @@ void MainWindow::on_start_btn_2_clicked()//block
     {
         ui->start_btn_2->setChecked(false);
         ui->stop_btn_2->setChecked(true);
-//        _modeValue->setText(tr("No mode"));
         return;
     }
 
@@ -472,12 +299,7 @@ void MainWindow::on_start_btn_2_clicked()//block
     _dataOperator->blockMeasuring(true);
     _isBlockRunning = true;
 
-
     _tryToStart();
-//    _isWorking = true;
-//    _dataOperator->startWorking();
-//    _workingTime->restart();
-//    _updateTimer->start();
 }
 
 void MainWindow::on_stop_btn_2_clicked()//block
@@ -495,20 +317,13 @@ void MainWindow::on_stop_btn_2_clicked()//block
     _hfPlot->measuringStopped();
     _isBlockRunning = false;
 
-
     _tryToStop();
-//    _updateTimer->stop();
-//    _dataOperator->stopWorking();
-//    _isWorking = false;
-//    _stopLogging();
-//    ui->log_btn->setChecked(false);
 }
 
 void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
 {
     int p1, p2;
     p.selectedPins(p1, p2);
-//    _dataOperator->setChannelsPins(pins);
     _dataOperator->setPin(0, p1);
     _dataOperator->setPin(1, p2);
 
@@ -531,7 +346,6 @@ void MainWindow::_setupBlockParameters(BlockDialog &p)
 
     int p1;
     p.selectedPins(p1);
-//    _dataOperator->setChannelsPins(pins);
     _dataOperator->setPin(2, p1);
 
     _parameters.measuringInterval = delayedSlider->value();
@@ -666,20 +480,12 @@ void MainWindow::_channelZeroState(bool state)
 {
     _plot->setChannels(ui->channelZero_check->isChecked(),
                        ui->channelOne_check->isChecked());
-//    _plot->enableAxis(QwtPlot::yLeft, false);
-//    ui->ch_0_voltage_range_slider->setVisible(state);
-//    ui->ch_0_zoom_in_btn->setVisible(state);
-//    ui->ch_0_zoom_out_btn->setVisible(state);
 }
 
 void MainWindow::_channelOneState(bool state)
 {
     _plot->setChannels(ui->channelZero_check->isChecked(),
-                       ui->channelOne_check->isChecked());
-//    _plot->enableAxis(QwtPlot::yRight, false);
-//    ui->ch_1_voltage_range_slider->setVisible(state);
-//    ui->ch_1_zoom_in_btn->setVisible(state);
-//    ui->ch_1_zoom_out_btn->setVisible(state);
+                       ui->channelOne_check->isChecked());;
 }
 
 void MainWindow::on_forward_btn_clicked()
@@ -710,7 +516,7 @@ void MainWindow::_delayedSliderNewValue(int value)
     }
 
     ui->meas_per_second_spin->setValue(value);
-//    return;
+
     _parameters.mode = MODE_SINGLESHOT_MEASURING;
 
     QSettings settings("settings.ini", QSettings::IniFormat, this);

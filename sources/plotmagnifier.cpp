@@ -4,7 +4,7 @@
 PlotMagnifier::PlotMagnifier(QwtPlotCanvas *canvas)
     :   QwtPlotMagnifier(canvas)
 {
-
+    //
 }
 
 void PlotMagnifier::rescale(double factor)
@@ -34,7 +34,6 @@ void PlotMagnifier::rescale(double factor)
                 scaleDiv->lowerBound() + scaleDiv->range() / 2;
             const double width_2 = scaleDiv->range() / 2 * factor;
 
-//            plt->setAxisScale( axisId, center - width_2, center + width_2 );
             plt->rescaleAxis(static_cast<QwtPlot::Axis> (axisId),
                              center - width_2,
                              center + width_2);

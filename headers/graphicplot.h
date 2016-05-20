@@ -46,6 +46,9 @@ public:
     void        rescaleAxis(Axis axis, double minimum, double maximum);
     void        measuringStopped();
 
+private:
+    void        _initialize(int channelsCount);
+
 private slots:
     void        _plotPanned(int x, int y);
     void        _scaleTimerTimeout();
@@ -53,7 +56,6 @@ private slots:
 private:
     QwtPlotCurve*       _curveZero;
     QwtPlotCurve*       _curveOne;
-//    QList<QPointF>      _points;
 
     int                 _count;
     int                 _displayedPoints;

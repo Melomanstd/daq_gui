@@ -61,7 +61,6 @@ void PlotGrid::draw( QPainter *painter,
     const QwtScaleMap &xMap, const QwtScaleMap &yMap,
     const QRectF &canvasRect ) const
 {
-    ///////////////////////////////
     bool xEnabled=this->xEnabled();
     bool yEnabled=this->yEnabled();
     bool xMinEnabled=this->xMinEnabled();
@@ -72,45 +71,41 @@ void PlotGrid::draw( QPainter *painter,
 
     QPen majPen=this->majPen();
     QPen minPen=this->minPen();
-    ///////////////////////////////
-    //  draw minor gridlines
-    //QPen minPen = d_data->minPen;
+
     minPen.setCapStyle( Qt::FlatCap );
 
     painter->setPen( minPen );
 
-    if ( /*d_data->*/xEnabled && /*d_data->*/xMinEnabled )
+    if ( xEnabled && xMinEnabled )
     {
         drawLines( painter, canvasRect, Qt::Vertical, xMap,
-            /*d_data->*/xScaleDiv.ticks( QwtScaleDiv::MinorTick ) );
+            xScaleDiv.ticks( QwtScaleDiv::MinorTick ) );
         drawLines( painter, canvasRect, Qt::Vertical, xMap,
-            /*d_data->*/xScaleDiv.ticks( QwtScaleDiv::MediumTick ) );
+            xScaleDiv.ticks( QwtScaleDiv::MediumTick ) );
     }
 
-    if ( /*d_data->*/yEnabled && /*d_data->*/yMinEnabled )
+    if ( yEnabled && yMinEnabled )
     {
         drawLines( painter, canvasRect, Qt::Horizontal, yMap,
-            /*d_data->*/yScaleDiv.ticks( QwtScaleDiv::MinorTick ) );
+            yScaleDiv.ticks( QwtScaleDiv::MinorTick ) );
         drawLines( painter, canvasRect, Qt::Horizontal, yMap,
-            /*d_data->*/yScaleDiv.ticks( QwtScaleDiv::MediumTick ) );
+            yScaleDiv.ticks( QwtScaleDiv::MediumTick ) );
     }
 
-    //  draw major gridlines
-    //QPen majPen = d_data->majPen;
     majPen.setCapStyle( Qt::FlatCap );
 
     painter->setPen( majPen );
 
-    if ( /*d_data->*/xEnabled )
+    if ( xEnabled )
     {
         drawLines( painter, canvasRect, Qt::Vertical, xMap,
-            /*d_data->*/xScaleDiv.ticks( QwtScaleDiv::MajorTick ) );
+            xScaleDiv.ticks( QwtScaleDiv::MajorTick ) );
     }
 
-    if ( /*d_data->*/yEnabled )
+    if ( yEnabled )
     {
         drawLines( painter, canvasRect, Qt::Horizontal, yMap,
-            /*d_data->*/yScaleDiv.ticks( QwtScaleDiv::MajorTick ) );
+            yScaleDiv.ticks( QwtScaleDiv::MajorTick ) );
     }
 }
 
@@ -222,16 +217,6 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
                                           Qt::AlignHCenter,
                                           QString::number(scaleValue));
                 }
-                /*else
-                {
-                    QwtPainter::drawText( painter,
-                                          value-80,
-                                          y2-20,
-                                          100,
-                                          20,
-                                          Qt::AlignHCenter,
-                                          QString::number(_time[i]));
-                }*/
                 painter->restore();
             }
         }

@@ -41,8 +41,6 @@ public:
     void        getSamplesBuffer(double *bufferZero,
                                  double *bufferOne);
 
-    void        getHfVoltageBuffer(double *buffer);
-
     bool        isDataReady();
     bool        isBlockDataReady();
     bool        isSingleshotDataReady();
@@ -61,7 +59,6 @@ private:
     void        _updateParameters();
     inline void _singleshotMeasure();
     inline void _blockMeasure();
-    inline void _hfMeasure();
     void        _initializeChannels();
 
 signals:
@@ -70,8 +67,6 @@ signals:
 private:
     bool            _isWorking;
     bool            _isUnitialize;
-    bool            _isNewParameters;
-    mutable bool    _newDataReady;
     mutable bool    _blockDataReady;
     mutable bool    _singleshotDataReady;
     BOOLEAN         _isDoubleBuffer;
@@ -99,11 +94,11 @@ private:
     quint32         _measuringInterval;
 
     U32             _measureSampleInterval;     //block measuring time
-                                        //[8:16777215]
+                                                //[8:16777215]
     U32             _measureSampleCount;        //samples per block
-                                        //[2:16777215]
-    U32             _measuringBlockInterval;         //delay between measurings
-                                        //[160:16777215]
+                                                //[2:16777215]
+    U32             _measuringBlockInterval;    //delay between measurings
+                                                //[160:16777215]
     U16             _resultBufferIdZero;
     U16             _resultBufferIdOne;
 

@@ -8,8 +8,6 @@ DataOperator::DataOperator(QObject *parent)
     :   QThread(parent),
         _isWorking(false),
         _isUnitialize(true),
-        _isNewParameters(false),
-        _newDataReady(false),
         _blockDataReady(false),
         _singleshotDataReady(false),
         _isDoubleBuffer(0),
@@ -68,7 +66,7 @@ void DataOperator::run()
 {
     _initializeCard();
 
-    if (_workingMode != MODE_SINGLESHOT_MEASURING)
+    if (_workingMode == MODE_BLOCK_MEASURING)
     {
         if (_initializeBlockMode() == false)
         {
@@ -79,36 +77,26 @@ void DataOperator::run()
 
     while (_isWorking == true)
     {
-        _updateParameters();
         if (_isWorking == false)
         {
             break;
         }
 
-//        if (_workingMode == MODE_SINGLESHOT_MEASURING)
         if (_measuringSingleshot == true)
         {
             _singleshotMeasure();
         }
 
-//        else if (_workingMode == MODE_BLOCK_MEASURING)
         if (_measuringBlock == true)
         {
             _blockMeasure();
         }
-        /*else if (_workingMode == MODE_HF_MEASURING)
-        {
-            _hfMeasure();
-        }*/
-//        _isWorking = false;
     }
 
     ::D2K_AI_ContBufferReset(_cardID);
     ::D2K_Release_Card(_cardID);
     _cardID = -1;
     _isUnitialize = true;
-
-    qDebug() << "Thread stopped";
 }
 
 void DataOperator::startWorking()
@@ -218,22 +206,22 @@ bool DataOperator::_initializeBlockMode()
     _errorCode = ::D2K_AI_AsyncDblBufferMode(_cardID, _isDoubleBuffer);
     if (_errorCode != NoError)
     {
-        qDebug() << "Cannot set double buufer mode";
-        _lastError = tr("Cannot set double buufer mode");
+        _lastError = tr("Cannot set double buufer mode: ") +
+                QString::number(_errorCode);;
         emit someError();
     }
 
     _errorCode = ::D2K_AI_InitialMemoryAllocated(_cardID, &memSize);
     if (_errorCode != NoError)
     {
-        qDebug() <<"Cannot get current memory size";
-        _lastError = tr("Cannot get current memory size");
+        _lastError = tr("Cannot get current memory size: ") +
+                QString::number(_errorCode);;
         return false;
     }
     if (memSize*1024 < _measureSampleCount * 2 * sizeof(I16) )
     {
-        qDebug() << "Not enough memory to initialize current mode";
-        _lastError = tr("Not enough memory to initialize current mode");
+        _lastError = tr("Not enough memory to initialize current mode: ") +
+                QString::number(_errorCode);;
         return false;
            //available memory size for analog input in the device driver
            //is smaller than the data size specified!!
@@ -248,8 +236,8 @@ bool DataOperator::_initializeBlockMode()
                                 reTrgCnt,
                                 bufAutoReset);
     if (_errorCode != NoError) {
-        qDebug() <<"Cant config block mode";
-        _lastError = tr("Cant config block mode");
+        _lastError = tr("Cant config block mode: ") +
+                QString::number(_errorCode);;
         return false;
     }
 
@@ -259,8 +247,8 @@ bool DataOperator::_initializeBlockMode()
                                        &_resultBufferIdZero);
     if (_errorCode != NoError)
     {
-        qDebug() <<"Cannot initialize buffer for channel 0";
-        _lastError = tr("Cannot initialize buffer for channel 0");
+        _lastError = tr("Cannot initialize buffer for channel 0: ") +
+                QString::number(_errorCode);;
         return false;
     }
 
@@ -270,8 +258,8 @@ bool DataOperator::_initializeBlockMode()
                                        &_resultBufferIdOne);
     if (_errorCode != NoError)
     {
-        qDebug() <<"Cannot initialize buffer for channel 1";
-        _lastError = tr("Cannot initialize buffer for channel 1");
+        _lastError = tr("Cannot initialize buffer for channel 1: ") +
+                QString::number(_errorCode);;
         return false;
     }
 
@@ -285,7 +273,6 @@ void DataOperator::_initializeCard()
     {
         _isWorking = false;
         _lastError = tr("Cant initialize device");
-        qDebug() << "Cant initialize device";
         emit someError();
     }
     else
@@ -293,14 +280,6 @@ void DataOperator::_initializeCard()
         _initializeChannels();
         _isWorking = true;
         _isUnitialize = false;
-    }
-}
-
-void DataOperator::_updateParameters()
-{
-    if (_isNewParameters == true)
-    {
-        _isNewParameters = false;
     }
 }
 
@@ -343,10 +322,8 @@ void DataOperator::getVoltage(double &ch0, double &ch1)
     _mutex.tryLock();
     ch0 = _voltageSingleshotValue_0;
     ch1 = _voltageSingleshotValue_1;
-//    _newDataReady = false;
     _singleshotDataReady = false;
     _mutex.unlock();
-//    return temp;
 }
 
 F64* DataOperator::getVoltageBuffer()
@@ -360,13 +337,6 @@ F64* DataOperator::getVoltageBuffer()
     _blockDataReady = false;
     _mutex.unlock();
     return temp;
-}
-
-bool DataOperator::isDataReady()
-{
-//    _mutex.tryLock();
-    return _newDataReady;
-//    _mutex.unlock();
 }
 
 bool DataOperator::isSingleshotDataReady()
@@ -398,31 +368,17 @@ void DataOperator::setParameters(ModeParameters parameters, bool update)
         ::D2K_AI_ContBufferReset(_cardID);
     }
 
-//    if (_samplesBlockBuffer_0 != 0)
-//    {
-//        delete [] _samplesBlockBuffer_0;
-//    }
-//    if (_samplesBlockBuffer_1 != 0)
-//    {
-//        delete [] _samplesBlockBuffer_1;
-//    }
-
     _channelZeroMeasuring = parameters.channelZeroState;
     _channelOneMeasuring = parameters.channelOneState;
 
     _measuringInterval      = 1000 / parameters.measuringInterval;
-//            static_cast<quint32> (1000 / );
 
-    //block mode
     _measureSampleCount     =
             static_cast<U32> (parameters.blockSize);
     _measureSampleInterval  =
             static_cast<U32> (parameters.samplingInterval);
     _measuringBlockInterval =
             static_cast<U32> (parameters.scaningInterval);
-
-//    _samplesBlockBuffer_0 = new U16[_measureSampleCount];
-//    _samplesBlockBuffer_1 = new U16[_measureSampleCount];
 
     if ((_workingMode == MODE_BLOCK_MEASURING) &&
             (update == true))
@@ -440,18 +396,30 @@ void DataOperator::_singleshotMeasure()
     _mutex.tryLock();
     if (_channelZeroMeasuring == STATE_ON)
     {
-        ::D2K_AI_VReadChannel(_cardID,
+        _lastError = ::D2K_AI_VReadChannel(_cardID,
                               _channelsPins[0],
                               &_voltageSingleshotValue_0);
+        if (_errorCode != NoError)
+        {
+            _lastError = tr("Error while reading: ") +
+                    QString::number(_errorCode);
+            _isWorking = false;
+
+        }
     }
     if (_channelOneMeasuring == STATE_ON)
     {
-        ::D2K_AI_VReadChannel(_cardID,
+        _lastError= ::D2K_AI_VReadChannel(_cardID,
                               _channelsPins[1],
                               &_voltageSingleshotValue_1);
+        if (_errorCode != NoError)
+        {
+            _lastError = tr("Error while reading: ") +
+                    QString::number(_errorCode);
+            _isWorking = false;
+        }
     }
     msleep(_measuringInterval);
-//    _newDataReady = true;
     _singleshotDataReady = true;
     _mutex.unlock();
 }
@@ -459,7 +427,6 @@ void DataOperator::_singleshotMeasure()
 void DataOperator::_blockMeasure()
 {
     _mutex.tryLock();
-    _errorCode = NoError;
     if (_channelZeroMeasuring == true)
     {
         _errorCode = ::D2K_AI_ContReadChannel (_cardID,
@@ -472,7 +439,9 @@ void DataOperator::_blockMeasure()
 
         if (_errorCode != NoError)
         {
-            qDebug() << "error";
+            _lastError = tr("Error while continue reading: ") +
+                    QString::number(_errorCode);
+            _isWorking = false;
         }
     }
     if (_channelOneMeasuring == true)
@@ -487,11 +456,11 @@ void DataOperator::_blockMeasure()
 
         if (_errorCode != NoError)
         {
-            qDebug() << "error";
+            _lastError = tr("Error while continue reading: ") +
+                    QString::number(_errorCode);
+            _isWorking = false;
         }
     }
-//    msleep(_measuringInterval);
-//    _newDataReady = true;
     _blockDataReady = true;
     _mutex.unlock();
 }
@@ -512,51 +481,6 @@ void DataOperator::setChannelsPins(char pins[])
 void DataOperator::setPin(int id, char value)
 {
     _channelsPins[id] = static_cast<I16> (value);
-}
-
-void DataOperator::getHfVoltageBuffer(double *buffer)
-{
-    _mutex.tryLock();
-    if (buffer != 0)
-    {
-        ::D2K_AI_ContVScale(_cardID,
-                            AD_B_10_V,
-                            _hfBuffer,
-                            buffer,
-                            1000);
-    }
-    _newDataReady = false;
-    _mutex.unlock();
-}
-
-void DataOperator::_hfMeasure()
-{
-    _mutex.tryLock();
-    _errorCode = NoError;
-
-    U16* bufferPos = _hfBuffer;
-
-    for (int i = 0; i < 1000; i++)
-    {
-        _errorCode = ::D2K_AI_ContReadChannel (_cardID,
-                                  _channelsPins[2],
-                                  _resultBufferIdZero,
-                                  _measureSampleCount,
-                                  _measuringBlockInterval,
-                                  _measureSampleInterval,
-                                  SYNCH_OP);
-
-        if (_errorCode != NoError)
-        {
-            qDebug() << "error";
-        }
-
-        *bufferPos = _samplesBlockBuffer_0[_measureSampleCount - 1];
-        ++bufferPos;
-    }
-
-    _newDataReady = true;
-    _mutex.unlock();
 }
 
 void DataOperator::singleshotMeasuring(bool state)
@@ -591,7 +515,9 @@ void DataOperator::_initializeChannels()
 
             if (_errorCode != NoError)
             {
-                qDebug() << "Cannot initialize " << _channelsPins[i] << " channel";
+                _lastError = tr("Cannot initialize ") +
+                        QString::number(_channelsPins[i]) +
+                        tr(" channel: ") + QString::number(_errorCode);
             }
         }
     }

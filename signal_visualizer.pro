@@ -15,7 +15,6 @@ TEMPLATE = app
 SOURCES +=  sources/main.cpp\
             sources/mainwindow.cpp \
             sources/dataoperator.cpp \
-            sources/parametersdialog.cpp \
             sources/graphicplot.cpp \
             sources/timerslider.cpp \
             sources/plotgrid.cpp \
@@ -27,7 +26,6 @@ SOURCES +=  sources/main.cpp\
 
 HEADERS  += headers/mainwindow.h \
             headers/dataoperator.h \
-            headers/parametersdialog.h \
             headers/defines.h \
             headers/graphicplot.h \
             headers/timerslider.h \
@@ -39,7 +37,6 @@ HEADERS  += headers/mainwindow.h \
             headers/blockdialog.h
 
 FORMS    += ui/mainwindow.ui \
-            ui/parametersdialog.ui \
             ui/singleshotdialog.ui \
             ui/blockdialog.ui
 

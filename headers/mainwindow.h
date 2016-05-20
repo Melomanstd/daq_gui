@@ -12,7 +12,6 @@
 #include "dataoperator.h"
 #include "graphicplot.h"
 #include "timerslider.h"
-#include "parametersdialog.h"
 
 class BlockDialog;
 class SingleshotDialog;
@@ -28,9 +27,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
-    void singleShot();
-    void blocks();
 
 private:
     void            _initializePlot();

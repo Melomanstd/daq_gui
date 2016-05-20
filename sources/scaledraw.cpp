@@ -13,7 +13,7 @@
 ScaleDraw::ScaleDraw()
     :   QwtScaleDraw()
 {
-
+    //
 }
 
 void ScaleDraw::drawLabel(QPainter *painter, double val) const
