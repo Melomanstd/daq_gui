@@ -42,6 +42,8 @@ private:
     void            _startLogging();
     void            _setupSingleshotParameters(SingleshotDialog &p);
     void            _setupBlockParameters(BlockDialog &p);
+    void            _tryToStop();
+    void            _tryToStart();
 
 private slots:
     void on_parameters_btn_clicked();
@@ -99,6 +101,8 @@ private:
 
     bool            _isBlockRunning;
     bool            _isSingleshotRunning;
+
+    double          _value0, _value1, _value2;
 };
 
 #endif // MAINWINDOW_H

@@ -17,7 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
     _plotBufferOne(0),
     _workingTime(0),
     _isBlockRunning(false),
-    _isSingleshotRunning(false)
+    _isSingleshotRunning(false),
+    _value0(0.0),
+    _value1(0.0),
+    _value2(0.0)
 {
     ui->setupUi(this);
     setWindowTitle(tr("DAQ 2213 Signal visualizer"));
@@ -157,43 +160,31 @@ void MainWindow::_initializeDataOperator()
 
 void MainWindow::_updatePlot()
 {
-    if (_dataOperator->isDataReady() == false)
+    if (_dataOperator->isSingleshotDataReady() == true)
     {
-        return;
+        _value0 = 0.0;
+        _value1 = 0.0;
+
+        _dataOperator->getVoltage(_value0, _value1);
+        _plot->setPoint(_value0, _value1);
     }
 
-    double ch0 = 0.0, ch1 = 0.0;
-
-    if (_parameters.mode == MODE_SINGLESHOT_MEASURING)
+    if (_dataOperator->isBlockDataReady() == true)
     {
-        _dataOperator->getVoltage(ch0, ch1);
-        _plot->setPoint(ch0, ch1);
-    }
-    else if (_parameters.mode == MODE_BLOCK_MEASURING)
-    {
+        _value2 = 0.0;
         _dataOperator->getSamplesBuffer(_plotBufferZero,
                                         _plotBufferOne);
         _hfPlot->displayBlock();
 
         if (_plotBufferZero != 0)
         {
-            ch0 = _plotBufferZero[_parameters.blockSize-1];
+            _value2 = _plotBufferZero[_parameters.blockSize-1];
         }
 
-        if (_plotBufferOne != 0)
+        /*if (_plotBufferOne != 0)
         {
             ch1 = _plotBufferOne[_parameters.blockSize-1];
-        }
-    }
-    else if (_parameters.mode == MODE_HF_MEASURING)
-    {
-        _dataOperator->getHfVoltageBuffer(_plotBufferZero);
-        _hfPlot->displayBlock();
-
-        if (_plotBufferZero != 0)
-        {
-            ch0 = _plotBufferZero[_parameters.blockSize-1];
-        }
+        }*/
     }
 
     if (_isLogging == true)
@@ -201,9 +192,11 @@ void MainWindow::_updatePlot()
         QString logString;
         logString.append(_workingTime->toString("mm:ss:zzz"));
         logString.append("|");
-        logString.append(QString::number(ch0));
+        logString.append(QString::number(_value0));
         logString.append("|");
-        logString.append(QString::number(ch1));
+        logString.append(QString::number(_value1));
+        logString.append("|");
+        logString.append(QString::number(_value2));
         logString.append("|");
         logString.append(";\r\n");
 
@@ -372,7 +365,7 @@ void MainWindow::on_parameters_btn_clicked()
 
 void MainWindow::on_start_btn_clicked()//singleshot
 {
-    if (_isWorking == true)
+    if (_isSingleshotRunning == true)
     {
         ui->stop_btn->setChecked(false);
         ui->start_btn->setChecked(true);
@@ -408,13 +401,14 @@ void MainWindow::on_start_btn_clicked()//singleshot
     _plot->setChannels(ui->channelZero_check->isChecked(),
                        ui->channelOne_check->isChecked());
     _dataOperator->singleshotMeasuring(true);
+    _isSingleshotRunning = true;
 
 
-
-    _isWorking = true;
-    _dataOperator->startWorking();
-    _workingTime->restart();
-    _updateTimer->start();
+    _tryToStart();
+//    _isWorking = true;
+//    _dataOperator->startWorking();
+//    _workingTime->restart();
+//    _updateTimer->start();
 }
 
 void MainWindow::on_stop_btn_clicked()//singleshot
@@ -426,12 +420,14 @@ void MainWindow::on_stop_btn_clicked()//singleshot
     _plotBufferZero = 0;
     _plotBufferOne = 0;
     _plot->measuringStopped();
+    _isSingleshotRunning = false;
 
-    _stopLogging();
-    _isWorking = false;
-     _dataOperator->stopWorking();
-     _updateTimer->stop();
-     ui->log_btn->setChecked(false);
+    _tryToStop();
+//    _stopLogging();
+//    _isWorking = false;
+//     _dataOperator->stopWorking();
+//     _updateTimer->stop();
+//     ui->log_btn->setChecked(false);
 }
 
 void MainWindow::on_parameters_btn_2_clicked()
@@ -448,7 +444,7 @@ void MainWindow::on_parameters_btn_2_clicked()
 
 void MainWindow::on_start_btn_2_clicked()//block
 {
-    if (_isWorking == true)
+    if (_isBlockRunning == true)
     {
         ui->stop_btn_2->setChecked(false);
         ui->start_btn_2->setChecked(true);
@@ -475,11 +471,11 @@ void MainWindow::on_start_btn_2_clicked()//block
     _isBlockRunning = true;
 
 
-
-    _isWorking = true;
-    _dataOperator->startWorking();
-    _workingTime->restart();
-    _updateTimer->start();
+    _tryToStart();
+//    _isWorking = true;
+//    _dataOperator->startWorking();
+//    _workingTime->restart();
+//    _updateTimer->start();
 }
 
 void MainWindow::on_stop_btn_2_clicked()//block
@@ -490,14 +486,15 @@ void MainWindow::on_stop_btn_2_clicked()//block
     _plotBufferZero = 0;
     _plotBufferOne = 0;
     _hfPlot->measuringStopped();
+    _isBlockRunning = false;
 
 
-
-    _updateTimer->stop();
-    _dataOperator->stopWorking();
-    _isWorking = false;
-    _stopLogging();
-    ui->log_btn->setChecked(false);
+    _tryToStop();
+//    _updateTimer->stop();
+//    _dataOperator->stopWorking();
+//    _isWorking = false;
+//    _stopLogging();
+//    ui->log_btn->setChecked(false);
 }
 
 void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
@@ -530,7 +527,7 @@ void MainWindow::_setupBlockParameters(BlockDialog &p)
 //    _dataOperator->setChannelsPins(pins);
     _dataOperator->setPin(2, p1);
 
-    _parameters.measuringInterval = 1000;
+    _parameters.measuringInterval = delayedSlider->value();
     _parameters.blockSize = p.getSamplesCount();
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
@@ -700,6 +697,11 @@ void MainWindow::on_backward_btn_2_clicked()
 
 void MainWindow::_delayedSliderNewValue(int value)
 {
+    if (value == delayedSlider->value())
+    {
+        return;
+    }
+
     ui->meas_per_second_spin->setValue(value);
 //    return;
     _parameters.mode = MODE_SINGLESHOT_MEASURING;
@@ -719,6 +721,11 @@ void MainWindow::_delayedSliderNewValue(int value)
 
 void MainWindow::_delayedSliderNewValue_2(int value)
 {
+    if (value == delayedSlider_2->value())
+    {
+        return;
+    }
+
     ui->meas_block_count_spin->setValue(value);
 
     _parameters.mode = MODE_BLOCK_MEASURING;
@@ -815,4 +822,31 @@ void MainWindow::on_meas_block_count_spin_valueChanged(int value)
         return;
     }
     delayedSlider_2->setValue(value);
+}
+
+void MainWindow::_tryToStop()
+{
+    if ((_isSingleshotRunning == true) || (_isBlockRunning == true))
+    {
+        return;
+    }
+
+    _updateTimer->stop();
+    _dataOperator->stopWorking();
+    _isWorking = false;
+    _stopLogging();
+    ui->log_btn->setChecked(false);
+}
+
+void MainWindow::_tryToStart()
+{
+    if (_isWorking == true)
+    {
+        return;
+    }
+
+        _isWorking = true;
+        _dataOperator->startWorking();
+        _workingTime->restart();
+        _updateTimer->start();
 }

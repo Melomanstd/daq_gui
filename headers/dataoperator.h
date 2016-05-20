@@ -44,6 +44,8 @@ public:
     void        getHfVoltageBuffer(double *buffer);
 
     bool        isDataReady();
+    bool        isBlockDataReady();
+    bool        isSingleshotDataReady();
     QString     getLastError();
     void        setChannelsPins(char pins[]);
 
@@ -70,6 +72,8 @@ private:
     bool            _isUnitialize;
     bool            _isNewParameters;
     mutable bool    _newDataReady;
+    mutable bool    _blockDataReady;
+    mutable bool    _singleshotDataReady;
     BOOLEAN         _isDoubleBuffer;
 
     QMutex          _mutex;

@@ -10,6 +10,8 @@ DataOperator::DataOperator(QObject *parent)
         _isUnitialize(true),
         _isNewParameters(false),
         _newDataReady(false),
+        _blockDataReady(false),
+        _singleshotDataReady(false),
         _isDoubleBuffer(0),
         _errorCode(0),
         _lastError(tr("No error")),
@@ -105,6 +107,8 @@ void DataOperator::run()
     ::D2K_Release_Card(_cardID);
     _cardID = -1;
     _isUnitialize = true;
+
+    qDebug() << "Thread stopped";
 }
 
 void DataOperator::startWorking()
@@ -292,7 +296,7 @@ U16 DataOperator::getSamples()
 {
     _mutex.tryLock();
     U16 temp = _sampleSingleshotValue_0;
-    _newDataReady = false;
+    _singleshotDataReady = false;
     _mutex.unlock();
     return temp;
 }
@@ -318,7 +322,7 @@ void DataOperator::getSamplesBuffer(double* bufferZero,
                             bufferOne,
                             _measureSampleCount);
     }
-    _newDataReady = false;
+    _blockDataReady = false;
     _mutex.unlock();
 }
 
@@ -327,7 +331,8 @@ void DataOperator::getVoltage(double &ch0, double &ch1)
     _mutex.tryLock();
     ch0 = _voltageSingleshotValue_0;
     ch1 = _voltageSingleshotValue_1;
-    _newDataReady = false;
+//    _newDataReady = false;
+    _singleshotDataReady = false;
     _mutex.unlock();
 //    return temp;
 }
@@ -340,7 +345,7 @@ F64* DataOperator::getVoltageBuffer()
     {
         temp[i] = _voltageBlockBuffer_0[i];
     }
-    _newDataReady = false;
+    _blockDataReady = false;
     _mutex.unlock();
     return temp;
 }
@@ -350,6 +355,16 @@ bool DataOperator::isDataReady()
 //    _mutex.tryLock();
     return _newDataReady;
 //    _mutex.unlock();
+}
+
+bool DataOperator::isSingleshotDataReady()
+{
+    return _singleshotDataReady;
+}
+
+bool DataOperator::isBlockDataReady()
+{
+    return _blockDataReady;
 }
 
 void DataOperator::setMeasuringInterval(quint32 msec)
@@ -362,6 +377,8 @@ void DataOperator::setMeasuringInterval(quint32 msec)
 void DataOperator::setParameters(ModeParameters parameters, bool update)
 {
     _mutex.tryLock();
+
+    _workingMode = parameters.mode;
 
     if ((_workingMode != MODE_SINGLESHOT_MEASURING) &&
             (update == true))
@@ -377,8 +394,6 @@ void DataOperator::setParameters(ModeParameters parameters, bool update)
     {
         delete [] _samplesBlockBuffer_1;
     }
-
-    _workingMode = parameters.mode;
 
     _channelZeroMeasuring = parameters.channelZeroState;
     _channelOneMeasuring = parameters.channelOneState;
@@ -413,14 +428,19 @@ void DataOperator::_singleshotMeasure()
     _mutex.tryLock();
     if (_channelZeroMeasuring == STATE_ON)
     {
-        ::D2K_AI_VReadChannel(_cardID, 0, &_voltageSingleshotValue_0);
+        ::D2K_AI_VReadChannel(_cardID,
+                              _channelsPins[0],
+                              &_voltageSingleshotValue_0);
     }
     if (_channelOneMeasuring == STATE_ON)
     {
-        ::D2K_AI_VReadChannel(_cardID, 1, &_voltageSingleshotValue_1);
+        ::D2K_AI_VReadChannel(_cardID,
+                              _channelsPins[1],
+                              &_voltageSingleshotValue_1);
     }
     msleep(_measuringInterval);
-    _newDataReady = true;
+//    _newDataReady = true;
+    _singleshotDataReady = true;
     _mutex.unlock();
 }
 
@@ -458,8 +478,9 @@ void DataOperator::_blockMeasure()
             qDebug() << "error";
         }
     }
-    msleep(_measuringInterval);
-    _newDataReady = true;
+//    msleep(_measuringInterval);
+//    _newDataReady = true;
+    _blockDataReady = true;
     _mutex.unlock();
 }
 
@@ -555,6 +576,11 @@ void DataOperator::_initializeChannels()
         {
             _errorCode = ::D2K_AI_CH_Config(
                         _cardID, _channelsPins[i], AD_B_10_V|AI_RSE);
+
+            if (_errorCode != NoError)
+            {
+                qDebug() << "Cannot initialize " << _channelsPins[i] << " channel";
+            }
         }
     }
 }
