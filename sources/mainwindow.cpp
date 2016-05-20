@@ -15,7 +15,9 @@ MainWindow::MainWindow(QWidget *parent) :
     _isLogging(false),
     _plotBufferZero(0),
     _plotBufferOne(0),
-    _workingTime(0)
+    _workingTime(0),
+    _isBlockRunning(false),
+    _isSingleshotRunning(false)
 {
     ui->setupUi(this);
     setWindowTitle(tr("DAQ 2213 Signal visualizer"));
@@ -405,9 +407,11 @@ void MainWindow::on_start_btn_clicked()//singleshot
 
     _plot->setChannels(ui->channelZero_check->isChecked(),
                        ui->channelOne_check->isChecked());
+    _dataOperator->singleshotMeasuring(true);
+
+
 
     _isWorking = true;
-    _dataOperator->singleshotMeasuring(true);
     _dataOperator->startWorking();
     _workingTime->restart();
     _updateTimer->start();
@@ -417,16 +421,17 @@ void MainWindow::on_stop_btn_clicked()//singleshot
 {
     ui->start_btn->setChecked(false);
     ui->stop_btn->setChecked(true);
-    _isWorking = false;
-    _updateTimer->stop();
+    ui->log_btn->setChecked(false);
     _dataOperator->singleshotMeasuring(false);
-    _dataOperator->stopWorking();
     _plotBufferZero = 0;
     _plotBufferOne = 0;
-//    _modeValue->setText(tr("No mode"));
     _plot->measuringStopped();
-    ui->log_btn->setChecked(false);
+
     _stopLogging();
+    _isWorking = false;
+     _dataOperator->stopWorking();
+     _updateTimer->stop();
+     ui->log_btn->setChecked(false);
 }
 
 void MainWindow::on_parameters_btn_2_clicked()
@@ -465,10 +470,13 @@ void MainWindow::on_start_btn_2_clicked()//block
 
     _parameters.mode = MODE_BLOCK_MEASURING;
     _setupBlockParameters(d);
-
     _hfPlot->setChannels(true, false);
-    _isWorking = true;
     _dataOperator->blockMeasuring(true);
+    _isBlockRunning = true;
+
+
+
+    _isWorking = true;
     _dataOperator->startWorking();
     _workingTime->restart();
     _updateTimer->start();
@@ -478,16 +486,18 @@ void MainWindow::on_stop_btn_2_clicked()//block
 {
     ui->start_btn_2->setChecked(false);
     ui->stop_btn_2->setChecked(true);
-    _isWorking = false;
     _dataOperator->blockMeasuring(false);
-    _updateTimer->stop();
-    _dataOperator->stopWorking();
     _plotBufferZero = 0;
     _plotBufferOne = 0;
-//    _modeValue->setText(tr("No mode"));
     _hfPlot->measuringStopped();
-    ui->log_btn->setChecked(false);
+
+
+
+    _updateTimer->stop();
+    _dataOperator->stopWorking();
+    _isWorking = false;
     _stopLogging();
+    ui->log_btn->setChecked(false);
 }
 
 void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
@@ -728,11 +738,6 @@ void MainWindow::_delayedSliderNewValue_2(int value)
 
     QSettings settings("settings.ini", QSettings::IniFormat, this);
     settings.setValue("measuring_samples_count", value);
-
-//    if (_dataOperator != 0)
-//    {
-//        _dataOperator->setSampleCount(value);
-//    }
 }
 
 void MainWindow::on_screenshot_btn_clicked()

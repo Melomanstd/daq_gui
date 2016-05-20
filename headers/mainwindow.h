@@ -96,6 +96,9 @@ private:
 
     QFile           _logFile;
     QTime*          _workingTime;
+
+    bool            _isBlockRunning;
+    bool            _isSingleshotRunning;
 };
 
 #endif // MAINWINDOW_H

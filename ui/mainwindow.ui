@@ -719,7 +719,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Slower</string>
+         <string>Less samples</string>
         </property>
         <property name="text">
          <string/>
@@ -786,7 +786,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Faster</string>
+         <string>More samples</string>
         </property>
         <property name="text">
          <string/>
