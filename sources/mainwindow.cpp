@@ -158,6 +158,11 @@ void MainWindow::_updatePlot()
 
         _dataOperator->getVoltage(_value0, _value1);
         _plot->setPoint(_value0, _value1);
+
+        if ((_isLogging == true) && (_isBlockRunning == false))
+        {
+            _writeLog();
+        }
     }
 
     if (_dataOperator->isBlockDataReady() == true)
@@ -171,23 +176,30 @@ void MainWindow::_updatePlot()
         {
             _value2 = _plotBufferZero[_parameters.blockSize-1];
         }
+
+        if (_isLogging == true)
+        {
+            _writeLog();
+        }
     }
 
-    if (_isLogging == true)
-    {
-        QString logString;
-        logString.append(_workingTime->toString("mm:ss:zzz"));
-        logString.append("|");
-        logString.append(QString::number(_value0));
-        logString.append("|");
-        logString.append(QString::number(_value1));
-        logString.append("|");
-        logString.append(QString::number(_value2));
-        logString.append("|");
-        logString.append(";\r\n");
 
-        _logFile.write(logString.toAscii());
-    }
+}
+
+void MainWindow::_writeLog()
+{
+    _logString.clear();
+    _logString.append(QString::number(_workingTime->elapsed()));//_workingTime->toString("mm:ss:zzz")
+    _logString.append("|");
+    _logString.append(QString::number(_value0));
+    _logString.append("|");
+    _logString.append(QString::number(_value1));
+    _logString.append("|");
+    _logString.append(QString::number(_value2));
+    _logString.append("|");
+    _logString.append(";\r\n");
+
+    _logFile.write(_logString.toAscii());
 }
 
 void MainWindow::on_parameters_btn_clicked()
@@ -427,14 +439,11 @@ void MainWindow::on_channelZero_check_toggled(bool state)
     {
         _parameters.channelZeroState = STATE_ON;
         settings.setValue("channel_zero", STATE_ON);
-        _plotBufferZero = _plot->initializeChannelZeroBuffer(
-                    _parameters.blockSize);
     }
     else
     {
         _parameters.channelZeroState = STATE_OFF;
         settings.setValue("channel_zero", STATE_OFF);
-        _plotBufferZero = 0;
     }
     _channelZeroState(state);
     if (_dataOperator != 0)
@@ -451,14 +460,11 @@ void MainWindow::on_channelOne_check_toggled(bool state)
     {
         _parameters.channelOneState = STATE_ON;
         settings.setValue("channel_one", STATE_ON);
-        _plotBufferOne = _plot->initializeChannelOneBuffer(
-                    _parameters.blockSize);
     }
     else
     {
         _parameters.channelOneState = STATE_OFF;
         settings.setValue("channel_one", STATE_OFF);
-        _plotBufferOne = 0;
     }
     _channelOneState(state);
     if (_dataOperator != 0)

@@ -40,6 +40,7 @@ private:
     void            _setupBlockParameters(BlockDialog &p);
     void            _tryToStop();
     void            _tryToStart();
+    void            _writeLog();
 
 private slots:
     void on_parameters_btn_clicked();
@@ -99,6 +100,7 @@ private:
     bool            _isSingleshotRunning;
 
     double          _value0, _value1, _value2;
+    QString         _logString;
 };
 
 #endif // MAINWINDOW_H
