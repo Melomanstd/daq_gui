@@ -203,6 +203,18 @@ bool DataOperator::_initializeBlockMode()
     BOOLEAN bufAutoReset = 0;
     U32     memSize = 0;
 
+    if (_samplesBlockBuffer_0 != 0)
+    {
+        delete [] _samplesBlockBuffer_0;
+    }
+    if (_samplesBlockBuffer_1 != 0)
+    {
+        delete [] _samplesBlockBuffer_1;
+    }
+
+    _samplesBlockBuffer_0 = new U16[_measureSampleCount];
+    _samplesBlockBuffer_1 = new U16[_measureSampleCount];
+
     _errorCode = ::D2K_AI_AsyncDblBufferMode(_cardID, _isDoubleBuffer);
     if (_errorCode != NoError)
     {
@@ -380,20 +392,20 @@ void DataOperator::setParameters(ModeParameters parameters, bool update)
 
     _workingMode = parameters.mode;
 
-    if ((_workingMode != MODE_SINGLESHOT_MEASURING) &&
+    if ((_workingMode == MODE_BLOCK_MEASURING) &&
             (update == true))
     {
         ::D2K_AI_ContBufferReset(_cardID);
     }
 
-    if (_samplesBlockBuffer_0 != 0)
-    {
-        delete [] _samplesBlockBuffer_0;
-    }
-    if (_samplesBlockBuffer_1 != 0)
-    {
-        delete [] _samplesBlockBuffer_1;
-    }
+//    if (_samplesBlockBuffer_0 != 0)
+//    {
+//        delete [] _samplesBlockBuffer_0;
+//    }
+//    if (_samplesBlockBuffer_1 != 0)
+//    {
+//        delete [] _samplesBlockBuffer_1;
+//    }
 
     _channelZeroMeasuring = parameters.channelZeroState;
     _channelOneMeasuring = parameters.channelOneState;
@@ -409,10 +421,10 @@ void DataOperator::setParameters(ModeParameters parameters, bool update)
     _measuringBlockInterval =
             static_cast<U32> (parameters.scaningInterval);
 
-    _samplesBlockBuffer_0 = new U16[_measureSampleCount];
-    _samplesBlockBuffer_1 = new U16[_measureSampleCount];
+//    _samplesBlockBuffer_0 = new U16[_measureSampleCount];
+//    _samplesBlockBuffer_1 = new U16[_measureSampleCount];
 
-    if ((_workingMode != MODE_SINGLESHOT_MEASURING) &&
+    if ((_workingMode == MODE_BLOCK_MEASURING) &&
             (update == true))
     {
         _initializeBlockMode();
