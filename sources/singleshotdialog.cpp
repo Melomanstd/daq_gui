@@ -7,6 +7,8 @@ SingleshotDialog::SingleshotDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setWindowTitle(tr("Single measure parameters"));
+
     QStringList items;
     for (int i = 0; i < 16; i++)
     {

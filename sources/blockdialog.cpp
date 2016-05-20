@@ -7,6 +7,8 @@ BlockDialog::BlockDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setWindowTitle(tr("Block measure parameters"));
+
     QStringList items;
     for (int i = 0; i < 16; i++)
     {
