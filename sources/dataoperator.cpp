@@ -10,6 +10,8 @@ DataOperator::DataOperator(QObject *parent)
         _isUnitialize(true),
         _isNewParameters(false),
         _newDataReady(false),
+        _blockDataReady(false),
+        _singleshotDataReady(false),
         _isDoubleBuffer(0),
         _errorCode(0),
         _lastError(tr("No error")),
@@ -29,9 +31,11 @@ DataOperator::DataOperator(QObject *parent)
         _measureSampleCount(2),
         _measuringBlockInterval(160),
         _resultBufferIdZero(0),
-        _cardID(-1)
+        _cardID(-1),
+        _measuringBlock(false),
+        _measuringSingleshot(false)
 {
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < MAXIMUM_CHANNELS; i++)
     {
         _channelsPins[i] = -1;
     }
@@ -45,6 +49,7 @@ DataOperator::~DataOperator()
     {
         ::D2K_Release_Card(_cardID);
         ::D2K_AI_ContBufferReset(_cardID);
+        _cardID = -1;
     }
 
     if (_samplesBlockBuffer_0 != 0)
@@ -80,33 +85,46 @@ void DataOperator::run()
             break;
         }
 
-        if (_workingMode == MODE_SINGLESHOT_MEASURING)
+//        if (_workingMode == MODE_SINGLESHOT_MEASURING)
+        if (_measuringSingleshot == true)
         {
             _singleshotMeasure();
         }
-        else if (_workingMode == MODE_BLOCK_MEASURING)
+
+//        else if (_workingMode == MODE_BLOCK_MEASURING)
+        if (_measuringBlock == true)
         {
             _blockMeasure();
         }
-        else if (_workingMode == MODE_HF_MEASURING)
+        /*else if (_workingMode == MODE_HF_MEASURING)
         {
             _hfMeasure();
-        }
+        }*/
 //        _isWorking = false;
     }
 
     ::D2K_AI_ContBufferReset(_cardID);
     ::D2K_Release_Card(_cardID);
+    _cardID = -1;
     _isUnitialize = true;
+
+    qDebug() << "Thread stopped";
 }
 
 void DataOperator::startWorking()
 {
-    start();
+    if (isRunning() == false)
+    {
+        start();
+    }
 }
 
 void DataOperator::stopWorking()
 {
+    if ((_measuringSingleshot == true) || (_measuringBlock == true))
+    {
+        return;
+    }
     _mutex.tryLock();
     _isWorking = false;
     _mutex.unlock();
@@ -185,6 +203,18 @@ bool DataOperator::_initializeBlockMode()
     BOOLEAN bufAutoReset = 0;
     U32     memSize = 0;
 
+    if (_samplesBlockBuffer_0 != 0)
+    {
+        delete [] _samplesBlockBuffer_0;
+    }
+    if (_samplesBlockBuffer_1 != 0)
+    {
+        delete [] _samplesBlockBuffer_1;
+    }
+
+    _samplesBlockBuffer_0 = new U16[_measureSampleCount];
+    _samplesBlockBuffer_1 = new U16[_measureSampleCount];
+
     _errorCode = ::D2K_AI_AsyncDblBufferMode(_cardID, _isDoubleBuffer);
     if (_errorCode != NoError)
     {
@@ -260,8 +290,7 @@ void DataOperator::_initializeCard()
     }
     else
     {
-        ::D2K_AI_CH_Config(_cardID, 0, AD_B_10_V|AI_RSE);
-        ::D2K_AI_CH_Config(_cardID, 1, AD_B_10_V|AI_RSE);
+        _initializeChannels();
         _isWorking = true;
         _isUnitialize = false;
     }
@@ -279,7 +308,7 @@ U16 DataOperator::getSamples()
 {
     _mutex.tryLock();
     U16 temp = _sampleSingleshotValue_0;
-    _newDataReady = false;
+    _singleshotDataReady = false;
     _mutex.unlock();
     return temp;
 }
@@ -305,7 +334,7 @@ void DataOperator::getSamplesBuffer(double* bufferZero,
                             bufferOne,
                             _measureSampleCount);
     }
-    _newDataReady = false;
+    _blockDataReady = false;
     _mutex.unlock();
 }
 
@@ -314,7 +343,8 @@ void DataOperator::getVoltage(double &ch0, double &ch1)
     _mutex.tryLock();
     ch0 = _voltageSingleshotValue_0;
     ch1 = _voltageSingleshotValue_1;
-    _newDataReady = false;
+//    _newDataReady = false;
+    _singleshotDataReady = false;
     _mutex.unlock();
 //    return temp;
 }
@@ -327,7 +357,7 @@ F64* DataOperator::getVoltageBuffer()
     {
         temp[i] = _voltageBlockBuffer_0[i];
     }
-    _newDataReady = false;
+    _blockDataReady = false;
     _mutex.unlock();
     return temp;
 }
@@ -339,10 +369,20 @@ bool DataOperator::isDataReady()
 //    _mutex.unlock();
 }
 
+bool DataOperator::isSingleshotDataReady()
+{
+    return _singleshotDataReady;
+}
+
+bool DataOperator::isBlockDataReady()
+{
+    return _blockDataReady;
+}
+
 void DataOperator::setMeasuringInterval(quint32 msec)
 {
     _mutex.tryLock();
-    _measuringInterval = msec;
+    _measuringInterval = 1000 / msec;
     _mutex.unlock();
 }
 
@@ -350,27 +390,27 @@ void DataOperator::setParameters(ModeParameters parameters, bool update)
 {
     _mutex.tryLock();
 
-    if ((_workingMode != MODE_SINGLESHOT_MEASURING) &&
+    _workingMode = parameters.mode;
+
+    if ((_workingMode == MODE_BLOCK_MEASURING) &&
             (update == true))
     {
         ::D2K_AI_ContBufferReset(_cardID);
     }
 
-    if (_samplesBlockBuffer_0 != 0)
-    {
-        delete [] _samplesBlockBuffer_0;
-    }
-    if (_samplesBlockBuffer_1 != 0)
-    {
-        delete [] _samplesBlockBuffer_1;
-    }
-
-    _workingMode = parameters.mode;
+//    if (_samplesBlockBuffer_0 != 0)
+//    {
+//        delete [] _samplesBlockBuffer_0;
+//    }
+//    if (_samplesBlockBuffer_1 != 0)
+//    {
+//        delete [] _samplesBlockBuffer_1;
+//    }
 
     _channelZeroMeasuring = parameters.channelZeroState;
     _channelOneMeasuring = parameters.channelOneState;
 
-    _measuringInterval      = parameters.measuringInterval;
+    _measuringInterval      = 1000 / parameters.measuringInterval;
 //            static_cast<quint32> (1000 / );
 
     //block mode
@@ -381,14 +421,16 @@ void DataOperator::setParameters(ModeParameters parameters, bool update)
     _measuringBlockInterval =
             static_cast<U32> (parameters.scaningInterval);
 
-    _samplesBlockBuffer_0 = new U16[_measureSampleCount];
-    _samplesBlockBuffer_1 = new U16[_measureSampleCount];
+//    _samplesBlockBuffer_0 = new U16[_measureSampleCount];
+//    _samplesBlockBuffer_1 = new U16[_measureSampleCount];
 
-    if ((_workingMode != MODE_SINGLESHOT_MEASURING) &&
+    if ((_workingMode == MODE_BLOCK_MEASURING) &&
             (update == true))
     {
         _initializeBlockMode();
     }
+
+    _initializeChannels();
 
     _mutex.unlock();
 }
@@ -398,14 +440,19 @@ void DataOperator::_singleshotMeasure()
     _mutex.tryLock();
     if (_channelZeroMeasuring == STATE_ON)
     {
-        ::D2K_AI_VReadChannel(_cardID, 0, &_voltageSingleshotValue_0);
+        ::D2K_AI_VReadChannel(_cardID,
+                              _channelsPins[0],
+                              &_voltageSingleshotValue_0);
     }
     if (_channelOneMeasuring == STATE_ON)
     {
-        ::D2K_AI_VReadChannel(_cardID, 1, &_voltageSingleshotValue_1);
+        ::D2K_AI_VReadChannel(_cardID,
+                              _channelsPins[1],
+                              &_voltageSingleshotValue_1);
     }
-    msleep(1000 / _measuringInterval);
-    _newDataReady = true;
+    msleep(_measuringInterval);
+//    _newDataReady = true;
+    _singleshotDataReady = true;
     _mutex.unlock();
 }
 
@@ -416,7 +463,7 @@ void DataOperator::_blockMeasure()
     if (_channelZeroMeasuring == true)
     {
         _errorCode = ::D2K_AI_ContReadChannel (_cardID,
-                                  _channelsPins[0],
+                                  _channelsPins[2],
                                   _resultBufferIdZero,
                                   _measureSampleCount,
                                   _measuringBlockInterval,
@@ -443,8 +490,9 @@ void DataOperator::_blockMeasure()
             qDebug() << "error";
         }
     }
-    msleep(_measuringInterval);
-    _newDataReady = true;
+//    msleep(_measuringInterval);
+//    _newDataReady = true;
+    _blockDataReady = true;
     _mutex.unlock();
 }
 
@@ -455,10 +503,15 @@ QString DataOperator::getLastError()
 
 void DataOperator::setChannelsPins(char pins[])
 {
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < MAXIMUM_CHANNELS; i++)
     {
         _channelsPins[i] = static_cast<I16> (pins[i]);
     }
+}
+
+void DataOperator::setPin(int id, char value)
+{
+    _channelsPins[id] = static_cast<I16> (value);
 }
 
 void DataOperator::getHfVoltageBuffer(double *buffer)
@@ -504,4 +557,42 @@ void DataOperator::_hfMeasure()
 
     _newDataReady = true;
     _mutex.unlock();
+}
+
+void DataOperator::singleshotMeasuring(bool state)
+{
+    _mutex.tryLock();
+    _measuringSingleshot = state;
+    _mutex.unlock();
+}
+
+void DataOperator::blockMeasuring(bool state)
+{
+    _mutex.tryLock();
+    _measuringBlock = state;
+    _mutex.unlock();
+}
+
+void DataOperator::_initializeChannels()
+{
+    if (_cardID == -1)
+    {
+        return;
+    }
+
+    _errorCode = NoError;
+
+    for (int i = 0; i < MAXIMUM_CHANNELS; i++)
+    {
+        if (_channelsPins[i] != -1)
+        {
+            _errorCode = ::D2K_AI_CH_Config(
+                        _cardID, _channelsPins[i], AD_B_10_V|AI_RSE);
+
+            if (_errorCode != NoError)
+            {
+                qDebug() << "Cannot initialize " << _channelsPins[i] << " channel";
+            }
+        }
+    }
 }

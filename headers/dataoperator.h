@@ -6,6 +6,7 @@
 #define MINIMUM_SAMPLES_PER_BLOCK   2
 #define MINIMUM_SAMPLES_INTERVAL    160
 #define MINIMUM_MEASURING_INTERVAL  160 //miliseconds
+#define MAXIMUM_CHANNELS            3
 
 #include <QThread>
 #include <QMutex>
@@ -31,6 +32,7 @@ public:
     void        setMeasureSampleInterval(quint32 interval);
     void        setSampleCount(quint32 count); //samples per block
     void        setParameters(ModeParameters parameters, bool update);
+    void        setPin(int id, char value);
 
     void        getVoltage(double &ch0, double &ch1);
     F64*        getVoltageBuffer();
@@ -42,8 +44,13 @@ public:
     void        getHfVoltageBuffer(double *buffer);
 
     bool        isDataReady();
+    bool        isBlockDataReady();
+    bool        isSingleshotDataReady();
     QString     getLastError();
     void        setChannelsPins(char pins[]);
+
+    void        singleshotMeasuring(bool state);
+    void        blockMeasuring(bool state);
 
 protected:
     virtual void run();
@@ -55,6 +62,7 @@ private:
     inline void _singleshotMeasure();
     inline void _blockMeasure();
     inline void _hfMeasure();
+    void        _initializeChannels();
 
 signals:
     void someError();
@@ -64,6 +72,8 @@ private:
     bool            _isUnitialize;
     bool            _isNewParameters;
     mutable bool    _newDataReady;
+    mutable bool    _blockDataReady;
+    mutable bool    _singleshotDataReady;
     BOOLEAN         _isDoubleBuffer;
 
     QMutex          _mutex;
@@ -99,9 +109,12 @@ private:
 
     I16             _cardID;
 
-    I16             _channelsPins[3];
+    I16             _channelsPins[MAXIMUM_CHANNELS];
 
     U16*            _hfBuffer;
+
+    bool            _measuringSingleshot;
+    bool            _measuringBlock;
 };
 
 #endif // DATAOPERATOR_H

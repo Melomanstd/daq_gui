@@ -14,6 +14,9 @@
 #include "timerslider.h"
 #include "parametersdialog.h"
 
+class BlockDialog;
+class SingleshotDialog;
+
 namespace Ui {
 class MainWindow;
 }
@@ -32,20 +35,23 @@ public:
 private:
     void            _initializePlot();
     void            _initializeDataOperator();
-    bool            _setupParameters();
     ModeParameters  _lastParameters();
     void            _channelZeroState(bool state);
     void            _channelOneState(bool state);
     void            _stopLogging();
     void            _startLogging();
-    void            _setupSingleshotParameters(ParametersDialog &p);
-    void            _setupBlockParameters(ParametersDialog &p);
-    void            _setupHfParameters(ParametersDialog &p);
+    void            _setupSingleshotParameters(SingleshotDialog &p);
+    void            _setupBlockParameters(BlockDialog &p);
+    void            _tryToStop();
+    void            _tryToStart();
 
 private slots:
     void on_parameters_btn_clicked();
     void on_start_btn_clicked();
     void on_stop_btn_clicked();
+    void on_start_btn_2_clicked();
+    void on_stop_btn_2_clicked();
+    void on_parameters_btn_2_clicked();
     void on_ch_0_voltage_range_slider_valueChanged(int value);
     void on_ch_1_voltage_range_slider_valueChanged(int value);
     void on_ch_0_zoom_in_btn_clicked();
@@ -56,9 +62,15 @@ private slots:
     void on_channelOne_check_toggled(bool state);
     void on_forward_btn_clicked();
     void on_backward_btn_clicked();
+    void on_forward_btn_2_clicked();
+    void on_backward_btn_2_clicked();
     void on_screenshot_btn_clicked();
     void on_log_btn_clicked();
     void _delayedSliderNewValue(int value);
+    void _delayedSliderNewValue_2(int value);
+
+    void on_meas_per_second_spin_valueChanged(int value);
+    void on_meas_block_count_spin_valueChanged(int value);
 
     void _updatePlot();
     void _displayError();
@@ -81,15 +93,16 @@ private:
     double*         _plotBufferZero;
     double*         _plotBufferOne;
 
-    QLabel*         _modeLabel;
-    QLabel*         _modeValue;
-    QLabel*         _intervalLabel;
-    QLabel*         _intervalValue;
-
     TimerSlider*    delayedSlider;
+    TimerSlider*    delayedSlider_2;
 
     QFile           _logFile;
     QTime*          _workingTime;
+
+    bool            _isBlockRunning;
+    bool            _isSingleshotRunning;
+
+    double          _value0, _value1, _value2;
 };
 
 #endif // MAINWINDOW_H

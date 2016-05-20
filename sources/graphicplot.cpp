@@ -21,8 +21,6 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
         _count(0),
         _displayedPoints(1),
         _initializedPoints(0),
-        _displayStep(1),
-        _currentStep(0),
         _scaleMinimum(-1.0),
         _scaleMaximum(1.0),
         _channelZeroEnabled(false),
@@ -42,7 +40,7 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
 
     setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
     setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
-    setTitle(title);
+//    setTitle(title);
 
 //    setCanvasBackground(Qt::white);
 
@@ -122,7 +120,7 @@ GraphicPlot::GraphicPlot(QString title , int channelsCount, QWidget *parent)
         legend->insert(_curveZero, _channelOutput_0);
     if (_curveOne != 0)
         legend->insert(_curveOne, _channelOutput_1);
-    insertLegend(legend,QwtPlot::BottomLegend);
+    insertLegend(legend,QwtPlot::TopLegend);
 
 //    _curve->setXAxis(QwtPlot::xTop);
 
@@ -190,11 +188,6 @@ void GraphicPlot::setPoint(const double &voltage_0,
     if (_initializedPoints < _displayedPoints)
     {
         _initializedPoints++;
-//        _rescaleAxis(xBottom, 0, _initializedPoints - 1);
-//        setAxisScale(xBottom,
-//                     0,
-//                     _initializedPoints - 1,
-//                     _displayStep);
     }
     else
     {
@@ -236,19 +229,18 @@ void GraphicPlot::setBlock(unsigned short *samples, int size)
 
 }
 
-void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
+void GraphicPlot::setDisplayedPoints(int size, qint8 mode)
 {
     _displayedPoints = size;
     _grid->cleanTime();
-    int time = size * 40;
+    int time = size * 4;
 
-    if (reset == true)
-    {
-        _count = 0;
-        _initializedPoints = 0;
-        _pointsZero.clear();
-        _pointsOne.clear();
-    }
+    //reset
+    _count = 0;
+    _initializedPoints = 0;
+    _pointsZero.clear();
+    _pointsOne.clear();
+    //
 
     if (mode == MODE_SINGLESHOT_MEASURING)
     {
@@ -318,12 +310,6 @@ void GraphicPlot::setDisplayedPoints(int size, bool reset, qint8 mode)
     _pointsOne.reserve(size);
 }
 
-void GraphicPlot::setDisplayStep(int step)
-{
-    _displayStep = step;
-    _currentStep = step;
-}
-
 void GraphicPlot::setChannels(bool ch1, bool ch2)
 {
     _channelOneEnabled = ch2;
@@ -391,7 +377,7 @@ void GraphicPlot::displayBlock()
 {
     _pointsZero.clear();
     _pointsOne.clear();
-    _count = 1;
+    _count = 0;
 
     for (int i = 0; i < _displayedPoints; i++)
     {

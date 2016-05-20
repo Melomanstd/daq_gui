@@ -154,7 +154,7 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
                 {
                     QwtPainter::drawText(painter,
                                          x1+5,
-                                         value-6,
+                                         value - 10,
                                          100,
                                          20,
                                          Qt::AlignLeft,
@@ -169,7 +169,7 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
 
                     QwtPainter::drawText(painter,
                                          (x2)-100,//*90,
-                                         value-6,
+                                         value - 10,
                                          100,
                                          20,
                                          Qt::AlignRight,
@@ -182,7 +182,7 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
         {
             if (_useTimeValues == false)
             {
-                scaleValue = /*qRound*/(values[i] * 40.0 / _timescaleDivider);
+                scaleValue = /*qRound*/(values[i] * 4.0 / _timescaleDivider);
             }
             else
             {
@@ -290,16 +290,6 @@ void PlotGrid::updateTime()
         _time.pop_front();
         _time.push_back(++_listPosition);
     }
-    /*if (_lastTime < BUFFER_SIZE)
-    {
-        ++_lastTime;
-    }
-
-    for (int i = 0; i < _lastTime; i++)
-    {
-        _savedTime[i] = _savedTime[i] + 1;
-    }*/
-
 }
 
 void PlotGrid::usingTimeValues(bool state)
