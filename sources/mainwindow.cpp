@@ -369,10 +369,21 @@ void MainWindow::_setupBlockParameters(BlockDialog &p)
     _parameters.blockSize = p.getSamplesCount();
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
-    _hfPlot->setDisplayedPoints(_parameters.blockSize, _parameters.mode);
 
-    _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
-                _parameters.blockSize);
+
+    if (_parameters.blockSize > MAXIMUM_PLOT_SAMPLES)
+    {
+        _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
+                    MAXIMUM_PLOT_SAMPLES);
+        _hfPlot->setDisplayedPoints(MAXIMUM_PLOT_SAMPLES,
+                                    _parameters.mode);
+    }
+    else
+    {
+        _hfPlot->setDisplayedPoints(_parameters.blockSize, _parameters.mode);
+        _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
+                    _parameters.blockSize);
+    }
 
     _dataOperator->setParameters(_parameters, _isWorking);
 }
@@ -557,10 +568,24 @@ void MainWindow::_delayedSliderNewValue_2(int value)
     _parameters.blockSize = value;
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
-    _hfPlot->setDisplayedPoints(value, _parameters.mode);
 
-    _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
-                _parameters.blockSize);
+
+    //<old>
+    //_plotBufferZero = _hfPlot->initializeChannelZeroBuffer(value);
+    //</old>
+
+    if (value > MAXIMUM_PLOT_SAMPLES)
+    {
+        _hfPlot->setDisplayedPoints(MAXIMUM_PLOT_SAMPLES,
+                                    _parameters.mode);
+        _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
+                    MAXIMUM_PLOT_SAMPLES);
+    }
+    else
+    {
+        _hfPlot->setDisplayedPoints(value, _parameters.mode);
+        _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(value);
+    }
 
     if (_dataOperator != 0)
     {

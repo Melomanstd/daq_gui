@@ -1,6 +1,8 @@
 #ifndef DEFINES
 #define DEFINES
 
+#define MAXIMUM_PLOT_SAMPLES 1000
+
 enum
 {
     MODE_NO_MEASURING,
