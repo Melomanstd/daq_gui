@@ -175,7 +175,7 @@ void MainWindow::_updatePlot()
 
         if (_plotBufferZero != 0)
         {
-            _value2 = _plotBufferZero[_parameters.blockSize-1];
+            _value2 = _plotBufferZero[MAXIMUM_PLOT_SAMPLES-1];
         }
 
         if (_isLogging == true)
