@@ -61,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     delayedSlider_2->setFixedSize(300, 32);
 
     ui->stop_btn->setChecked(true);
+    ui->stop_btn_2->setChecked(true);
 
     _updateTimer = new QTimer;
     connect(_updateTimer, SIGNAL(timeout()),
@@ -260,6 +261,8 @@ void MainWindow::on_stop_btn_clicked()//singleshot
 {
     if (_isSingleshotRunning == false)
     {
+        ui->start_btn->setChecked(false);
+        ui->stop_btn->setChecked(true);
         return;
     }
 
@@ -318,6 +321,8 @@ void MainWindow::on_stop_btn_2_clicked()//block
 {
     if (_isBlockRunning == false)
     {
+        ui->start_btn_2->setChecked(false);
+        ui->stop_btn_2->setChecked(true);
         return;
     }
 
