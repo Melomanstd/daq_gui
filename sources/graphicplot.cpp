@@ -169,7 +169,8 @@ void GraphicPlot::setPoint(const double &voltage_0,
         _pointsZero.append(ch0Point);
         _curveZero->setSamples(_pointsZero);
         _channelOutput_0->setText(tr("Signal 1 Voltage: ") +
-                                     QString::number(voltage_0));
+                                     QString::number(voltage_0) +
+                                     _getVoltagePrefix(voltage_0));
     }
     if ((_channelOneEnabled == true) &&
             (_curveOne != 0))
@@ -179,7 +180,8 @@ void GraphicPlot::setPoint(const double &voltage_0,
         _pointsOne.append(ch1Point);
         _curveOne->setSamples(_pointsOne);
         _channelOutput_1->setText(tr("Signal 2 Voltage: ") +
-                                     QString::number(voltage_1));
+                                     QString::number(voltage_1) +
+                                     _getVoltagePrefix(voltage_1));
     }
 
     ++_count;
@@ -371,6 +373,7 @@ void GraphicPlot::displayBlock()
     _pointsZero.clear();
     _pointsOne.clear();
     _count = 0;
+    double value = 0.0;
 
     for (int i = 0; i < _displayedPoints; i++)
     {
@@ -392,16 +395,24 @@ void GraphicPlot::displayBlock()
 
     if ((_curveZero != 0) && (_channelZeroEnabled == true))
     {
+        value = _channelZeroVoltageBuffer[_displayedPoints -1];
+
         _curveZero->setSamples(_pointsZero);
-        QString text = _curveZero->title().text() + tr(" Voltage: ") +
-                QString::number(_channelZeroVoltageBuffer[_displayedPoints -1]);
+        QString text =  _curveZero->title().text() +
+                        tr(" Voltage: ") +
+                        QString::number(value) +
+                        _getVoltagePrefix(value);
         _channelOutput_0->setText(text);
     }
     if ((_curveOne != 0) && (_channelOneEnabled == true))
     {
+        value = _channelOneVoltageBuffer[_displayedPoints-1];
+
         _curveOne->setSamples(_pointsOne);
-        QString text = _curveOne->title().text() + tr(" Voltage: ") +
-                QString::number(_channelOneVoltageBuffer[_displayedPoints-1]);
+        QString text =  _curveOne->title().text() +
+                        tr(" Voltage: ") +
+                        QString::number(value) +
+                        _getVoltagePrefix(value);
         _channelOutput_1->setText(text);
     }
     replot();
@@ -575,4 +586,16 @@ void GraphicPlot::measuringStopped()
 {
     _scaleTimer->stop();
     _grid->usingTimeValues(false);
+}
+
+QString GraphicPlot::_getVoltagePrefix(double value)
+{
+    if ((value >= 1) || (value <= -1))
+        return tr(" V");
+    if ((value >= 0.001) && ((value < 1)))
+         return tr(" mV");
+    if ((value <= -0.001) && (value > -1))
+        return tr(" mV");
+//    else if ((value < 0.001) && (value >))
+    return tr(" mkV");
 }

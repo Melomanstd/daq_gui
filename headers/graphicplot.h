@@ -48,6 +48,7 @@ public:
 
 private:
     void        _initialize(int channelsCount);
+    QString     _getVoltagePrefix(double value);
 
 private slots:
     void        _plotPanned(int x, int y);

@@ -16,12 +16,12 @@
 
 #include "defines.h"
 
-class DataOperator : public QThread
+class MeasureThread : public QThread
 {
     Q_OBJECT
 public:
-    explicit    DataOperator(QObject *parent = 0);
-    virtual     ~DataOperator();
+    explicit    MeasureThread(QObject *parent = 0);
+    virtual     ~MeasureThread();
 
     void        startWorking();
     void        stopWorking();

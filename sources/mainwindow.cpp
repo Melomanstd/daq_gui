@@ -143,7 +143,7 @@ void MainWindow::_initializePlot()
 
 void MainWindow::_initializeDataOperator()
 {
-    _dataOperator = new DataOperator();
+    _dataOperator = new MeasureThread();
 
     connect(_dataOperator, SIGNAL(someError()),
             this, SLOT(_displayError()));
