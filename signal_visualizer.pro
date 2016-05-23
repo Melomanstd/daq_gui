@@ -14,7 +14,6 @@ TEMPLATE = app
 
 SOURCES +=  sources/main.cpp\
             sources/mainwindow.cpp \
-            sources/dataoperator.cpp \
             sources/graphicplot.cpp \
             sources/timerslider.cpp \
             sources/plotgrid.cpp \
@@ -22,10 +21,10 @@ SOURCES +=  sources/main.cpp\
             sources/plotmagnifier.cpp \
             sources/scaledraw.cpp \
             sources/singleshotdialog.cpp \
-            sources/blockdialog.cpp
+            sources/blockdialog.cpp \
+    sources/measurethread.cpp
 
 HEADERS  += headers/mainwindow.h \
-            headers/dataoperator.h \
             headers/defines.h \
             headers/graphicplot.h \
             headers/timerslider.h \
@@ -34,7 +33,8 @@ HEADERS  += headers/mainwindow.h \
             headers/plotgridplotmagnifier.h \
             headers/scaledraw.h \
             headers/singleshotdialog.h \
-            headers/blockdialog.h
+            headers/blockdialog.h \
+    headers/measurethread.h
 
 FORMS    += ui/mainwindow.ui \
             ui/singleshotdialog.ui \

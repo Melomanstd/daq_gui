@@ -1,10 +1,10 @@
-#include "headers/dataoperator.h"
+#include "headers/measurethread.h"
 
 #define CardNumber 0
 
 #include <QDebug>
 
-DataOperator::DataOperator(QObject *parent)
+MeasureThread::MeasureThread(QObject *parent)
     :   QThread(parent),
         _isWorking(false),
         _isUnitialize(true),
@@ -41,7 +41,7 @@ DataOperator::DataOperator(QObject *parent)
     _hfBuffer = new U16[1000];
 }
 
-DataOperator::~DataOperator()
+MeasureThread::~MeasureThread()
 {
     if (_isUnitialize == false)
     {
@@ -62,7 +62,7 @@ DataOperator::~DataOperator()
     delete [] _hfBuffer;
 }
 
-void DataOperator::run()
+void MeasureThread::run()
 {
     _initializeCard();
 
@@ -99,7 +99,7 @@ void DataOperator::run()
     _isUnitialize = true;
 }
 
-void DataOperator::startWorking()
+void MeasureThread::startWorking()
 {
     if (isRunning() == false)
     {
@@ -107,7 +107,7 @@ void DataOperator::startWorking()
     }
 }
 
-void DataOperator::stopWorking()
+void MeasureThread::stopWorking()
 {
     if ((_measuringSingleshot == true) || (_measuringBlock == true))
     {
@@ -119,14 +119,14 @@ void DataOperator::stopWorking()
     wait(3000);
 }
 
-void DataOperator::setWorkingMode(qint8 mode)
+void MeasureThread::setWorkingMode(qint8 mode)
 {
     _mutex.tryLock();
     _workingMode = mode;
     _mutex.unlock();
 }
 
-void DataOperator::setChannelStatus(qint8 channel, qint8 state)
+void MeasureThread::setChannelStatus(qint8 channel, qint8 state)
 {
     _mutex.tryLock();
     if (channel == CHANNEL_0)
@@ -140,7 +140,7 @@ void DataOperator::setChannelStatus(qint8 channel, qint8 state)
     _mutex.unlock();
 }
 
-void DataOperator::setBlockMeasuringInterval(quint32 interval)
+void MeasureThread::setBlockMeasuringInterval(quint32 interval)
 {
     if ((interval < MINIMUM_MEASURING_INTERVAL) ||
             (interval > MAXIMUM_OPTION_VALUE))
@@ -154,7 +154,7 @@ void DataOperator::setBlockMeasuringInterval(quint32 interval)
     _mutex.unlock();
 }
 
-void DataOperator::setMeasureSampleInterval(quint32 interval)
+void MeasureThread::setMeasureSampleInterval(quint32 interval)
 {
     if ((interval < MINIMUM_SAMPLES_INTERVAL) ||
             (interval > MAXIMUM_SAMPLES_INTERVAL))
@@ -168,7 +168,7 @@ void DataOperator::setMeasureSampleInterval(quint32 interval)
     _mutex.unlock();
 }
 
-void DataOperator::setSampleCount(quint32 count)
+void MeasureThread::setSampleCount(quint32 count)
 {
     if ((count < MINIMUM_SAMPLES_PER_BLOCK) ||
             (count > MAXIMUM_OPTION_VALUE))
@@ -181,7 +181,7 @@ void DataOperator::setSampleCount(quint32 count)
     _mutex.unlock();
 }
 
-bool DataOperator::_initializeBlockMode()
+bool MeasureThread::_initializeBlockMode()
 {
     //AI config constants definition
     U16     configCtrl = DAQ2K_AI_ADCONVSRC_Int;
@@ -266,7 +266,7 @@ bool DataOperator::_initializeBlockMode()
     return true;
 }
 
-void DataOperator::_initializeCard()
+void MeasureThread::_initializeCard()
 {
     _cardID = ::D2K_Register_Card(DAQ_2213, 0);
     if (_cardID < 0)
@@ -283,7 +283,7 @@ void DataOperator::_initializeCard()
     }
 }
 
-U16 DataOperator::getSamples()
+U16 MeasureThread::getSamples()
 {
     _mutex.tryLock();
     U16 temp = _sampleSingleshotValue_0;
@@ -292,7 +292,7 @@ U16 DataOperator::getSamples()
     return temp;
 }
 
-void DataOperator::getSamplesBuffer(double* bufferZero,
+void MeasureThread::getSamplesBuffer(double* bufferZero,
                                     double* bufferOne)
 {
     _mutex.tryLock();
@@ -317,7 +317,7 @@ void DataOperator::getSamplesBuffer(double* bufferZero,
     _mutex.unlock();
 }
 
-void DataOperator::getVoltage(double &ch0, double &ch1)
+void MeasureThread::getVoltage(double &ch0, double &ch1)
 {
     _mutex.tryLock();
     ch0 = _voltageSingleshotValue_0;
@@ -326,7 +326,7 @@ void DataOperator::getVoltage(double &ch0, double &ch1)
     _mutex.unlock();
 }
 
-F64* DataOperator::getVoltageBuffer()
+F64* MeasureThread::getVoltageBuffer()
 {
     _mutex.tryLock();
     F64 *temp = new F64[_measureSampleCount];
@@ -339,24 +339,24 @@ F64* DataOperator::getVoltageBuffer()
     return temp;
 }
 
-bool DataOperator::isSingleshotDataReady()
+bool MeasureThread::isSingleshotDataReady()
 {
     return _singleshotDataReady;
 }
 
-bool DataOperator::isBlockDataReady()
+bool MeasureThread::isBlockDataReady()
 {
     return _blockDataReady;
 }
 
-void DataOperator::setMeasuringInterval(quint32 msec)
+void MeasureThread::setMeasuringInterval(quint32 msec)
 {
     _mutex.tryLock();
     _measuringInterval = 1000 / msec;
     _mutex.unlock();
 }
 
-void DataOperator::setParameters(ModeParameters parameters, bool update)
+void MeasureThread::setParameters(ModeParameters parameters, bool update)
 {
     _mutex.tryLock();
 
@@ -391,7 +391,7 @@ void DataOperator::setParameters(ModeParameters parameters, bool update)
     _mutex.unlock();
 }
 
-void DataOperator::_singleshotMeasure()
+void MeasureThread::_singleshotMeasure()
 {
     _mutex.tryLock();
     if (_channelZeroMeasuring == STATE_ON)
@@ -424,7 +424,7 @@ void DataOperator::_singleshotMeasure()
     _mutex.unlock();
 }
 
-void DataOperator::_blockMeasure()
+void MeasureThread::_blockMeasure()
 {
     _mutex.tryLock();
     if (_channelZeroMeasuring == true)
@@ -465,12 +465,12 @@ void DataOperator::_blockMeasure()
     _mutex.unlock();
 }
 
-QString DataOperator::getLastError()
+QString MeasureThread::getLastError()
 {
     return _lastError;
 }
 
-void DataOperator::setChannelsPins(char pins[])
+void MeasureThread::setChannelsPins(char pins[])
 {
     for (int i = 0; i < MAXIMUM_CHANNELS; i++)
     {
@@ -478,26 +478,26 @@ void DataOperator::setChannelsPins(char pins[])
     }
 }
 
-void DataOperator::setPin(int id, char value)
+void MeasureThread::setPin(int id, char value)
 {
     _channelsPins[id] = static_cast<I16> (value);
 }
 
-void DataOperator::singleshotMeasuring(bool state)
+void MeasureThread::singleshotMeasuring(bool state)
 {
     _mutex.tryLock();
     _measuringSingleshot = state;
     _mutex.unlock();
 }
 
-void DataOperator::blockMeasuring(bool state)
+void MeasureThread::blockMeasuring(bool state)
 {
     _mutex.tryLock();
     _measuringBlock = state;
     _mutex.unlock();
 }
 
-void DataOperator::_initializeChannels()
+void MeasureThread::_initializeChannels()
 {
     if (_cardID == -1)
     {

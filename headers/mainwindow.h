@@ -9,7 +9,7 @@
 #include <QFileDialog>
 #include <QTime>
 
-#include "dataoperator.h"
+#include "measurethread.h"
 #include "graphicplot.h"
 #include "timerslider.h"
 
@@ -75,7 +75,7 @@ private slots:
 private:
     Ui::MainWindow  *ui;
 
-    DataOperator*   _dataOperator;
+    MeasureThread*   _dataOperator;
     GraphicPlot*    _plot;
     GraphicPlot*    _hfPlot;
 
