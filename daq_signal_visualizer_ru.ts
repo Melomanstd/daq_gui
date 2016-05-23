@@ -32,66 +32,52 @@
 <context>
     <name>DataOperator</name>
     <message>
-        <location filename="sources/dataoperator.cpp" line="15"/>
         <source>No error</source>
-        <translation>Ошибок нет</translation>
+        <translation type="obsolete">Ошибок нет</translation>
     </message>
     <message>
-        <location filename="sources/dataoperator.cpp" line="209"/>
         <source>Cannot set double buufer mode: </source>
-        <translation>Не удается выставить режим двойной буферизации: </translation>
+        <translation type="obsolete">Не удается выставить режим двойной буферизации: </translation>
     </message>
     <message>
-        <location filename="sources/dataoperator.cpp" line="217"/>
         <source>Cannot get current memory size: </source>
-        <translation>Не удается прочитать максимальный размер буффера:  </translation>
+        <translation type="obsolete">Не удается прочитать максимальный размер буффера:  </translation>
     </message>
     <message>
-        <location filename="sources/dataoperator.cpp" line="223"/>
         <source>Not enough memory to initialize current mode: </source>
-        <translation>Не достаточно памяти для инициализации выбраного режима измерения: </translation>
+        <translation type="obsolete">Не достаточно памяти для инициализации выбраного режима измерения: </translation>
     </message>
     <message>
-        <location filename="sources/dataoperator.cpp" line="239"/>
         <source>Cant config block mode: </source>
-        <translation>Не удается настроить режим группового замера: </translation>
+        <translation type="obsolete">Не удается настроить режим группового замера: </translation>
     </message>
     <message>
-        <location filename="sources/dataoperator.cpp" line="250"/>
         <source>Cannot initialize buffer for channel 0: </source>
-        <translation>Не удается инициализировать буффер для сигнала номер 3: </translation>
+        <translation type="obsolete">Не удается инициализировать буффер для сигнала номер 3: </translation>
     </message>
     <message>
-        <location filename="sources/dataoperator.cpp" line="261"/>
         <source>Cannot initialize buffer for channel 1: </source>
-        <translation>Не удается инициализировать буффер для сигнала номер 4: </translation>
+        <translation type="obsolete">Не удается инициализировать буффер для сигнала номер 4: </translation>
     </message>
     <message>
-        <location filename="sources/dataoperator.cpp" line="275"/>
         <source>Cant initialize device</source>
-        <translation>Не удается инициализировать плату</translation>
+        <translation type="obsolete">Не удается инициализировать плату</translation>
     </message>
     <message>
-        <location filename="sources/dataoperator.cpp" line="404"/>
-        <location filename="sources/dataoperator.cpp" line="417"/>
         <source>Error while reading: </source>
-        <translation>Не удается провести единичный замер: </translation>
+        <translation type="obsolete">Не удается провести единичный замер: </translation>
     </message>
     <message>
-        <location filename="sources/dataoperator.cpp" line="442"/>
-        <location filename="sources/dataoperator.cpp" line="459"/>
         <source>Error while continue reading: </source>
-        <translation>Не удается провести групповой замер: </translation>
+        <translation type="obsolete">Не удается провести групповой замер: </translation>
     </message>
     <message>
-        <location filename="sources/dataoperator.cpp" line="518"/>
         <source>Cannot initialize </source>
-        <translation>Не удается инициализировать </translation>
+        <translation type="obsolete">Не удается инициализировать </translation>
     </message>
     <message>
-        <location filename="sources/dataoperator.cpp" line="520"/>
         <source> channel: </source>
-        <translation> канал: </translation>
+        <translation type="obsolete"> канал: </translation>
     </message>
 </context>
 <context>
@@ -126,34 +112,50 @@
     <message>
         <location filename="sources/graphicplot.cpp" line="171"/>
         <source>Signal 1 Voltage: </source>
-        <translation>Сингнал 1, напряжение: </translation>
+        <translation>Сингнал 1 напряжение: </translation>
     </message>
     <message>
-        <location filename="sources/graphicplot.cpp" line="181"/>
+        <location filename="sources/graphicplot.cpp" line="182"/>
         <source>Signal 2 Voltage: </source>
-        <translation>Сигнал 2, напряжение: </translation>
+        <translation>Сигнал 2 напряжение: </translation>
     </message>
     <message>
-        <location filename="sources/graphicplot.cpp" line="264"/>
-        <location filename="sources/graphicplot.cpp" line="295"/>
+        <location filename="sources/graphicplot.cpp" line="266"/>
+        <location filename="sources/graphicplot.cpp" line="297"/>
         <source>Seconds</source>
         <translation>Сек.</translation>
     </message>
     <message>
-        <location filename="sources/graphicplot.cpp" line="285"/>
+        <location filename="sources/graphicplot.cpp" line="287"/>
         <source>Micro Seconds</source>
         <translation>мкСек.</translation>
     </message>
     <message>
-        <location filename="sources/graphicplot.cpp" line="290"/>
+        <location filename="sources/graphicplot.cpp" line="292"/>
         <source>Milli Seconds</source>
         <translation>мСек</translation>
     </message>
     <message>
-        <location filename="sources/graphicplot.cpp" line="396"/>
-        <location filename="sources/graphicplot.cpp" line="403"/>
+        <location filename="sources/graphicplot.cpp" line="402"/>
+        <location filename="sources/graphicplot.cpp" line="413"/>
         <source> Voltage: </source>
         <translation> Напряжение: </translation>
+    </message>
+    <message>
+        <location filename="sources/graphicplot.cpp" line="594"/>
+        <source> V</source>
+        <translation> В</translation>
+    </message>
+    <message>
+        <location filename="sources/graphicplot.cpp" line="596"/>
+        <location filename="sources/graphicplot.cpp" line="598"/>
+        <source> mV</source>
+        <translation> мВ</translation>
+    </message>
+    <message>
+        <location filename="sources/graphicplot.cpp" line="600"/>
+        <source> mkV</source>
+        <translation>мкВ</translation>
     </message>
 </context>
 <context>
@@ -255,50 +257,115 @@
         <translation>Сигнал 3</translation>
     </message>
     <message>
-        <location filename="sources/mainwindow.cpp" line="218"/>
-        <location filename="sources/mainwindow.cpp" line="474"/>
+        <location filename="sources/mainwindow.cpp" line="230"/>
+        <location filename="sources/mainwindow.cpp" line="480"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="sources/mainwindow.cpp" line="219"/>
+        <location filename="sources/mainwindow.cpp" line="231"/>
         <source>Select atleast one channel for measuring</source>
         <translation>Выберите канал для начала измерения</translation>
     </message>
     <message>
-        <location filename="sources/mainwindow.cpp" line="569"/>
+        <location filename="sources/mainwindow.cpp" line="575"/>
         <source>Save as</source>
         <translation>Сохранить как</translation>
     </message>
     <message>
-        <location filename="sources/mainwindow.cpp" line="571"/>
+        <location filename="sources/mainwindow.cpp" line="577"/>
         <source>%1 Files(*.%2);;All Files (*)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="sources/mainwindow.cpp" line="596"/>
+        <location filename="sources/mainwindow.cpp" line="602"/>
         <source>Attention</source>
         <translation>Внимание</translation>
     </message>
     <message>
-        <location filename="sources/mainwindow.cpp" line="604"/>
+        <location filename="sources/mainwindow.cpp" line="610"/>
         <source>TIME|</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="sources/mainwindow.cpp" line="605"/>
+        <location filename="sources/mainwindow.cpp" line="611"/>
         <source>SIGNAL_1|</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="sources/mainwindow.cpp" line="606"/>
+        <location filename="sources/mainwindow.cpp" line="612"/>
         <source>SIGNAL_2|</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="sources/mainwindow.cpp" line="607"/>
+        <location filename="sources/mainwindow.cpp" line="613"/>
         <source>SIGNAL_3|;</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>MeasureThread</name>
+    <message>
+        <location filename="sources/measurethread.cpp" line="15"/>
+        <source>No error</source>
+        <translation>Ошибок нет</translation>
+    </message>
+    <message>
+        <location filename="sources/measurethread.cpp" line="209"/>
+        <source>Cannot set double buufer mode: </source>
+        <translation>Не удается выставить режим двойной буферизации: </translation>
+    </message>
+    <message>
+        <location filename="sources/measurethread.cpp" line="217"/>
+        <source>Cannot get current memory size: </source>
+        <translation>Не удается прочитать максимальный размер буффера:  </translation>
+    </message>
+    <message>
+        <location filename="sources/measurethread.cpp" line="223"/>
+        <source>Not enough memory to initialize current mode: </source>
+        <translation>Не достаточно памяти для инициализации выбраного режима измерения: </translation>
+    </message>
+    <message>
+        <location filename="sources/measurethread.cpp" line="239"/>
+        <source>Cant config block mode: </source>
+        <translation>Не удается настроить режим группового замера: </translation>
+    </message>
+    <message>
+        <location filename="sources/measurethread.cpp" line="250"/>
+        <source>Cannot initialize buffer for channel 0: </source>
+        <translation>Не удается инициализировать буффер для сигнала номер 3: </translation>
+    </message>
+    <message>
+        <location filename="sources/measurethread.cpp" line="261"/>
+        <source>Cannot initialize buffer for channel 1: </source>
+        <translation>Не удается инициализировать буффер для сигнала номер 4: </translation>
+    </message>
+    <message>
+        <location filename="sources/measurethread.cpp" line="275"/>
+        <source>Cant initialize device</source>
+        <translation>Не удается инициализировать плату</translation>
+    </message>
+    <message>
+        <location filename="sources/measurethread.cpp" line="404"/>
+        <location filename="sources/measurethread.cpp" line="417"/>
+        <source>Error while reading: </source>
+        <translation>Не удается провести единичный замер: </translation>
+    </message>
+    <message>
+        <location filename="sources/measurethread.cpp" line="442"/>
+        <location filename="sources/measurethread.cpp" line="459"/>
+        <source>Error while continue reading: </source>
+        <translation>Не удается провести групповой замер: </translation>
+    </message>
+    <message>
+        <location filename="sources/measurethread.cpp" line="518"/>
+        <source>Cannot initialize </source>
+        <translation>Не удается инициализировать </translation>
+    </message>
+    <message>
+        <location filename="sources/measurethread.cpp" line="520"/>
+        <source> channel: </source>
+        <translation> канал: </translation>
     </message>
 </context>
 <context>
