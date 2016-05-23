@@ -112,7 +112,7 @@
     <message>
         <location filename="sources/graphicplot.cpp" line="171"/>
         <source>Signal 1 Voltage: </source>
-        <translation>Сингнал 1 напряжение: </translation>
+        <translation>Сигнал 1 напряжение: </translation>
     </message>
     <message>
         <location filename="sources/graphicplot.cpp" line="182"/>
@@ -123,12 +123,12 @@
         <location filename="sources/graphicplot.cpp" line="266"/>
         <location filename="sources/graphicplot.cpp" line="297"/>
         <source>Seconds</source>
-        <translation>Сек.</translation>
+        <translation>Сек</translation>
     </message>
     <message>
         <location filename="sources/graphicplot.cpp" line="287"/>
         <source>Micro Seconds</source>
-        <translation>мкСек.</translation>
+        <translation>мкСек</translation>
     </message>
     <message>
         <location filename="sources/graphicplot.cpp" line="292"/>
