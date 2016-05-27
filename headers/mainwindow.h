@@ -31,7 +31,6 @@ public:
 private:
     void            _initializePlot();
     void            _initializeDataOperator();
-    ModeParameters  _lastParameters();
     void            _channelZeroState(bool state);
     void            _channelOneState(bool state);
     void            _stopLogging();

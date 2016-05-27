@@ -12,7 +12,8 @@ class BlockDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit BlockDialog(QWidget *parent = 0);
+    explicit BlockDialog(int defaultParameters[],
+                         QWidget *parent = 0);
     ~BlockDialog();
 
     void selectedPins(int &p1);

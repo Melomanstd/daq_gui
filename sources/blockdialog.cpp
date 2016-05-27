@@ -1,7 +1,8 @@
 #include "headers/blockdialog.h"
 #include "ui_blockdialog.h"
 
-BlockDialog::BlockDialog(QWidget *parent) :
+BlockDialog::BlockDialog(int defaultParameters[],
+                         QWidget *parent) :
     QDialog(parent),
     ui(new Ui::BlockDialog)
 {
@@ -16,7 +17,9 @@ BlockDialog::BlockDialog(QWidget *parent) :
     }
 
     ui->ch3_combo->addItems(items);
-    ui->ch3_combo->setCurrentIndex(2);
+
+    ui->samples_count_spin->setValue(defaultParameters[0]);
+    ui->ch3_combo->setCurrentIndex(defaultParameters[1]);
 }
 
 BlockDialog::~BlockDialog()

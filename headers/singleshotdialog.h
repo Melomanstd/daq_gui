@@ -12,7 +12,8 @@ class SingleshotDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SingleshotDialog(QWidget *parent = 0);
+    explicit SingleshotDialog(int defaultParameters[] ,
+                              QWidget *parent = 0);
     ~SingleshotDialog();
 
     void selectedPins(int &p1, int &p2);

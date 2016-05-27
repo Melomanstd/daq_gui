@@ -1,7 +1,8 @@
 #include "headers/singleshotdialog.h"
 #include "ui_singleshotdialog.h"
 
-SingleshotDialog::SingleshotDialog(QWidget *parent) :
+SingleshotDialog::SingleshotDialog(int defaultParameters[],
+                                   QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SingleshotDialog)
 {
@@ -17,8 +18,9 @@ SingleshotDialog::SingleshotDialog(QWidget *parent) :
     ui->ch1_combo->addItems(items);
     ui->ch2_combo->addItems(items);
 
-    ui->ch1_combo->setCurrentIndex(0);
-    ui->ch2_combo->setCurrentIndex(1);
+    ui->measurings_count_spin->setValue(defaultParameters[0]);
+    ui->ch1_combo->setCurrentIndex(defaultParameters[1]);
+    ui->ch2_combo->setCurrentIndex(defaultParameters[2]);
 }
 
 SingleshotDialog::~SingleshotDialog()

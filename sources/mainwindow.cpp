@@ -205,7 +205,13 @@ void MainWindow::_writeLog()
 
 void MainWindow::on_parameters_btn_clicked()
 {
-    SingleshotDialog d;
+    int parameters[3];
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    parameters[0] = settings.value("measuring_interval", 1).toInt();
+    parameters[1] = settings.value("signal_1_pin", 0).toInt();
+    parameters[2] = settings.value("signal_2_pin", 1).toInt();
+
+    SingleshotDialog d(parameters);
 
     if (d.exec() == false)
     {
@@ -237,7 +243,12 @@ void MainWindow::on_start_btn_clicked()//singleshot
     ui->stop_btn->setChecked(false);
     ui->start_btn->setChecked(true);
 
-    SingleshotDialog d;
+    int parameters[3];
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    parameters[0] = settings.value("measuring_interval", 1).toInt();
+    parameters[1] = settings.value("signal_1_pin", 0).toInt();
+    parameters[2] = settings.value("signal_2_pin", 1).toInt();
+    SingleshotDialog d(parameters);
 
     if (d.exec() == false)
     {
@@ -277,7 +288,11 @@ void MainWindow::on_stop_btn_clicked()//singleshot
 
 void MainWindow::on_parameters_btn_2_clicked()
 {
-    BlockDialog d;
+    int parameters[2];
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    parameters[0] = settings.value("samples_count", 1).toInt();
+    parameters[1] = settings.value("signal_3_pin", 2).toInt();
+    BlockDialog d(parameters);
 
     if (d.exec() == false)
     {
@@ -299,7 +314,11 @@ void MainWindow::on_start_btn_2_clicked()//block
     ui->stop_btn_2->setChecked(false);
     ui->start_btn_2->setChecked(true);
 
-    BlockDialog d;
+    int parameters[2];
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    parameters[0] = settings.value("samples_count", 1).toInt();
+    parameters[1] = settings.value("signal_3_pin", 2).toInt();
+    BlockDialog d(parameters);
 
     if (d.exec() == false)
     {
@@ -349,6 +368,11 @@ void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
     _parameters.displayedInterval = 10;
     _parameters.measuringInterval = p.getMeasuresCount();
 
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    settings.setValue("measuring_interval", _parameters.measuringInterval);
+    settings.setValue("signal_1_pin", p1);
+    settings.setValue("signal_2_pin", p2);
+
     //points per sec * displayed seconds
     _plot->setDisplayedPoints(_parameters.measuringInterval *
                               _parameters.displayedInterval,
@@ -370,6 +394,9 @@ void MainWindow::_setupBlockParameters(BlockDialog &p)
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
 
+    QSettings settings("settings.ini", QSettings::IniFormat, this);
+    settings.setValue("samples_count", _parameters.blockSize);
+    settings.setValue("signal_3_pin", p1);
 
     if (_parameters.blockSize > MAXIMUM_PLOT_SAMPLES)
     {
@@ -386,26 +413,6 @@ void MainWindow::_setupBlockParameters(BlockDialog &p)
     }
 
     _dataOperator->setParameters(_parameters, _isWorking);
-}
-
-ModeParameters MainWindow::_lastParameters()
-{
-    ModeParameters parameters;
-    QSettings settings("settings.ini", QSettings::IniFormat, this);
-    parameters.mode = settings.value(
-                "measuring_mode", MODE_SINGLESHOT_MEASURING).toInt();
-    parameters.measuringInterval = settings.value(
-                "measuring_interval", 1).toInt();
-    parameters.blockSize = settings.value(
-                "samples_count", 10).toInt();
-    parameters.displayedInterval = settings.value(
-                "displayed_interval", 10).toInt();
-    parameters.channelZeroState = settings.value(
-                "channel_zero", STATE_ON).toInt();
-    parameters.channelOneState = settings.value(
-                "channel_one", STATE_OFF).toInt();
-
-    return parameters;
 }
 
 void MainWindow::on_ch_0_voltage_range_slider_valueChanged(int value)
