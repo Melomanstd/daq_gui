@@ -532,12 +532,15 @@ void MainWindow::on_backward_btn_2_clicked()
 
 void MainWindow::_delayedSliderNewValue(int value)
 {
+    if (ui->meas_per_second_spin->value() != value)
+    {
+        ui->meas_per_second_spin->setValue(value);
+    }
+
     if (value == delayedSlider->value())
     {
         return;
     }
-
-    ui->meas_per_second_spin->setValue(value);
 
     _parameters.mode = MODE_SINGLESHOT_MEASURING;
 
@@ -556,23 +559,21 @@ void MainWindow::_delayedSliderNewValue(int value)
 
 void MainWindow::_delayedSliderNewValue_2(int value)
 {
+    if (ui->meas_block_count_spin->value())
+    {
+        ui->meas_block_count_spin->setValue(value);
+    }
+
     if (value == delayedSlider_2->value())
     {
         return;
     }
 
-    ui->meas_block_count_spin->setValue(value);
-
     _parameters.mode = MODE_BLOCK_MEASURING;
-    _parameters.measuringInterval = 1000;
+    _parameters.measuringInterval = delayedSlider->value();;
     _parameters.blockSize = value;
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
-
-
-    //<old>
-    //_plotBufferZero = _hfPlot->initializeChannelZeroBuffer(value);
-    //</old>
 
     if (value > MAXIMUM_PLOT_SAMPLES)
     {

@@ -93,10 +93,10 @@ void MeasureThread::run()
         }
     }
 
-    ::D2K_AI_ContBufferReset(_cardID);
-    ::D2K_Release_Card(_cardID);
-    _cardID = -1;
-    _isUnitialize = true;
+//    _errorCode = ::D2K_AI_ContBufferReset(_cardID);
+//    _errorCode = ::D2K_Release_Card(_cardID);
+//    _cardID = -1;
+//    _isUnitialize = true;
 }
 
 void MeasureThread::startWorking()
@@ -115,6 +115,19 @@ void MeasureThread::stopWorking()
     }
     _mutex.tryLock();
     _isWorking = false;
+    _channelZeroMeasuring = false;
+    _channelOneMeasuring = false;
+    _singleshotDataReady = false;
+    _blockDataReady = false;
+
+    if (_isUnitialize == false)
+    {
+        _errorCode = ::D2K_AI_ContBufferReset(_cardID);
+        _errorCode = ::D2K_Release_Card(_cardID);
+        _cardID = -1;
+        _isUnitialize = true;
+    }
+
     _mutex.unlock();
     wait(3000);
 }
