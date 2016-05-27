@@ -175,7 +175,7 @@ void MainWindow::_updatePlot()
 
         if (_plotBufferZero != 0)
         {
-            _value2 = _plotBufferZero[_parameters.blockSize-1];
+            _value2 = _plotBufferZero[MAXIMUM_PLOT_SAMPLES-1];
         }
 
         if (_isLogging == true)
@@ -369,10 +369,21 @@ void MainWindow::_setupBlockParameters(BlockDialog &p)
     _parameters.blockSize = p.getSamplesCount();
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
-    _hfPlot->setDisplayedPoints(_parameters.blockSize, _parameters.mode);
 
-    _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
-                _parameters.blockSize);
+
+    if (_parameters.blockSize > MAXIMUM_PLOT_SAMPLES)
+    {
+        _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
+                    MAXIMUM_PLOT_SAMPLES);
+        _hfPlot->setDisplayedPoints(MAXIMUM_PLOT_SAMPLES,
+                                    _parameters.mode);
+    }
+    else
+    {
+        _hfPlot->setDisplayedPoints(_parameters.blockSize, _parameters.mode);
+        _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
+                    _parameters.blockSize);
+    }
 
     _dataOperator->setParameters(_parameters, _isWorking);
 }
@@ -521,12 +532,15 @@ void MainWindow::on_backward_btn_2_clicked()
 
 void MainWindow::_delayedSliderNewValue(int value)
 {
+    if (ui->meas_per_second_spin->value() != value)
+    {
+        ui->meas_per_second_spin->setValue(value);
+    }
+
     if (value == delayedSlider->value())
     {
         return;
     }
-
-    ui->meas_per_second_spin->setValue(value);
 
     _parameters.mode = MODE_SINGLESHOT_MEASURING;
 
@@ -545,22 +559,34 @@ void MainWindow::_delayedSliderNewValue(int value)
 
 void MainWindow::_delayedSliderNewValue_2(int value)
 {
+    if (ui->meas_block_count_spin->value())
+    {
+        ui->meas_block_count_spin->setValue(value);
+    }
+
     if (value == delayedSlider_2->value())
     {
         return;
     }
 
-    ui->meas_block_count_spin->setValue(value);
-
     _parameters.mode = MODE_BLOCK_MEASURING;
-    _parameters.measuringInterval = 1000;
+    _parameters.measuringInterval = delayedSlider->value();;
     _parameters.blockSize = value;
     _parameters.scaningInterval = 160;
     _parameters.samplingInterval = 160;
-    _hfPlot->setDisplayedPoints(value, _parameters.mode);
 
-    _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
-                _parameters.blockSize);
+    if (value > MAXIMUM_PLOT_SAMPLES)
+    {
+        _hfPlot->setDisplayedPoints(MAXIMUM_PLOT_SAMPLES,
+                                    _parameters.mode);
+        _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
+                    MAXIMUM_PLOT_SAMPLES);
+    }
+    else
+    {
+        _hfPlot->setDisplayedPoints(value, _parameters.mode);
+        _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(value);
+    }
 
     if (_dataOperator != 0)
     {

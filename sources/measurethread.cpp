@@ -38,7 +38,7 @@ MeasureThread::MeasureThread(QObject *parent)
         _channelsPins[i] = -1;
     }
 
-    _hfBuffer = new U16[1000];
+    _hfBuffer = new U16[MAXIMUM_PLOT_SAMPLES];
 }
 
 MeasureThread::~MeasureThread()
@@ -93,10 +93,10 @@ void MeasureThread::run()
         }
     }
 
-    ::D2K_AI_ContBufferReset(_cardID);
-    ::D2K_Release_Card(_cardID);
-    _cardID = -1;
-    _isUnitialize = true;
+//    _errorCode = ::D2K_AI_ContBufferReset(_cardID);
+//    _errorCode = ::D2K_Release_Card(_cardID);
+//    _cardID = -1;
+//    _isUnitialize = true;
 }
 
 void MeasureThread::startWorking()
@@ -115,6 +115,19 @@ void MeasureThread::stopWorking()
     }
     _mutex.tryLock();
     _isWorking = false;
+    _channelZeroMeasuring = false;
+    _channelOneMeasuring = false;
+    _singleshotDataReady = false;
+    _blockDataReady = false;
+
+    if (_isUnitialize == false)
+    {
+        _errorCode = ::D2K_AI_ContBufferReset(_cardID);
+        _errorCode = ::D2K_Release_Card(_cardID);
+        _cardID = -1;
+        _isUnitialize = true;
+    }
+
     _mutex.unlock();
     wait(3000);
 }
@@ -296,7 +309,31 @@ void MeasureThread::getSamplesBuffer(double* bufferZero,
                                     double* bufferOne)
 {
     _mutex.tryLock();
-    if (bufferZero != 0)
+    if (_measureSampleCount < MAXIMUM_PLOT_SAMPLES)
+    {
+        ::D2K_AI_ContVScale(_cardID,
+                            AD_B_10_V,
+                            _samplesBlockBuffer_0,
+                            bufferZero,
+                            _measureSampleCount);
+    }
+    else
+    {
+        int sampleStep = qRound((static_cast<double> (_measureSampleCount) /
+                static_cast<double> (MAXIMUM_PLOT_SAMPLES)) - 0.5);
+
+        for (int i = 0; i < MAXIMUM_PLOT_SAMPLES; i++)
+        {
+            _hfBuffer[i] = _samplesBlockBuffer_0[i*sampleStep];
+        }
+
+        ::D2K_AI_ContVScale(_cardID,
+                            AD_B_10_V,
+                            _hfBuffer,
+                            bufferZero,
+                            MAXIMUM_PLOT_SAMPLES);
+    }
+    /*if (bufferZero != 0)
     {
         ::D2K_AI_ContVScale(_cardID,
                             AD_B_10_V,
@@ -312,7 +349,7 @@ void MeasureThread::getSamplesBuffer(double* bufferZero,
                             _samplesBlockBuffer_1,
                             bufferOne,
                             _measureSampleCount);
-    }
+    }*/
     _blockDataReady = false;
     _mutex.unlock();
 }
