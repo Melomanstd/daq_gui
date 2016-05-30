@@ -232,7 +232,7 @@ void GraphicPlot::setDisplayedPoints(int displayedSize,
 {
     _displayedPoints = displayedSize;
     _grid->cleanTime();
-    int time = displayedSize * 4;
+    int time = realSize * 4;
 
     //reset
     _count = 0;
@@ -300,7 +300,9 @@ void GraphicPlot::setDisplayedPoints(int displayedSize,
             _grid->trannsformScaleValue(true, 1000000);
         }
 
-        rescaleAxis(QwtPlot::xBottom, 0, displayedSize);
+        rescaleAxis(QwtPlot::xTop, 0, displayedSize);
+        rescaleAxis(QwtPlot::xBottom, 0, realSize);
+        _curveZero->setXAxis(QwtPlot::xTop);
     }
 
     _pointsZero.reserve(displayedSize);
@@ -470,6 +472,9 @@ void GraphicPlot::_plotPanned(int x, int y)
     _scaleMinimum = axisInterval(xBottom).minValue();
     _scaleMaximum = axisInterval(xBottom).maxValue();
     rescaleAxis(xBottom, _scaleMinimum, _scaleMaximum);
+    _scaleMinimum = axisInterval(xTop).minValue();
+    _scaleMaximum = axisInterval(xTop).maxValue();
+    rescaleAxis(xTop, _scaleMinimum, _scaleMaximum);
 
     replot();
 }

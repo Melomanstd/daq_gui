@@ -21,7 +21,7 @@ void PlotMagnifier::rescale(double factor)
 
     for ( int axisId = 0; axisId < QwtPlot::axisCnt; axisId++ )
     {
-        if (axisId == QwtPlot::xBottom)
+        if ((axisId == QwtPlot::xBottom) || (axisId == QwtPlot::xTop))
         {
             continue;
         }
