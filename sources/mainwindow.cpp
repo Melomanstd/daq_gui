@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     delayedSlider->setPageStep(3);
     connect(delayedSlider, SIGNAL(NewValue(int)),
             this, SLOT(_delayedSliderNewValue(int)));
-    ui->horizontalLayout->insertWidget(5,delayedSlider);
+    ui->horizontalLayout->insertWidget(6,delayedSlider);
 
     delayedSlider_2 = new TimerSlider(Qt::Horizontal, 0);
     delayedSlider_2->setRange(2, maxSamplesRange);
@@ -133,7 +133,15 @@ void MainWindow::_initializePlot()
     lay->insertWidget(3, _hfPlot);
 
     QColor channelZeroColor = Qt::red;
-    QColor channelOneColor = Qt::yellow;
+    QColor channelOneColor = Qt::green;
+
+    QPalette pal = ui->signal_1_color_lbl->palette();
+    pal.setColor(QPalette::Window, channelZeroColor);
+    ui->signal_1_color_lbl->setPalette(pal);
+
+    pal = ui->signal_2_color_lbl->palette();
+    pal.setColor(QPalette::Window, channelOneColor);
+    ui->signal_2_color_lbl->setPalette(pal);
 
     _plot->setCurveProperties(0, QPen(channelZeroColor, 3, Qt::DashLine));
     _plot->setCurveProperties(1, QPen(channelOneColor, 3, Qt::DotLine));
