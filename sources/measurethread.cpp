@@ -31,7 +31,8 @@ MeasureThread::MeasureThread(QObject *parent)
         _resultBufferIdZero(0),
         _cardID(-1),
         _measuringBlock(false),
-        _measuringSingleshot(false)
+        _measuringSingleshot(false),
+        _tempValue(0)
 {
     for (int i = 0; i < MAXIMUM_CHANNELS; i++)
     {
@@ -39,10 +40,13 @@ MeasureThread::MeasureThread(QObject *parent)
     }
 
     _hfBuffer = new U16[MAXIMUM_PLOT_SAMPLES];
+    _blockModeTime = new QTime;
 }
 
 MeasureThread::~MeasureThread()
 {
+    delete _blockModeTime;
+
     if (_isUnitialize == false)
     {
         ::D2K_Release_Card(_cardID);
@@ -464,40 +468,30 @@ void MeasureThread::_singleshotMeasure()
 void MeasureThread::_blockMeasure()
 {
     _mutex.tryLock();
-    if (_channelZeroMeasuring == true)
-    {
-        _errorCode = ::D2K_AI_ContReadChannel (_cardID,
-                                  _channelsPins[2],
-                                  _resultBufferIdZero,
-                                  _measureSampleCount,
-                                  _measuringBlockInterval,
-                                  _measureSampleInterval,
-                                  SYNCH_OP);
 
-        if (_errorCode != NoError)
-        {
-            _lastError = tr("Error while continue reading: ") +
-                    QString::number(_errorCode);
-            _isWorking = false;
-        }
-    }
-    if (_channelOneMeasuring == true)
-    {
-        _errorCode = ::D2K_AI_ContReadChannel (_cardID,
-                                  _channelsPins[1],
-                                  _resultBufferIdOne,
-                                  _measureSampleCount,
-                                  _measuringBlockInterval,
-                                  _measureSampleInterval,
-                                  SYNCH_OP);
+    _blockModeTime->restart();
 
-        if (_errorCode != NoError)
-        {
-            _lastError = tr("Error while continue reading: ") +
-                    QString::number(_errorCode);
-            _isWorking = false;
-        }
+    _errorCode = ::D2K_AI_ContReadChannel (_cardID,
+                              _channelsPins[2],
+                              _resultBufferIdZero,
+                              _measureSampleCount,
+                              _measuringBlockInterval,
+                              _measureSampleInterval,
+                              SYNCH_OP);
+
+    if (_errorCode != NoError)
+    {
+        _lastError = tr("Error while continue reading: ") +
+                QString::number(_errorCode);
+        _isWorking = false;
     }
+
+    _tempValue = _blockModeTime->elapsed();
+    if (_tempValue < 200)
+    {
+        msleep(200 - _tempValue);
+    }
+
     _blockDataReady = true;
     _mutex.unlock();
 }

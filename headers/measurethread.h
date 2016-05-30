@@ -10,6 +10,7 @@
 
 #include <QThread>
 #include <QMutex>
+#include <QTime>
 
 #include <D2kDask.h>
 #include <DAQHeader.h>
@@ -110,6 +111,8 @@ private:
 
     bool            _measuringSingleshot;
     bool            _measuringBlock;
+    QTime*          _blockModeTime;
+    int             _tempValue;
 };
 
 #endif // DATAOPERATOR_H
