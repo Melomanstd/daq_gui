@@ -367,6 +367,7 @@ void MainWindow::on_stop_btn_2_clicked()//block
 void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
 {
     int p1, p2;
+    int temp = 0;
     p.selectedPins(p1, p2);
     _dataOperator->setPin(0, p1);
     _dataOperator->setPin(1, p2);
@@ -376,15 +377,16 @@ void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
     _parameters.displayedInterval = 10;
     _parameters.measuringInterval = p.getMeasuresCount();
 
+    temp = _parameters.measuringInterval *
+                _parameters.displayedInterval;
+
     QSettings settings("settings.ini", QSettings::IniFormat, this);
     settings.setValue("measuring_interval", _parameters.measuringInterval);
     settings.setValue("signal_1_pin", p1);
     settings.setValue("signal_2_pin", p2);
 
     //points per sec * displayed seconds
-    _plot->setDisplayedPoints(_parameters.measuringInterval *
-                              _parameters.displayedInterval,
-                              _parameters.mode);
+    _plot->setDisplayedPoints(temp, _parameters.mode, temp);
 
     _dataOperator->setParameters(_parameters, _isWorking);
 }
@@ -411,11 +413,14 @@ void MainWindow::_setupBlockParameters(BlockDialog &p)
         _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
                     MAXIMUM_PLOT_SAMPLES);
         _hfPlot->setDisplayedPoints(MAXIMUM_PLOT_SAMPLES,
-                                    _parameters.mode);
+                                    _parameters.mode,
+                                    _parameters.blockSize);
     }
     else
     {
-        _hfPlot->setDisplayedPoints(_parameters.blockSize, _parameters.mode);
+        _hfPlot->setDisplayedPoints(_parameters.blockSize,
+                                    _parameters.mode,
+                                    _parameters.blockSize);
         _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
                     _parameters.blockSize);
     }
@@ -564,7 +569,7 @@ void MainWindow::_delayedSliderNewValue(int value)
     settings.setValue("measuring_interval", value);
 
     //points per sec * displayed seconds
-    _plot->setDisplayedPoints(value * 10, _parameters.mode);
+    _plot->setDisplayedPoints(value * 10, _parameters.mode, value * 10);
 
     if (_dataOperator != 0)
     {
@@ -593,13 +598,16 @@ void MainWindow::_delayedSliderNewValue_2(int value)
     if (value > MAXIMUM_PLOT_SAMPLES)
     {
         _hfPlot->setDisplayedPoints(MAXIMUM_PLOT_SAMPLES,
-                                    _parameters.mode);
+                                    _parameters.mode,
+                                    _parameters.blockSize);
         _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(
                     MAXIMUM_PLOT_SAMPLES);
     }
     else
     {
-        _hfPlot->setDisplayedPoints(value, _parameters.mode);
+        _hfPlot->setDisplayedPoints(_parameters.blockSize,
+                                    _parameters.mode,
+                                    _parameters.blockSize);
         _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(value);
     }
 

@@ -19,7 +19,9 @@ public:
                             QWidget *parent = 0);
     virtual     ~GraphicPlot();
 
-    void        setDisplayedPoints(int size, qint8 mode);
+    void        setDisplayedPoints(int displayedSize,
+                                   qint8 mode,
+                                   int realSize);
 
     void        setPoint(const double/*F64*/ &voltage_0,
                          const double &voltage_1);

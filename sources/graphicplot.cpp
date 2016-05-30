@@ -226,11 +226,13 @@ void GraphicPlot::setBlock(unsigned short *samples, int size)
 
 }
 
-void GraphicPlot::setDisplayedPoints(int size, qint8 mode)/*real size*/
+void GraphicPlot::setDisplayedPoints(int displayedSize,
+                                     qint8 mode,
+                                     int realSize)
 {
-    _displayedPoints = size;
+    _displayedPoints = displayedSize;
     _grid->cleanTime();
-    int time = size * 4;
+    int time = displayedSize * 4;
 
     //reset
     _count = 0;
@@ -262,7 +264,7 @@ void GraphicPlot::setDisplayedPoints(int size, qint8 mode)/*real size*/
 
         _grid->usingTimeValues(true);
         _scaleTimer->start();
-        rescaleAxis(xBottom, 0, size);
+        rescaleAxis(xBottom, 0, displayedSize);
         setAxisTitle(xBottom, tr("Seconds"));
         _grid->trannsformScaleValue(false, 1);
 
@@ -298,11 +300,11 @@ void GraphicPlot::setDisplayedPoints(int size, qint8 mode)/*real size*/
             _grid->trannsformScaleValue(true, 1000000);
         }
 
-        rescaleAxis(QwtPlot::xBottom, 0, size);
+        rescaleAxis(QwtPlot::xBottom, 0, displayedSize);
     }
 
-    _pointsZero.reserve(size);
-    _pointsOne.reserve(size);
+    _pointsZero.reserve(displayedSize);
+    _pointsOne.reserve(displayedSize);
 }
 
 void GraphicPlot::setChannels(bool ch1, bool ch2)
