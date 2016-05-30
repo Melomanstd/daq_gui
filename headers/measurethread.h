@@ -58,9 +58,10 @@ private:
     bool        _initializeBlockMode();
     void        _initializeCard();
     void        _updateParameters();
-    inline void _singleshotMeasure();
-    inline void _blockMeasure();
+    void        _singleshotMeasure();
+    void        _blockMeasure();
     void        _initializeChannels();
+    void        _measuringDelay();
 
 signals:
     void someError();
@@ -111,7 +112,7 @@ private:
 
     bool            _measuringSingleshot;
     bool            _measuringBlock;
-    QTime*          _blockModeTime;
+    QTime*          _measuredTime;
     int             _tempValue;
 };
 

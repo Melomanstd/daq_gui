@@ -40,12 +40,12 @@ MeasureThread::MeasureThread(QObject *parent)
     }
 
     _hfBuffer = new U16[MAXIMUM_PLOT_SAMPLES];
-    _blockModeTime = new QTime;
+    _measuredTime = new QTime;
 }
 
 MeasureThread::~MeasureThread()
 {
-    delete _blockModeTime;
+    delete _measuredTime;
 
     if (_isUnitialize == false)
     {
@@ -81,10 +81,7 @@ void MeasureThread::run()
 
     while (_isWorking == true)
     {
-        if (_isWorking == false)
-        {
-            break;
-        }
+        _measuredTime->restart();
 
         if (_measuringSingleshot == true)
         {
@@ -95,6 +92,8 @@ void MeasureThread::run()
         {
             _blockMeasure();
         }
+
+        _measuringDelay();
     }
 
 //    _errorCode = ::D2K_AI_ContBufferReset(_cardID);
@@ -460,7 +459,6 @@ void MeasureThread::_singleshotMeasure()
             _isWorking = false;
         }
     }
-    msleep(_measuringInterval);
     _singleshotDataReady = true;
     _mutex.unlock();
 }
@@ -468,8 +466,6 @@ void MeasureThread::_singleshotMeasure()
 void MeasureThread::_blockMeasure()
 {
     _mutex.tryLock();
-
-    _blockModeTime->restart();
 
     _errorCode = ::D2K_AI_ContReadChannel (_cardID,
                               _channelsPins[2],
@@ -484,12 +480,6 @@ void MeasureThread::_blockMeasure()
         _lastError = tr("Error while continue reading: ") +
                 QString::number(_errorCode);
         _isWorking = false;
-    }
-
-    _tempValue = _blockModeTime->elapsed();
-    if (_tempValue < 200)
-    {
-        msleep(200 - _tempValue);
     }
 
     _blockDataReady = true;
@@ -550,6 +540,29 @@ void MeasureThread::_initializeChannels()
                         QString::number(_channelsPins[i]) +
                         tr(" channel: ") + QString::number(_errorCode);
             }
+        }
+    }
+}
+
+void MeasureThread::_measuringDelay()
+{
+    _tempValue = _measuredTime->elapsed();
+    if ((_measuringBlock == true) && (_measuringSingleshot == false))
+    {
+        if (_tempValue < 200)
+        {
+            msleep(200 - _tempValue);
+        }
+    }
+    else if ((_measuringBlock == false) && (_measuringSingleshot == true))
+    {
+        msleep(_measuringInterval);
+    }
+    else
+    {
+        if (_tempValue < 1000)
+        {
+            msleep(1000 - _tempValue);
         }
     }
 }
