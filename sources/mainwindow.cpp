@@ -99,6 +99,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->ch_0_voltage_range_slider->setValue(80);
     ui->ch_1_voltage_range_slider->setValue(80);
+
+    delayedSlider->setVisible(false);
+    delayedSlider_2->setVisible(false);
+    ui->forward_btn->setVisible(false);
+    ui->forward_btn_2->setVisible(false);
+    ui->backward_btn->setVisible(false);
+    ui->backward_btn_2->setVisible(false);
+    ui->meas_block_count_spin->setVisible(false);
+    ui->meas_per_second_spin->setVisible(false);
 }
 
 MainWindow::~MainWindow()
