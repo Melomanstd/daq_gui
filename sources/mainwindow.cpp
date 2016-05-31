@@ -20,7 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     _isSingleshotRunning(false),
     _value0(0.0),
     _value1(0.0),
-    _value2(0.0)
+    _value2(0.0),
+    _lastInterval(1)
 {
     ui->setupUi(this);
     setWindowTitle(tr("DAQ 2213 Signal visualizer"));
@@ -344,6 +345,9 @@ void MainWindow::on_start_btn_2_clicked()//block
         return;
     }
 
+    _plot->setDisplayedPoints(10, MODE_SINGLESHOT_MEASURING, 10);
+    _measureThread->setMeasuringInterval(1);
+
     _parameters.mode = MODE_BLOCK_MEASURING;
     _setupBlockParameters(d);
     _hfPlot->setChannels(true, false);
@@ -361,6 +365,11 @@ void MainWindow::on_stop_btn_2_clicked()//block
         ui->stop_btn_2->setChecked(true);
         return;
     }
+
+    _plot->setDisplayedPoints(10 * _lastInterval,
+                              MODE_SINGLESHOT_MEASURING,
+                              10 * _lastInterval);
+    _measureThread->setMeasuringInterval(_lastInterval);
 
     ui->start_btn_2->setChecked(false);
     ui->stop_btn_2->setChecked(true);
@@ -385,6 +394,7 @@ void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
 
     _parameters.displayedInterval = 10;
     _parameters.measuringInterval = p.getMeasuresCount();
+    _lastInterval = _parameters.measuringInterval;
 
     temp = _parameters.measuringInterval *
                 _parameters.displayedInterval;

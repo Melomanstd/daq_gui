@@ -226,6 +226,7 @@ void GraphicPlot::setDisplayedPoints(int displayedSize,
     _displayedPoints = displayedSize;
     _grid->cleanTime();
     int time = realSize * 4;
+    QSize pointSize(10, 10);
 
     //reset
     _count = 0;
@@ -238,7 +239,7 @@ void GraphicPlot::setDisplayedPoints(int displayedSize,
         QwtSymbol *simba = new QwtSymbol(QwtSymbol::Ellipse,
                                          QBrush(Qt::yellow),
                                          QPen(Qt::red),
-                                         QSize(10,10));
+                                         pointSize);
 
         if (_curveZero != 0)
             _curveZero->setSymbol(simba);
@@ -246,7 +247,7 @@ void GraphicPlot::setDisplayedPoints(int displayedSize,
         simba = new QwtSymbol(QwtSymbol::Rect,
                               QBrush(Qt::red),
                               QPen(Qt::darkCyan),
-                              QSize(10,10));
+                              pointSize);
         if (_curveOne != 0)
             _curveOne->setSymbol(simba);
 

@@ -99,6 +99,7 @@ private:
 
     double          _value0, _value1, _value2;
     QString         _logString;
+    quint32         _lastInterval;
 };
 
 #endif // MAINWINDOW_H
