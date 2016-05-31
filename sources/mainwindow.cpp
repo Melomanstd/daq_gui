@@ -172,17 +172,13 @@ void MainWindow::_initializeDataOperator()
 
 void MainWindow::_updatePlot()
 {
-    if (_measureThread->isSingleshotDataReady() == true)
-    {
-        _measureThread->getVoltage(_value0, _value1);
-        _plot->setPoint(_value0, _value1);
+    _readSingleshotData();
+    _readBlockData();
+    _measureThread->resumeThread();
+}
 
-        if ((_isLogging == true) && (_isBlockRunning == false))
-        {
-            _writeLog();
-        }
-    }
-
+void MainWindow::_readBlockData()
+{
     if (_measureThread->isBlockDataReady() == true)
     {
         _measureThread->getSamplesBuffer(_plotBufferZero,
@@ -199,8 +195,20 @@ void MainWindow::_updatePlot()
             _writeLog();
         }
     }
+}
 
-    _measureThread->resumeThread();
+void MainWindow::_readSingleshotData()
+{
+    if (_measureThread->isSingleshotDataReady() == true)
+    {
+        _measureThread->getVoltage(_value0, _value1);
+        _plot->setPoint(_value0, _value1);
+
+        if ((_isLogging == true) && (_isBlockRunning == false))
+        {
+            _writeLog();
+        }
+    }
 }
 
 void MainWindow::_writeLog()

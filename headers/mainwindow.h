@@ -40,6 +40,8 @@ private:
     void            _tryToStop();
     void            _tryToStart();
     void            _writeLog();
+    void            _readBlockData();
+    void            _readSingleshotData();
 
 private slots:
     void on_parameters_btn_clicked();
