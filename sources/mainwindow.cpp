@@ -199,6 +199,8 @@ void MainWindow::_updatePlot()
             _writeLog();
         }
     }
+
+    _measureThread->resumeThread();
 }
 
 void MainWindow::_writeLog()
