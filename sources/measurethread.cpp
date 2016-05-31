@@ -553,3 +553,12 @@ void MeasureThread::_measuringDelay()
         }
     }
 }
+
+quint32 MeasureThread::getMeasuringInterval()
+{
+    quint32 temp;
+    _mutex.tryLock();
+    temp = _measuringInterval;
+    _mutex.unlock();
+    return temp;
+}

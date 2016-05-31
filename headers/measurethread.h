@@ -52,6 +52,7 @@ public:
     void        singleshotMeasuring(bool state);
     void        blockMeasuring(bool state);
     void        resumeThread();
+    quint32     getMeasuringInterval();
 
 protected:
     virtual void run();
