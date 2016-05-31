@@ -80,9 +80,6 @@ private:
     GraphicPlot*    _plot;
     GraphicPlot*    _hfPlot;
 
-
-    QTimer*         _updateTimer;
-
     ModeParameters  _parameters;
 
     bool            _isWorking;

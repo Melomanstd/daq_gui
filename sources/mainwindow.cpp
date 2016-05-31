@@ -63,14 +63,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stop_btn->setChecked(true);
     ui->stop_btn_2->setChecked(true);
 
-    _updateTimer = new QTimer;
-//    connect(_updateTimer, SIGNAL(timeout()),
-//            this, SLOT(_updatePlot()));
-
     _initializePlot();
     _initializeDataOperator();
-    _updateTimer->setInterval(1000);
-    _updateTimer->start();
+
     showMaximized();
 
 
@@ -117,11 +112,9 @@ MainWindow::~MainWindow()
     delete _workingTime;
     _workingTime = 0;
 
-    delete _updateTimer;
     _measureThread->stopWorking();
     delete _measureThread;
 
-    _updateTimer = 0;
     _measureThread = 0;
 
     delete ui;
@@ -732,7 +725,6 @@ void MainWindow::_tryToStop()
         return;
     }
 
-    _updateTimer->stop();
     _measureThread->stopWorking();
     _isWorking = false;
     _stopLogging();
@@ -749,5 +741,4 @@ void MainWindow::_tryToStart()
         _isWorking = true;
         _measureThread->startWorking();
         _workingTime->restart();
-        _updateTimer->start();
 }

@@ -53,109 +53,102 @@ GraphicPlot::~GraphicPlot()
 
 void GraphicPlot::_initialize(int channelsCount)
 {
-        _scaleTimer = new QTimer;
-        _scaleTimer->setInterval(1000);
-        connect(_scaleTimer, SIGNAL(timeout()),
-                this, SLOT(_scaleTimerTimeout()));
+    setAutoReplot(false);
+    _scaleTimer = new QTimer;
+    _scaleTimer->setInterval(1000);
+    connect(_scaleTimer, SIGNAL(timeout()),
+            this, SLOT(_scaleTimerTimeout()));
 
-        setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
-        setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
-    //    setTitle(title);
+    setAxisScale(QwtPlot::yLeft, _scaleMinimum, _scaleMaximum);
+    setAxisScale(QwtPlot::yRight, _scaleMinimum, _scaleMaximum);
 
-        canvas()->setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
+    canvas()->setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
 
-        if (canvas()->testPaintAttribute(QwtPlotCanvas::BackingStore) == true)
-        {
-            canvas()->setAttribute(Qt::WA_PaintOnScreen, true);
-            canvas()->setAttribute(Qt::WA_NoSystemBackground, true);
-        }
+    if (canvas()->testPaintAttribute(QwtPlotCanvas::BackingStore) == true)
+    {
+        canvas()->setAttribute(Qt::WA_PaintOnScreen, true);
+        canvas()->setAttribute(Qt::WA_NoSystemBackground, true);
+    }
 
-        QPalette pal = canvas()->palette();
-        QLinearGradient gradient(0.0, 0.0, 1.0, 1.0);
-        gradient.setCoordinateMode(QLinearGradient::StretchToDeviceMode);
-        gradient.setColorAt(0.0, QColor(0, 49, 110));
-        gradient.setColorAt(1.0, QColor(0, 87, 174));
-        pal.setBrush(QPalette::Window, QBrush(gradient));
-        canvas()->setPalette(pal);
+    QPalette pal = canvas()->palette();
+    QLinearGradient gradient(0.0, 0.0, 1.0, 1.0);
+    gradient.setCoordinateMode(QLinearGradient::StretchToDeviceMode);
+    gradient.setColorAt(0.0, QColor(0, 49, 110));
+    gradient.setColorAt(1.0, QColor(0, 87, 174));
+    pal.setBrush(QPalette::Window, QBrush(gradient));
+    canvas()->setPalette(pal);
 
-        enableAxis(yLeft, false);
-        enableAxis(yRight, false);
-    //    enableAxis(xBottom, false);
-    //    setAxisScaleDraw(yLeft, new ScaleDraw());
-    //    setAxisTitle(yLeft, tr("Signal 1 Voltage"));
-    //    setAxisScaleDraw(yRight, new ScaleDraw());
-    //    setAxisTitle(yRight, tr("Signal 2 Voltage"));
-        setAxisScaleDraw(xBottom, new ScaleDraw());
-        setAxisTitle(xBottom, tr("Timescale"));
+    enableAxis(yLeft, false);
+    enableAxis(yRight, false);
+    setAxisScaleDraw(xBottom, new ScaleDraw());
+    setAxisTitle(xBottom, tr("Timescale"));
 
-        _grid = new PlotGrid();
-        _grid->setMajPen(QPen(Qt::gray, 1, Qt::DotLine));
+    _grid = new PlotGrid();
+    _grid->setMajPen(QPen(Qt::gray, 1, Qt::DotLine));
 
-        _grid->attach(this);
+    _grid->attach(this);
 
-        QFont font = QwtTextLabel().font();
-        font.setPointSize(14);
-        font.setBold(true);
+    QFont font = QwtTextLabel().font();
+    font.setPointSize(14);
+    font.setBold(true);
 
-        if (channelsCount > 0)
-        {
-            _curveZero = new QwtPlotCurve();
-            _curveZero->setTitle(tr("Signal 1"));
-            _curveZero->setPen(QPen(Qt::blue, 6, Qt::DashLine));
-            _curveZero->setRenderHint(QwtPlotItem::RenderAntialiased, true);
-            _curveZero->attach(this);
+    if (channelsCount > 0)
+    {
+        _curveZero = new QwtPlotCurve();
+        _curveZero->setTitle(tr("Signal 1"));
+        _curveZero->setPen(QPen(Qt::blue, 6, Qt::DashLine));
+        _curveZero->setRenderHint(QwtPlotItem::RenderAntialiased, true);
+        _curveZero->attach(this);
 
-            QString text = _curveZero->title().text() + tr(" Voltage: 0");
-            _channelOutput_0 = new QwtTextLabel(text);
-            _channelOutput_0->setFont(font);
-        }
+        QString text = _curveZero->title().text() + tr(" Voltage: 0");
+        _channelOutput_0 = new QwtTextLabel(text);
+        _channelOutput_0->setFont(font);
+    }
 
-        if (channelsCount > 1)
-        {
-            _curveOne = new QwtPlotCurve();
-            _curveOne->setTitle(tr("Signal 2"));
-            _curveOne->setPen(QPen(Qt::darkCyan, 6, Qt::DotLine));
-            _curveOne->setRenderHint(QwtPlotItem::RenderAntialiased, true);
-            _curveOne->setYAxis(QwtPlot::yRight);
-            _curveOne->attach(this);
+    if (channelsCount > 1)
+    {
+        _curveOne = new QwtPlotCurve();
+        _curveOne->setTitle(tr("Signal 2"));
+        _curveOne->setPen(QPen(Qt::darkCyan, 6, Qt::DotLine));
+        _curveOne->setRenderHint(QwtPlotItem::RenderAntialiased, true);
+        _curveOne->setYAxis(QwtPlot::yRight);
+        _curveOne->attach(this);
 
-            QString text = _curveOne->title().text() + tr(" Voltage: 0");
-            _channelOutput_1 = new QwtTextLabel(text);
-            _channelOutput_1->setFont(font);
-        }
-        else
-        {
-            _curveZero->setTitle(tr("Signal 3"));
-            QString text = _curveZero->title().text() + tr(" Voltage: 0");
-            _channelOutput_0->setText(text);
-        }
+        QString text = _curveOne->title().text() + tr(" Voltage: 0");
+        _channelOutput_1 = new QwtTextLabel(text);
+        _channelOutput_1->setFont(font);
+    }
+    else
+    {
+        _curveZero->setTitle(tr("Signal 3"));
+        QString text = _curveZero->title().text() + tr(" Voltage: 0");
+        _channelOutput_0->setText(text);
+    }
 
-        PlotLegend *legend = new PlotLegend();
-        legend->setAutoFillBackground(true);
+    PlotLegend *legend = new PlotLegend();
+    legend->setAutoFillBackground(true);
 
-        if (_curveZero != 0)
-            legend->insert(_curveZero, _channelOutput_0);
-        if (_curveOne != 0)
-            legend->insert(_curveOne, _channelOutput_1);
-        insertLegend(legend,QwtPlot::TopLegend);
+    if (_curveZero != 0)
+        legend->insert(_curveZero, _channelOutput_0);
+    if (_curveOne != 0)
+        legend->insert(_curveOne, _channelOutput_1);
+    insertLegend(legend,QwtPlot::TopLegend);
 
-    //    _curve->setXAxis(QwtPlot::xTop);
+//    QwtPlotZoomer *zoomer = new QwtPlotZoomer(canvas());
+//    zoomer->setTrackerMode(QwtPlotZoomer::AlwaysOff);
 
-    //    QwtPlotZoomer *zoomer = new QwtPlotZoomer(canvas());
-    //    zoomer->setTrackerMode(QwtPlotZoomer::AlwaysOff);
+    PlotMagnifier *magnifier = new PlotMagnifier(canvas());
+    magnifier->setMouseButton(Qt::NoButton);
+    magnifier->setWheelFactor(0.8);
 
-        PlotMagnifier *magnifier = new PlotMagnifier(canvas());
-        magnifier->setMouseButton(Qt::NoButton);
-        magnifier->setWheelFactor(0.8);
+    QwtPlotPanner *panner = new QwtPlotPanner(canvas());
+    panner->setMouseButton(Qt::LeftButton);
+    connect(panner, SIGNAL(panned(int,int)),
+            this, SLOT(_plotPanned(int,int)));
 
-        QwtPlotPanner *panner = new QwtPlotPanner(canvas());
-        panner->setMouseButton(Qt::LeftButton);
-        connect(panner, SIGNAL(panned(int,int)),
-                this, SLOT(_plotPanned(int,int)));
+    replot();
 
-        replot();
-
-        rescaleAxis(xBottom, 0, 100);
+    rescaleAxis(xBottom, 0, 100);
 }
 
 void GraphicPlot::setPoint(const double &voltage_0,
