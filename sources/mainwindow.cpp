@@ -476,6 +476,12 @@ void MainWindow::on_ch_1_zoom_out_btn_clicked()
 
 void MainWindow::on_channelZero_check_toggled(bool state)
 {
+    if ((state == false) &&
+            (ui->channelOne_check->isChecked() == false))
+    {
+        ui->channelZero_check->setChecked(true);
+        return;
+    }
     QSettings settings("settings.ini", QSettings::IniFormat, this);
     if (state == true)
     {
@@ -497,6 +503,12 @@ void MainWindow::on_channelZero_check_toggled(bool state)
 
 void MainWindow::on_channelOne_check_toggled(bool state)
 {
+    if ((state == false) &&
+            (ui->channelZero_check->isChecked() == false))
+    {
+        ui->channelOne_check->setChecked(true);
+        return;
+    }
     QSettings settings("settings.ini", QSettings::IniFormat, this);
     if (state == true)
     {
