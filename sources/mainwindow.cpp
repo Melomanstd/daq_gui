@@ -64,12 +64,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stop_btn_2->setChecked(true);
 
     _updateTimer = new QTimer;
-    connect(_updateTimer, SIGNAL(timeout()),
-            this, SLOT(_updatePlot()));
+//    connect(_updateTimer, SIGNAL(timeout()),
+//            this, SLOT(_updatePlot()));
 
     _initializePlot();
     _initializeDataOperator();
-    _updateTimer->setInterval(1);
+    _updateTimer->setInterval(1000);
     _updateTimer->start();
     showMaximized();
 
@@ -118,11 +118,11 @@ MainWindow::~MainWindow()
     _workingTime = 0;
 
     delete _updateTimer;
-    _dataOperator->stopWorking();
-    delete _dataOperator;
+    _measureThread->stopWorking();
+    delete _measureThread;
 
     _updateTimer = 0;
-    _dataOperator = 0;
+    _measureThread = 0;
 
     delete ui;
 }
@@ -161,20 +161,20 @@ void MainWindow::_initializePlot()
 
 void MainWindow::_initializeDataOperator()
 {
-    _dataOperator = new MeasureThread();
+    _measureThread = new MeasureThread();
 
-    connect(_dataOperator, SIGNAL(someError()),
+    connect(_measureThread, SIGNAL(someError()),
             this, SLOT(_displayError()));
+
+    connect(_measureThread, SIGNAL(measured()),
+            this, SLOT(_updatePlot()));
 }
 
 void MainWindow::_updatePlot()
 {
-    if (_dataOperator->isSingleshotDataReady() == true)
+    if (_measureThread->isSingleshotDataReady() == true)
     {
-        _value0 = 0.0;
-        _value1 = 0.0;
-
-        _dataOperator->getVoltage(_value0, _value1);
+        _measureThread->getVoltage(_value0, _value1);
         _plot->setPoint(_value0, _value1);
 
         if ((_isLogging == true) && (_isBlockRunning == false))
@@ -183,10 +183,9 @@ void MainWindow::_updatePlot()
         }
     }
 
-    if (_dataOperator->isBlockDataReady() == true)
+    if (_measureThread->isBlockDataReady() == true)
     {
-        _value2 = 0.0;
-        _dataOperator->getSamplesBuffer(_plotBufferZero,
+        _measureThread->getSamplesBuffer(_plotBufferZero,
                                         _plotBufferOne);
         _hfPlot->displayBlock();
 
@@ -200,8 +199,6 @@ void MainWindow::_updatePlot()
             _writeLog();
         }
     }
-
-
 }
 
 void MainWindow::_writeLog()
@@ -279,7 +276,7 @@ void MainWindow::on_start_btn_clicked()//singleshot
 
     _plot->setChannels(ui->channelZero_check->isChecked(),
                        ui->channelOne_check->isChecked());
-    _dataOperator->singleshotMeasuring(true);
+    _measureThread->singleshotMeasuring(true);
     _isSingleshotRunning = true;
 
     _tryToStart();
@@ -296,7 +293,7 @@ void MainWindow::on_stop_btn_clicked()//singleshot
 
     ui->start_btn->setChecked(false);
     ui->stop_btn->setChecked(true);
-    _dataOperator->singleshotMeasuring(false);
+    _measureThread->singleshotMeasuring(false);
     _plot->measuringStopped();
     _isSingleshotRunning = false;
 
@@ -347,7 +344,7 @@ void MainWindow::on_start_btn_2_clicked()//block
     _parameters.mode = MODE_BLOCK_MEASURING;
     _setupBlockParameters(d);
     _hfPlot->setChannels(true, false);
-    _dataOperator->blockMeasuring(true);
+    _measureThread->blockMeasuring(true);
     _isBlockRunning = true;
 
     _tryToStart();
@@ -364,7 +361,7 @@ void MainWindow::on_stop_btn_2_clicked()//block
 
     ui->start_btn_2->setChecked(false);
     ui->stop_btn_2->setChecked(true);
-    _dataOperator->blockMeasuring(false);
+    _measureThread->blockMeasuring(false);
     _plotBufferZero = 0;
     _plotBufferOne = 0;
     _hfPlot->measuringStopped();
@@ -378,8 +375,8 @@ void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
     int p1, p2;
     int temp = 0;
     p.selectedPins(p1, p2);
-    _dataOperator->setPin(0, p1);
-    _dataOperator->setPin(1, p2);
+    _measureThread->setPin(0, p1);
+    _measureThread->setPin(1, p2);
 
     delayedSlider->setValue(p.getMeasuresCount());
 
@@ -397,7 +394,7 @@ void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
     //points per sec * displayed seconds
     _plot->setDisplayedPoints(temp, _parameters.mode, temp);
 
-    _dataOperator->setParameters(_parameters, _isWorking);
+    _measureThread->setParameters(_parameters, _isWorking);
 }
 
 void MainWindow::_setupBlockParameters(BlockDialog &p)
@@ -406,7 +403,7 @@ void MainWindow::_setupBlockParameters(BlockDialog &p)
 
     int p1;
     p.selectedPins(p1);
-    _dataOperator->setPin(2, p1);
+    _measureThread->setPin(2, p1);
 
     _parameters.measuringInterval = delayedSlider->value();
     _parameters.blockSize = p.getSamplesCount();
@@ -434,7 +431,7 @@ void MainWindow::_setupBlockParameters(BlockDialog &p)
                     _parameters.blockSize);
     }
 
-    _dataOperator->setParameters(_parameters, _isWorking);
+    _measureThread->setParameters(_parameters, _isWorking);
 }
 
 void MainWindow::on_ch_0_voltage_range_slider_valueChanged(int value)
@@ -491,9 +488,9 @@ void MainWindow::on_channelZero_check_toggled(bool state)
         settings.setValue("channel_zero", STATE_OFF);
     }
     _channelZeroState(state);
-    if (_dataOperator != 0)
+    if (_measureThread != 0)
     {
-        _dataOperator->setChannelStatus(CHANNEL_0,
+        _measureThread->setChannelStatus(CHANNEL_0,
                                         _parameters.channelZeroState);
     }
 }
@@ -512,9 +509,9 @@ void MainWindow::on_channelOne_check_toggled(bool state)
         settings.setValue("channel_one", STATE_OFF);
     }
     _channelOneState(state);
-    if (_dataOperator != 0)
+    if (_measureThread != 0)
     {
-        _dataOperator->setChannelStatus(CHANNEL_1,
+        _measureThread->setChannelStatus(CHANNEL_1,
                                         _parameters.channelOneState);
     }
 }
@@ -523,7 +520,7 @@ void MainWindow::_displayError()
 {
     QMessageBox::critical(this,
                           tr("Error"),
-                          _dataOperator->getLastError(),
+                          _measureThread->getLastError(),
                           QMessageBox::Ok);
 }
 
@@ -580,9 +577,9 @@ void MainWindow::_delayedSliderNewValue(int value)
     //points per sec * displayed seconds
     _plot->setDisplayedPoints(value * 10, _parameters.mode, value * 10);
 
-    if (_dataOperator != 0)
+    if (_measureThread != 0)
     {
-        _dataOperator->setMeasuringInterval(value);
+        _measureThread->setMeasuringInterval(value);
     }
 }
 
@@ -620,9 +617,9 @@ void MainWindow::_delayedSliderNewValue_2(int value)
         _plotBufferZero = _hfPlot->initializeChannelZeroBuffer(value);
     }
 
-    if (_dataOperator != 0)
+    if (_measureThread != 0)
     {
-        _dataOperator->setParameters(_parameters, _isWorking);
+        _measureThread->setParameters(_parameters, _isWorking);
     }
 
     QSettings settings("settings.ini", QSettings::IniFormat, this);
@@ -714,7 +711,7 @@ void MainWindow::_tryToStop()
     }
 
     _updateTimer->stop();
-    _dataOperator->stopWorking();
+    _measureThread->stopWorking();
     _isWorking = false;
     _stopLogging();
     ui->log_btn->setChecked(false);
@@ -728,7 +725,7 @@ void MainWindow::_tryToStart()
     }
 
         _isWorking = true;
-        _dataOperator->startWorking();
+        _measureThread->startWorking();
         _workingTime->restart();
         _updateTimer->start();
 }
