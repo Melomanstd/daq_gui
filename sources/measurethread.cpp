@@ -95,13 +95,15 @@ void MeasureThread::run()
 
         emit measured();
 
+        _wait.wait(&_mutex, 500);
+
         _measuringDelay();
     }
+}
 
-//    _errorCode = ::D2K_AI_ContBufferReset(_cardID);
-//    _errorCode = ::D2K_Release_Card(_cardID);
-//    _cardID = -1;
-//    _isUnitialize = true;
+void MeasureThread::resumeThread()
+{
+    _wait.wakeAll();
 }
 
 void MeasureThread::startWorking()

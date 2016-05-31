@@ -11,6 +11,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QTime>
+#include <QWaitCondition>
 
 #include <D2kDask.h>
 #include <DAQHeader.h>
@@ -50,6 +51,7 @@ public:
 
     void        singleshotMeasuring(bool state);
     void        blockMeasuring(bool state);
+    void        resumeThread();
 
 protected:
     virtual void run();
@@ -75,6 +77,7 @@ private:
     BOOLEAN         _isDoubleBuffer;
 
     QMutex          _mutex;
+    QWaitCondition  _wait;
     I16             _errorCode;
     QString         _lastError;
 

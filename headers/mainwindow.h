@@ -40,6 +40,8 @@ private:
     void            _tryToStop();
     void            _tryToStart();
     void            _writeLog();
+    void            _readBlockData();
+    void            _readSingleshotData();
 
 private slots:
     void on_parameters_btn_clicked();
@@ -77,9 +79,6 @@ private:
     MeasureThread*   _measureThread;
     GraphicPlot*    _plot;
     GraphicPlot*    _hfPlot;
-
-
-    QTimer*         _updateTimer;
 
     ModeParameters  _parameters;
 

@@ -63,14 +63,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stop_btn->setChecked(true);
     ui->stop_btn_2->setChecked(true);
 
-    _updateTimer = new QTimer;
-//    connect(_updateTimer, SIGNAL(timeout()),
-//            this, SLOT(_updatePlot()));
-
     _initializePlot();
     _initializeDataOperator();
-    _updateTimer->setInterval(1000);
-    _updateTimer->start();
+
     showMaximized();
 
 
@@ -117,11 +112,9 @@ MainWindow::~MainWindow()
     delete _workingTime;
     _workingTime = 0;
 
-    delete _updateTimer;
     _measureThread->stopWorking();
     delete _measureThread;
 
-    _updateTimer = 0;
     _measureThread = 0;
 
     delete ui;
@@ -172,17 +165,13 @@ void MainWindow::_initializeDataOperator()
 
 void MainWindow::_updatePlot()
 {
-    if (_measureThread->isSingleshotDataReady() == true)
-    {
-        _measureThread->getVoltage(_value0, _value1);
-        _plot->setPoint(_value0, _value1);
+    _readSingleshotData();
+    _readBlockData();
+    _measureThread->resumeThread();
+}
 
-        if ((_isLogging == true) && (_isBlockRunning == false))
-        {
-            _writeLog();
-        }
-    }
-
+void MainWindow::_readBlockData()
+{
     if (_measureThread->isBlockDataReady() == true)
     {
         _measureThread->getSamplesBuffer(_plotBufferZero,
@@ -195,6 +184,20 @@ void MainWindow::_updatePlot()
         }
 
         if (_isLogging == true)
+        {
+            _writeLog();
+        }
+    }
+}
+
+void MainWindow::_readSingleshotData()
+{
+    if (_measureThread->isSingleshotDataReady() == true)
+    {
+        _measureThread->getVoltage(_value0, _value1);
+        _plot->setPoint(_value0, _value1);
+
+        if ((_isLogging == true) && (_isBlockRunning == false))
         {
             _writeLog();
         }
@@ -722,7 +725,6 @@ void MainWindow::_tryToStop()
         return;
     }
 
-    _updateTimer->stop();
     _measureThread->stopWorking();
     _isWorking = false;
     _stopLogging();
@@ -739,5 +741,4 @@ void MainWindow::_tryToStart()
         _isWorking = true;
         _measureThread->startWorking();
         _workingTime->restart();
-        _updateTimer->start();
 }
