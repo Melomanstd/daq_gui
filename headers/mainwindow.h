@@ -74,7 +74,7 @@ private slots:
 private:
     Ui::MainWindow  *ui;
 
-    MeasureThread*   _dataOperator;
+    MeasureThread*   _measureThread;
     GraphicPlot*    _plot;
     GraphicPlot*    _hfPlot;
 

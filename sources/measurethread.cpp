@@ -93,6 +93,8 @@ void MeasureThread::run()
             _blockMeasure();
         }
 
+        emit measured();
+
         _measuringDelay();
     }
 
@@ -336,23 +338,6 @@ void MeasureThread::getSamplesBuffer(double* bufferZero,
                             bufferZero,
                             MAXIMUM_PLOT_SAMPLES);
     }
-    /*if (bufferZero != 0)
-    {
-        ::D2K_AI_ContVScale(_cardID,
-                            AD_B_10_V,
-                            _samplesBlockBuffer_0,
-                            bufferZero,
-                            _measureSampleCount);
-    }
-
-    if (bufferOne != 0)
-    {
-        ::D2K_AI_ContVScale(_cardID,
-                            AD_B_10_V,
-                            _samplesBlockBuffer_1,
-                            bufferOne,
-                            _measureSampleCount);
-    }*/
     _blockDataReady = false;
     _mutex.unlock();
 }

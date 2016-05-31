@@ -65,6 +65,7 @@ private:
 
 signals:
     void someError();
+    void measured();
 
 private:
     bool            _isWorking;
