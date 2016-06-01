@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <QTime>
 
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
@@ -89,6 +90,7 @@ private:
     QwtTextLabel*       _channelOutput_1;
 
     QTimer*             _scaleTimer;
+    QTime               _scaleTime;
 };
 
 #endif // GRAPHICPLOT_H

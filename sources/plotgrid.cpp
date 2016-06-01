@@ -175,14 +175,8 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
         }
         else
         {
-            if (_useTimeValues == false)
-            {
-                scaleValue = /*qRound*/(values[i] * 4.0 / _timescaleDivider);
-            }
-            else
-            {
-                scaleValue = values[i];
-            }
+            scaleValue = /*qRound*/(values[i] * 4.0 / _timescaleDivider);
+
             if ( qwtFuzzyGreaterOrEqual( value, x1 ) &&
                 qwtFuzzyLessOrEqual( value, x2 ) )
             {
@@ -197,27 +191,53 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
                 font.setBold(true);
                 painter->setFont(font);
 
-                if (i != 0 && i != values.count() - 1)
+                if (_useTimeValues == false)
                 {
-                    QwtPainter::drawText( painter,
-                                          value-50,
-                                          y2-20,
-                                          100,
-                                          20,
-                                          Qt::AlignHCenter,
-                                          "");
-//                                          QString::number(scaleValue));
+                    if (i != 0 && i != values.count() - 1)
+                    {
+                        QwtPainter::drawText( painter,
+                                              value-50,
+                                              y2-20,
+                                              100,
+                                              20,
+                                              Qt::AlignHCenter,
+                                              QString::number(scaleValue));
+                    }
+                    else if (i == 0)
+                    {
+                        QwtPainter::drawText( painter,
+                                              value-30,
+                                              y2-20,
+                                              100,
+                                              20,
+                                              Qt::AlignHCenter,
+                                              QString::number(scaleValue));
+                    }
                 }
-                else if (i == 0)
+                else
                 {
-                    QwtPainter::drawText( painter,
-                                          value-30,
-                                          y2-20,
-                                          100,
-                                          20,
-                                          Qt::AlignHCenter,
-                                          "");
-//                                          QString::number(scaleValue));
+                    if (i != 0 && i != values.count() - 1)
+                    {
+                        QwtPainter::drawText( painter,
+                                              value-50,
+                                              y2-20,
+                                              100,
+                                              20,
+                                              Qt::AlignHCenter,
+                                              _stringTime[i]);
+    //                                          QString::number(scaleValue));
+                    }
+                    else if (i == 0)
+                    {
+                        QwtPainter::drawText( painter,
+                                              value-30,
+                                              y2-20,
+                                              100,
+                                              20,
+                                              Qt::AlignHCenter,
+                                              _stringTime[i]);
+    //                                          QString::number(scaleValue));
+                    }
                 }
                 painter->restore();
             }
@@ -251,10 +271,16 @@ void PlotGrid::cleanTime()
 {
     _time.clear();
     _time.reserve(BUFFER_SIZE);
+
+    _stringTime.clear();
+    _stringTime.reserve(BUFFER_SIZE);
+
     for (int i = 0; i < BUFFER_SIZE; i++)
     {
         _time.append(i);
         _savedTime[i] = 0;
+
+        _stringTime.append("");
     }
     _timeStoragePointer = _savedTime;
     _lastTime = 0;
@@ -265,18 +291,10 @@ void PlotGrid::cleanTime()
     _timescaleDivider = 1;
 }
 
-void PlotGrid::updateTime()
+void PlotGrid::updateTime(double time)
 {
-    if (_listPosition < BUFFER_SIZE - 1)
-    {
-        ++_listPosition;
-        return;
-    }
-    else
-    {
-        _time.pop_front();
-        _time.push_back(++_listPosition);
-    }
+    _stringTime.pop_back();
+    _stringTime.push_front(QString::number(time));
 }
 
 void PlotGrid::usingTimeValues(bool state)

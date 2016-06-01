@@ -366,9 +366,9 @@ void MainWindow::on_stop_btn_2_clicked()//block
         return;
     }
 
-    _plot->setDisplayedPoints(10 * _lastInterval,
+    _plot->setDisplayedPoints(_lastInterval,
                               MODE_SINGLESHOT_MEASURING,
-                              10 * _lastInterval);
+                              _lastInterval);
     _measureThread->setMeasuringInterval(_lastInterval);
 
     ui->start_btn_2->setChecked(false);

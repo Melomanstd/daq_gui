@@ -55,7 +55,7 @@ void GraphicPlot::_initialize(int channelsCount)
 {
     setAutoReplot(false);
     _scaleTimer = new QTimer;
-    _scaleTimer->setInterval(1000);
+    _scaleTimer->setInterval(100);
     connect(_scaleTimer, SIGNAL(timeout()),
             this, SLOT(_scaleTimerTimeout()));
 
@@ -262,6 +262,7 @@ void GraphicPlot::setDisplayedPoints(int displayedSize,
 
         _grid->usingTimeValues(true);
         _scaleTimer->start();
+        _scaleTime.restart();
         rescaleAxis(xBottom, 0, displayedSize);
         setAxisTitle(xBottom, tr("Seconds"));
         _grid->trannsformScaleValue(false, 1);
@@ -298,8 +299,8 @@ void GraphicPlot::setDisplayedPoints(int displayedSize,
             _grid->trannsformScaleValue(true, 1000000);
         }
 
-        rescaleAxis(QwtPlot::xTop, 0, displayedSize);
-        rescaleAxis(QwtPlot::xBottom, 0, realSize);
+        rescaleAxis(QwtPlot::xTop, displayedSize, 0);
+        rescaleAxis(QwtPlot::xBottom, realSize, 0);
         _curveZero->setXAxis(QwtPlot::xTop);
     }
 
@@ -583,7 +584,7 @@ void GraphicPlot::setLineWidth_1(int width)
 
 void GraphicPlot::_scaleTimerTimeout()
 {
-    _grid->updateTime();
+    _grid->updateTime(static_cast<double> (_scaleTime.elapsed() / 1000.0));
 }
 
 

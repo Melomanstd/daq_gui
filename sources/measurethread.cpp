@@ -547,7 +547,7 @@ void MeasureThread::_measuringDelay()
     }
     else if ((_measuringBlock == false) && (_measuringSingleshot == true))
     {
-        msleep(_measuringInterval);
+        msleep(10);
     }
     else
     {
