@@ -11,7 +11,7 @@
     <message>
         <location filename="ui/blockdialog.ui" line="22"/>
         <source>Block mode</source>
-        <translation>Групповой замер</translation>
+        <translation>Сигнал 3</translation>
     </message>
     <message>
         <location filename="ui/blockdialog.ui" line="72"/>
@@ -26,7 +26,7 @@
     <message>
         <location filename="sources/blockdialog.cpp" line="10"/>
         <source>Block measure parameters</source>
-        <translation>Параметры групповых замеров</translation>
+        <translation>Параметры Сигнала 3</translation>
     </message>
 </context>
 <context>
@@ -328,7 +328,7 @@
     <message>
         <location filename="sources/measurethread.cpp" line="239"/>
         <source>Cant config block mode: </source>
-        <translation>Не удается настроить режим группового замера: </translation>
+        <translation>Не удается настроить режим Сигнала 3: </translation>
     </message>
     <message>
         <location filename="sources/measurethread.cpp" line="250"/>
@@ -349,13 +349,13 @@
         <location filename="sources/measurethread.cpp" line="404"/>
         <location filename="sources/measurethread.cpp" line="417"/>
         <source>Error while reading: </source>
-        <translation>Не удается провести единичный замер: </translation>
+        <translation>Не удается провести измерение Сигнала 1(2): </translation>
     </message>
     <message>
         <location filename="sources/measurethread.cpp" line="442"/>
         <location filename="sources/measurethread.cpp" line="459"/>
         <source>Error while continue reading: </source>
-        <translation>Не удается провести групповой замер: </translation>
+        <translation>Не удается провести измерение Сигнала 3: </translation>
     </message>
     <message>
         <location filename="sources/measurethread.cpp" line="518"/>
@@ -378,7 +378,7 @@
     <message>
         <location filename="ui/singleshotdialog.ui" line="22"/>
         <source>Singleshot mode</source>
-        <translation>Единичный замер</translation>
+        <translation>Сигнал 1, Сигнал 2</translation>
     </message>
     <message>
         <location filename="ui/singleshotdialog.ui" line="81"/>
@@ -398,7 +398,7 @@
     <message>
         <location filename="sources/singleshotdialog.cpp" line="10"/>
         <source>Single measure parameters</source>
-        <translation>Параметры единичных замеров</translation>
+        <translation>Параметры Сигнала 1, Сигнала 2</translation>
     </message>
 </context>
 </TS>

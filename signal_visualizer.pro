@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = signal visualizer
 TEMPLATE = app
 
+DESTDIR = ../bin
+
 
 SOURCES +=  sources/main.cpp\
             sources/mainwindow.cpp \
