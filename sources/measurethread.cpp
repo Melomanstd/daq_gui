@@ -334,11 +334,14 @@ void MeasureThread::getSamplesBuffer(double* bufferZero,
             _hfBuffer[i] = _samplesBlockBuffer_0[i*sampleStep];
         }
 
-        ::D2K_AI_ContVScale(_cardID,
-                            AD_B_10_V,
-                            _hfBuffer,
-                            bufferZero,
-                            MAXIMUM_PLOT_SAMPLES);
+        if (bufferZero != 0)
+        {
+            ::D2K_AI_ContVScale(_cardID,
+                                AD_B_10_V,
+                                _hfBuffer,
+                                bufferZero,
+                                MAXIMUM_PLOT_SAMPLES);
+        }
     }
     _blockDataReady = false;
     _mutex.unlock();

@@ -345,7 +345,7 @@ void MainWindow::on_start_btn_2_clicked()//block
         return;
     }
 
-    _plot->setDisplayedPoints(10, MODE_SINGLESHOT_MEASURING, 10);
+    _plot->setDisplayedPoints(200, MODE_SINGLESHOT_MEASURING, 200);
     _measureThread->setMeasuringInterval(1);
 
     _parameters.mode = MODE_BLOCK_MEASURING;
