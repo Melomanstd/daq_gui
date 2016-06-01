@@ -40,7 +40,7 @@ public:
         const    QwtScaleMap &xMap, const QwtScaleMap &yMap,
         const    QRectF &rect ) const;
     void         cleanTime();
-    void         updateTime();
+    void         updateTime(double time);
     void         usingTimeValues(bool state);
     void         trannsformScaleValue(bool state, int divider);
 
@@ -54,14 +54,9 @@ private:
     bool            _drawLeftScale;
     bool            _drawRightScale;
 
-    int*             _savedTime;
-    int*            _timeStoragePointer;
-    int             _lastTime;
     bool            _useTimeValues;
 
-    double          _value;
-    QList<int>      _time;
-    int             _listPosition;
+    QList<QString>  _stringTime;
     bool            _transformScaleValue;
     int             _timescaleDivider;
 };

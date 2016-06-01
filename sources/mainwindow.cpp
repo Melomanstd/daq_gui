@@ -366,9 +366,9 @@ void MainWindow::on_stop_btn_2_clicked()//block
         return;
     }
 
-    _plot->setDisplayedPoints(10 * _lastInterval,
+    _plot->setDisplayedPoints(_lastInterval,
                               MODE_SINGLESHOT_MEASURING,
-                              10 * _lastInterval);
+                              _lastInterval);
     _measureThread->setMeasuringInterval(_lastInterval);
 
     ui->start_btn_2->setChecked(false);
@@ -385,14 +385,14 @@ void MainWindow::on_stop_btn_2_clicked()//block
 void MainWindow::_setupSingleshotParameters(SingleshotDialog &p)
 {
     int p1, p2;
-    int temp = 0;
+    int temp = 100;
     p.selectedPins(p1, p2);
     _measureThread->setPin(0, p1);
     _measureThread->setPin(1, p2);
 
     delayedSlider->setValue(p.getMeasuresCount());
 
-    _parameters.displayedInterval = 10;
+    _parameters.displayedInterval = 1;
     _parameters.measuringInterval = p.getMeasuresCount();
     _lastInterval = _parameters.measuringInterval;
 
