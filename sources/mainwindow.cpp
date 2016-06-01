@@ -168,7 +168,7 @@ void MainWindow::_updatePlot()
 {
     _readSingleshotData();
     _readBlockData();
-    _measureThread->resumeThread();
+//    _measureThread->resumeThread();
 }
 
 void MainWindow::_readBlockData()

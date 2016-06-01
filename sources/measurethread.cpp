@@ -95,7 +95,7 @@ void MeasureThread::run()
 
         emit measured();
 
-        _wait.wait(&_mutex, 500);
+//        _wait.wait(&_mutex, 500);
 
         _measuringDelay();
     }
@@ -536,9 +536,9 @@ void MeasureThread::_measuringDelay()
     _tempValue = _measuredTime->elapsed();
     if ((_measuringBlock == true) && (_measuringSingleshot == false))
     {
-        if (_tempValue < 200)
+        if (_tempValue < 60)
         {
-            msleep(200 - _tempValue);
+            msleep(60 - _tempValue);
         }
     }
     else if ((_measuringBlock == false) && (_measuringSingleshot == true))
@@ -547,9 +547,9 @@ void MeasureThread::_measuringDelay()
     }
     else
     {
-        if (_tempValue < 1000)
+        if (_tempValue < 10)
         {
-            msleep(1000 - _tempValue);
+            msleep(10 - _tempValue);
         }
     }
 }

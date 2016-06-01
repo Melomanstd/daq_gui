@@ -241,15 +241,15 @@ void GraphicPlot::setDisplayedPoints(int displayedSize,
                                          QPen(Qt::red),
                                          pointSize);
 
-        if (_curveZero != 0)
-            _curveZero->setSymbol(simba);
+//        if (_curveZero != 0)
+//            _curveZero->setSymbol(simba);
 
         simba = new QwtSymbol(QwtSymbol::Rect,
                               QBrush(Qt::red),
                               QPen(Qt::darkCyan),
                               pointSize);
-        if (_curveOne != 0)
-            _curveOne->setSymbol(simba);
+//        if (_curveOne != 0)
+//            _curveOne->setSymbol(simba);
 
         setLineStyle_0(Qt::DashLine);
         setLineStyle_1(Qt::DotLine);
