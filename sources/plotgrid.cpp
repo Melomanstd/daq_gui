@@ -26,12 +26,9 @@ PlotGrid::PlotGrid()
         _drawLeftScale(0),
         _drawRightScale(0),
         _useTimeValues(false),
-        _value(0.0),
         _transformScaleValue(false),
         _timescaleDivider(1)
 {
-    _savedTime = new int[BUFFER_SIZE];
-
     cleanTime();
 }
 
@@ -269,23 +266,13 @@ void PlotGrid::drawRightScale(bool draw)
 
 void PlotGrid::cleanTime()
 {
-    _time.clear();
-    _time.reserve(BUFFER_SIZE);
-
     _stringTime.clear();
     _stringTime.reserve(BUFFER_SIZE);
 
     for (int i = 0; i < BUFFER_SIZE; i++)
     {
-        _time.append(i);
-        _savedTime[i] = 0;
-
         _stringTime.append("");
     }
-    _timeStoragePointer = _savedTime;
-    _lastTime = 0;
-    _value = 0.0;
-    _listPosition = 1;
     _useTimeValues = false;
     _transformScaleValue = false;
     _timescaleDivider = 1;

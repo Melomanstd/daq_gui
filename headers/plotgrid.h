@@ -54,15 +54,9 @@ private:
     bool            _drawLeftScale;
     bool            _drawRightScale;
 
-    int*             _savedTime;
-    int*            _timeStoragePointer;
-    int             _lastTime;
     bool            _useTimeValues;
 
-    double          _value;
-    QList<int>      _time;
     QList<QString>  _stringTime;
-    int             _listPosition;
     bool            _transformScaleValue;
     int             _timescaleDivider;
 };
