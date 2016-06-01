@@ -181,7 +181,7 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
             }
             else
             {
-                scaleValue = _time[i];
+                scaleValue = values[i];
             }
             if ( qwtFuzzyGreaterOrEqual( value, x1 ) &&
                 qwtFuzzyLessOrEqual( value, x2 ) )
@@ -205,7 +205,8 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
                                           100,
                                           20,
                                           Qt::AlignHCenter,
-                                          QString::number(scaleValue));
+                                          "");
+//                                          QString::number(scaleValue));
                 }
                 else if (i == 0)
                 {
@@ -215,7 +216,8 @@ void PlotGrid::drawLines( QPainter *painter, const QRectF &canvasRect,
                                           100,
                                           20,
                                           Qt::AlignHCenter,
-                                          QString::number(scaleValue));
+                                          "");
+//                                          QString::number(scaleValue));
                 }
                 painter->restore();
             }

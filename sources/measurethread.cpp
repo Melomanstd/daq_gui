@@ -45,6 +45,7 @@ MeasureThread::MeasureThread(QObject *parent)
 
 MeasureThread::~MeasureThread()
 {
+    _isWorking = false;
     delete _measuredTime;
 
     if (_isUnitialize == false)
@@ -539,9 +540,9 @@ void MeasureThread::_measuringDelay()
     _tempValue = _measuredTime->elapsed();
     if ((_measuringBlock == true) && (_measuringSingleshot == false))
     {
-        if (_tempValue < 60)
+        if (_tempValue < 10)
         {
-            msleep(60 - _tempValue);
+            msleep(10 - _tempValue);
         }
     }
     else if ((_measuringBlock == false) && (_measuringSingleshot == true))

@@ -102,6 +102,8 @@ void GraphicPlot::_initialize(int channelsCount)
 
         QString text = _curveZero->title().text() + tr(" Voltage: 0");
         _channelOutput_0 = new QwtTextLabel(text);
+//        _channelOutput_0->setMinimumWidth(400);
+//        _channelOutput_0->setMaximumWidth(400);
         _channelOutput_0->setFont(font);
     }
 
@@ -116,6 +118,8 @@ void GraphicPlot::_initialize(int channelsCount)
 
         QString text = _curveOne->title().text() + tr(" Voltage: 0");
         _channelOutput_1 = new QwtTextLabel(text);
+//        _channelOutput_1->setMinimumWidth(400);
+//        _channelOutput_1->setMaximumWidth(400);
         _channelOutput_1->setFont(font);
     }
     else
